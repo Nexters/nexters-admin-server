@@ -9,7 +9,7 @@ class Member(
         val username: String,
 
         @Column(name = "password", nullable = false)
-        var password: String,
+        var password: Password,
 
         @Column(name = "gender", nullable = false, length = 10)
         val gender: Gender,
