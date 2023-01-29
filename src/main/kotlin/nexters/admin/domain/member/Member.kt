@@ -11,6 +11,9 @@ class Member(
         @Column(name = "password", nullable = false)
         var password: Password,
 
+        @Column(name = "email", nullable = false)
+        var email: String,
+
         @Column(name = "gender", nullable = false, length = 10)
         val gender: Gender,
 
