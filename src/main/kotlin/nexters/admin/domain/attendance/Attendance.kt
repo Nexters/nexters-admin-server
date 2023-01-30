@@ -15,6 +15,7 @@ class Attendance(
         @JoinColumn(name = "generation_member_id")
         val generationMember: GenerationMember,
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "attendance_status")
         val attendanceStatus: AttendanceStatus
 ) {
