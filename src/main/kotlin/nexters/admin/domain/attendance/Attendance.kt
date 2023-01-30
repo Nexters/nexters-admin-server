@@ -1,7 +1,6 @@
 package nexters.admin.domain.attendance
 
 import nexters.admin.domain.generation_member.GenerationMember
-import nexters.admin.domain.member.Member
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -22,8 +21,4 @@ class Attendance(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    val member: Member? = null
 }
