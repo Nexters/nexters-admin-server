@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import java.security.MessageDigest
+import nexters.admin.extensions.sha256Encrypt
 import javax.persistence.Embeddable
 
 private class PasswordDeserializer : JsonDeserializer<Password>() {
@@ -26,13 +26,6 @@ private class PasswordSerializer : JsonSerializer<Password>() {
 @Embeddable
 data class Password(var value: String) {
     init {
-        value = sha256Encrypt(value)
+        value = value.sha256Encrypt()
     }
 }
-
-fun sha256Encrypt(plainText: String): String = bytesToHex(SHA256.digest(plainText.toByteArray()))
-
-private val SHA256: MessageDigest = MessageDigest.getInstance("SHA-256")
-
-private fun bytesToHex(bytes: ByteArray): String =
-        bytes.fold("") { previous, current -> previous + "%02x".format(current) }
