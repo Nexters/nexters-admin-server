@@ -18,7 +18,7 @@ class GenerationMember(
         var score: Int = 100,
 
         @Column(name = "is_completable", nullable = false)
-        var isCompletable: Boolean = false,
+        var isCompletable: Boolean = true,
 
         @Column(name = "is_manager", nullable = false)
         val isManager: Boolean = false
