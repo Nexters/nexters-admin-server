@@ -1,6 +1,6 @@
 package nexters.admin.domain.generation_member
 
-import nexters.admin.domain.member.Member
+import nexters.admin.domain.user.member.Member
 import javax.persistence.*
 
 @Entity

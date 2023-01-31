@@ -1,4 +1,4 @@
-package nexters.admin.domain.member
+package nexters.admin.domain.user.member
 
 enum class MemberStatus(val value: String) {
     NOT_COMPLETION("미이수"),

@@ -1,5 +1,6 @@
-package nexters.admin.domain.member
+package nexters.admin.domain.user.member
 
+import nexters.admin.domain.user.Password
 import javax.persistence.*
 
 @Entity

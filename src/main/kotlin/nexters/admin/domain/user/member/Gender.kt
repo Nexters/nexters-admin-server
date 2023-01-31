@@ -1,4 +1,4 @@
-package nexters.admin.domain.member
+package nexters.admin.domain.user.member
 
 enum class Gender(val value: String) {
     MALE("남자"),

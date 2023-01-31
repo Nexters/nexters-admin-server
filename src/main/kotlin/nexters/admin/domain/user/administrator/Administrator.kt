@@ -1,5 +1,6 @@
-package nexters.admin.domain.administrator
+package nexters.admin.domain.user.administrator
 
+import nexters.admin.domain.user.Password
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -10,7 +11,7 @@ class Administrator(
         val username: String,
 
         @Column(name = "password", nullable = false)
-        var password: String,
+        var password: Password,
 
         @Column(name = "last_access_time")
         var lastAccessTime: LocalDateTime? = null
