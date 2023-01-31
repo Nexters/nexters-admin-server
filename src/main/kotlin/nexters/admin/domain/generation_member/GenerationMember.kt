@@ -9,10 +9,10 @@ class GenerationMember(
         val generation: Int,
 
         @Column(name = "position", nullable = false, length = 30)
-        val position: String,
+        val position: Position,
 
-        @Column(name = "sub_position", nullable = false, length = 30)
-        val subPosition: String,
+        @Column(name = "sub_position", length = 30)
+        val subPosition: SubPosition,
 
         @Column(name = "score", nullable = false)
         var score: Int = 100,
