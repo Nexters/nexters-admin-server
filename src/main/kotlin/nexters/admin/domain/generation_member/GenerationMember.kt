@@ -1,6 +1,5 @@
 package nexters.admin.domain.generation_member
 
-import nexters.admin.domain.user.member.Member
 import javax.persistence.*
 
 @Entity
@@ -28,7 +27,6 @@ class GenerationMember(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    var member: Member? = null
+    @Column(name = "member_id")
+    var memberId: Long? = null
 }

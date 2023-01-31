@@ -1,6 +1,5 @@
 package nexters.admin.domain.attendance
 
-import nexters.admin.domain.generation_member.GenerationMember
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -10,9 +9,8 @@ class Attendance(
         @Column(name = "attend_time")
         var attendTime: LocalDateTime? = null,
 
-        @ManyToOne
-        @JoinColumn(name = "generation_member_id")
-        val generationMember: GenerationMember,
+        @Column(name = "generation_member_id")
+        val generationMemberId: Long,
 
         @Enumerated(EnumType.STRING)
         @Column(name = "attendance_status")
