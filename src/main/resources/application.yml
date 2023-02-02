@@ -10,3 +10,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+security.jwt.token:
+  secret-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  validity: 18000000
