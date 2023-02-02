@@ -2,7 +2,6 @@ package nexters.admin.common.auth
 
 import nexters.admin.common.exception.UnauthenticatedException
 import nexters.admin.domain.user.member.Member
-import nexters.admin.service.auth.JwtTokenProvider
 import nexters.admin.service.user.MemberService
 import org.springframework.core.MethodParameter
 import org.springframework.http.HttpHeaders

@@ -1,5 +1,6 @@
 package nexters.admin.service.auth
 
+import nexters.admin.common.auth.JwtTokenProvider
 import nexters.admin.common.exception.UnauthenticatedException
 import nexters.admin.repository.MemberRepository
 import org.springframework.stereotype.Service

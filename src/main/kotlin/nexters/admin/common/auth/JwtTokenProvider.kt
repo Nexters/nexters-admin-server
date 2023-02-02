@@ -1,4 +1,4 @@
-package nexters.admin.service.auth
+package nexters.admin.common.auth
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
