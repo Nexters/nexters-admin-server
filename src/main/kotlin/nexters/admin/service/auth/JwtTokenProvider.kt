@@ -3,17 +3,21 @@ package nexters.admin.service.auth
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.security.Keys
 import nexters.admin.common.exception.UnauthenticatedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.util.Date
+import java.nio.charset.StandardCharsets
+import java.util.*
 import javax.crypto.SecretKey
 
 @Component
 class JwtTokenProvider(
-        @Value("\${security.jwt.token.secret-key}") private val secretKey: SecretKey,
-        @Value("\${security.jwt.token.validity}") private val expirationTime: Long,
+        @Value("\${security.jwt.token.secret-key}") val secretKey: String,
+        @Value("\${security.jwt.token.validity}") val expirationTime: Long,
 ) {
+    private val signingKey: SecretKey = Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8))
+
     fun generateToken(payload: String): String {
         val claims: Claims = Jwts.claims().setSubject(payload)
         val now = Date()
@@ -21,7 +25,7 @@ class JwtTokenProvider(
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(Date(now.time + expirationTime))
-                .signWith(secretKey)
+                .signWith(signingKey)
                 .compact()
     }
 
@@ -36,7 +40,7 @@ class JwtTokenProvider(
     }
 
     private fun extractPayload(token: String) = Jwts.parserBuilder()
-            .setSigningKey(secretKey.encoded)
+            .setSigningKey(signingKey.encoded)
             .build()
             .parseClaimsJws(token)
             .body
