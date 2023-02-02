@@ -6,10 +6,7 @@ import nexters.admin.service.auth.AuthService
 import nexters.admin.service.auth.LoginRequest
 import nexters.admin.service.user.MemberService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RequestMapping("/api/users")
@@ -42,8 +39,8 @@ class MemberController(
      *      password: string
      * }
      */
-    @PostMapping("/password")
-    fun changePassword(
+    @PutMapping("/password")
+    fun updatePassword(
             @LoggedInMember member: Member,
             @RequestBody @Valid request: UpdatePasswordRequest): ResponseEntity<Void> {
         memberService.updatePassword(member, request.password)
