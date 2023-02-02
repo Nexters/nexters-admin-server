@@ -39,4 +39,9 @@ class Member(
             throw UnauthenticatedException.loginFail()
         }
     }
+
+    fun updatePassword(password: Password) {
+        this.password = password
+        this.isInitPassword = false
+    }
 }
