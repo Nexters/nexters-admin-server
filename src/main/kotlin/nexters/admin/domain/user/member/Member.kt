@@ -1,5 +1,6 @@
 package nexters.admin.domain.user.member
 
+import nexters.admin.common.exception.UnauthenticatedException
 import nexters.admin.domain.user.Password
 import javax.persistence.*
 
@@ -32,4 +33,10 @@ class Member(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun validatePassword(password: Password) {
+        if (this.password.value != password.value) {
+            throw UnauthenticatedException.loginFail()
+        }
+    }
 }
