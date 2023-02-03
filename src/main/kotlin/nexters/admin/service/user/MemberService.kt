@@ -1,6 +1,6 @@
 package nexters.admin.service.user
 
-import nexters.admin.common.exception.NotFoundException
+import nexters.admin.support.exception.NotFoundException
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Member
 import nexters.admin.repository.MemberRepository

@@ -1,6 +1,6 @@
 package nexters.admin.controller.user
 
-import nexters.admin.common.auth.LoggedInMember
+import nexters.admin.support.auth.LoggedInMember
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.auth.AuthService
 import nexters.admin.service.auth.LoginRequest

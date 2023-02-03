@@ -2,7 +2,7 @@ package nexters.admin.domain.user.member
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import nexters.admin.common.exception.UnauthenticatedException
+import nexters.admin.support.exception.UnauthenticatedException
 import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 

@@ -1,4 +1,4 @@
-package nexters.admin.extensions
+package nexters.admin.support.extensions
 
 import java.security.MessageDigest
 

@@ -1,4 +1,4 @@
-package nexters.admin.common.exception
+package nexters.admin.support.exception
 
 class BadRequestException(message: String?) : RuntimeException(message)
 

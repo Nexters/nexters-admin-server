@@ -1,8 +1,8 @@
-package nexters.admin.common.auth
+package nexters.admin.support.auth
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import nexters.admin.common.exception.UnauthenticatedException
+import nexters.admin.support.exception.UnauthenticatedException
 import org.junit.jupiter.api.Test
 
 private const val VALID_SECRET_KEY = "testtesttesttesttesttesttesttest"

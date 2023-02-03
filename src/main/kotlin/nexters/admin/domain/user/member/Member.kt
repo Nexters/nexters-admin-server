@@ -1,6 +1,6 @@
 package nexters.admin.domain.user.member
 
-import nexters.admin.common.exception.UnauthenticatedException
+import nexters.admin.support.exception.UnauthenticatedException
 import nexters.admin.domain.user.Password
 import javax.persistence.*
 

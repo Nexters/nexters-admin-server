@@ -1,10 +1,10 @@
-package nexters.admin.common.auth
+package nexters.admin.support.auth
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import nexters.admin.common.exception.UnauthenticatedException
+import nexters.admin.support.exception.UnauthenticatedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
