@@ -32,4 +32,14 @@ class JwtTokenProviderTest {
             validProvider.getPayload(token)
         }
     }
+
+    @Test
+    fun `만료된 토큰 해석시 실패`() {
+        val expiredTokenProvider = JwtTokenProvider(VALID_SECRET_KEY, -1)
+        val expiredToken = expiredTokenProvider.generateToken(PAYLOAD)
+
+        shouldThrow<UnauthenticatedException> {
+            expiredTokenProvider.getPayload(expiredToken)
+        }
+    }
 }
