@@ -42,7 +42,8 @@ class MemberController(
     @PutMapping("/password")
     fun updatePassword(
             @LoggedInMember member: Member,
-            @RequestBody @Valid request: UpdatePasswordRequest): ResponseEntity<Void> {
+            @RequestBody @Valid request: UpdatePasswordRequest,
+    ): ResponseEntity<Void> {
         memberService.updatePassword(member, request.password)
         return ResponseEntity.ok().build()
     }
