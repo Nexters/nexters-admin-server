@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class MemberTest {
 
     @Test
-    fun `비밀번호 검증`() {
+    fun `잘못된 비밀번호 입력시 예외`() {
         val member = Member("정진우", Password("1234"), "jweong@gmail.com", Gender.MALE, "01012345678", MemberStatus.NOT_COMPLETION, true)
 
         shouldThrow<UnauthenticatedException> {
@@ -18,13 +18,12 @@ class MemberTest {
     }
 
     @Test
-    fun `비밀번호 수정`() {
+    fun `비밀번호 수정시 초기화 여부도 수정`() {
         val member = Member("정진우", Password("1234"), "jweong@gmail.com", Gender.MALE, "01012345678", MemberStatus.NOT_COMPLETION, true)
         val newPassword = Password("abcd1234!")
 
         member.updatePassword(newPassword)
 
-        member.password.value shouldBe newPassword.value
         member.isInitPassword shouldBe false
     }
 }

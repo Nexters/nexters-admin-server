@@ -5,28 +5,27 @@ import io.kotest.matchers.shouldBe
 import nexters.admin.common.exception.UnauthenticatedException
 import org.junit.jupiter.api.Test
 
-private const val VALID_SECRET_KEY = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"
-private const val INVALID_SECRET_KEY = "wrongtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"
+private const val VALID_SECRET_KEY = "testtesttesttesttesttesttesttest"
+private const val INVALID_SECRET_KEY = "wrongtesttesttesttesttesttesttest"
 private const val EXPIRATION_TIME: Long = 3600000
+private const val PAYLOAD = "jwjeong@gmail.com"
 
 class JwtTokenProviderTest {
 
     @Test
     fun `토큰 발급 및 해석`() {
         val tokenProvider = JwtTokenProvider(VALID_SECRET_KEY, EXPIRATION_TIME)
-        val payload = "jwjeong@gmail.com"
 
-        val token = tokenProvider.generateToken(payload)
+        val token = tokenProvider.generateToken(PAYLOAD)
         val extractedPayload = tokenProvider.getPayload(token)
 
-        payload shouldBe extractedPayload
+        extractedPayload shouldBe PAYLOAD
     }
 
     @Test
-    fun `다른 키로 발급된 토큰 해석`() {
-        val payload = "jwjeong@gmail.com"
+    fun `다른 키로 발급된 토큰 해석시 실패`() {
         val invalidProvider = JwtTokenProvider(INVALID_SECRET_KEY, EXPIRATION_TIME)
-        val token = invalidProvider.generateToken(payload)
+        val token = invalidProvider.generateToken(PAYLOAD)
 
         val validProvider = JwtTokenProvider(VALID_SECRET_KEY, EXPIRATION_TIME)
         shouldThrow<UnauthenticatedException> {
