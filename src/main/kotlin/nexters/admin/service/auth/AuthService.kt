@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-        val memberRepository: MemberRepository,
-        val jwtTokenProvider: JwtTokenProvider
+        private val memberRepository: MemberRepository,
+        private val jwtTokenProvider: JwtTokenProvider
 ) {
     fun generateMemberToken(request: LoginRequest): String {
         val member = memberRepository.findByEmail(request.email)
