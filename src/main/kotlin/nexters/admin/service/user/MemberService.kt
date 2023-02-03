@@ -17,6 +17,7 @@ class MemberService(
         memberRepository.save(loggedInMember)
     }
 
+    @Transactional(readOnly = true)
     fun getByEmail(email: String): Member {
         return memberRepository.findByEmail(email)
                 ?: throw NotFoundException.memberNotFound()
