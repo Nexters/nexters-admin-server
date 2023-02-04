@@ -25,6 +25,6 @@ class MemberTest {
 
         member.updatePassword(newPassword)
 
-        member.isInitPassword shouldBe false
+        member.hasChangedPassword shouldBe true
     }
 }

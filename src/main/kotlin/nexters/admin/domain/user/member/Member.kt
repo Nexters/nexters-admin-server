@@ -28,7 +28,7 @@ class Member(
         var status: MemberStatus = MemberStatus.NOT_COMPLETION,
 
         @Column(name = "is_init_password", nullable = false)
-        var isInitPassword: Boolean = false
+        var hasChangedPassword: Boolean = false
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +42,6 @@ class Member(
 
     fun updatePassword(password: Password) {
         this.password = password
-        this.isInitPassword = false
+        this.hasChangedPassword = true
     }
 }
