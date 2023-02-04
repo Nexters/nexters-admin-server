@@ -1,6 +1,6 @@
 package nexters.admin.support.auth
 
-import nexters.admin.support.exception.UnauthenticatedException
+import nexters.admin.exception.UnauthenticatedException
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.user.MemberService
 import org.springframework.core.MethodParameter

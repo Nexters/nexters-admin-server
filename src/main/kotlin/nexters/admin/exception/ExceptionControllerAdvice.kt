@@ -1,4 +1,4 @@
-package nexters.admin.support.exception
+package nexters.admin.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
