@@ -11,7 +11,7 @@ class MemberTest {
 
     @Test
     fun `잘못된 비밀번호 입력시 예외`() {
-        val member = createNewMember()
+        val member = createNewMember(password = "abcd1234")
 
         shouldThrow<UnauthenticatedException> {
             member.checkSamePassword(Password("abcd1234!"))
