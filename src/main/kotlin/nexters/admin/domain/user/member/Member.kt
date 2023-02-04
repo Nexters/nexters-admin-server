@@ -34,7 +34,7 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    fun validatePassword(password: Password) {
+    fun checkSamePassword(password: Password) {
         if (this.password.value != password.value) {
             throw UnauthenticatedException.loginFail()
         }

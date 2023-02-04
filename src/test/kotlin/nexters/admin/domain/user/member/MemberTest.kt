@@ -13,7 +13,7 @@ class MemberTest {
         val member = Member("정진우", Password("1234"), "jweong@gmail.com", Gender.MALE, "01012345678", MemberStatus.NOT_COMPLETION, true)
 
         shouldThrow<UnauthenticatedException> {
-            member.validatePassword(Password("abcd1234!"))
+            member.checkSamePassword(Password("abcd1234!"))
         }
     }
 
