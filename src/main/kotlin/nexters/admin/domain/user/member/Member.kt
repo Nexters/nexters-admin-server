@@ -26,10 +26,19 @@ class Member(
         @Column(name = "status", nullable = false, length = 15)
         var status: MemberStatus = MemberStatus.NOT_COMPLETION,
 
-        @Column(name = "is_init_password", nullable = false)
-        var isInitPassword: Boolean = false
+        @Column(name = "has_changed_password", nullable = false)
+        var hasChangedPassword: Boolean = false
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun isSamePassword(password: Password): Boolean {
+       return this.password.value == password.value
+    }
+
+    fun updatePassword(password: Password) {
+        this.password = password
+        this.hasChangedPassword = true
+    }
 }

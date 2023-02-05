@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import nexters.admin.extensions.sha256Encrypt
+import nexters.admin.support.extensions.sha256Encrypt
 import javax.persistence.Embeddable
 
 private class PasswordDeserializer : JsonDeserializer<Password>() {
