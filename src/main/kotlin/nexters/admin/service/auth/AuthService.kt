@@ -13,7 +13,9 @@ class AuthService(
     fun generateMemberToken(request: LoginRequest): String {
         val member = memberRepository.findByEmail(request.email)
                 ?: throw UnauthenticatedException.loginFail()
-        member.checkSamePassword(request.password)
+        if (!member.isSamePassword(request.password)) {
+            throw UnauthenticatedException.loginFail()
+        }
         return jwtTokenProvider.generateToken(member.email)
     }
 }

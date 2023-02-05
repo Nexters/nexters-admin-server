@@ -1,21 +1,18 @@
 package nexters.admin.domain.user.member
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import nexters.admin.createNewMember
-import nexters.admin.exception.UnauthenticatedException
 import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 
 class MemberTest {
 
     @Test
-    fun `잘못된 비밀번호 입력시 예외`() {
-        val member = createNewMember(password = "abcd1234")
+    fun `비밀번호 일치 여부 반환`() {
+        val password = "abcd1234"
+        val member = createNewMember(password = password)
 
-        shouldThrow<UnauthenticatedException> {
-            member.checkSamePassword(Password("abcd1234!"))
-        }
+        member.isSamePassword(Password(password)) shouldBe true
     }
 
     @Test
