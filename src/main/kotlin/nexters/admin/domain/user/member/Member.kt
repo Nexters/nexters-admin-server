@@ -6,8 +6,8 @@ import javax.persistence.*
 @Entity
 @Table(name = "member")
 class Member(
-        @Column(name = "username", nullable = false)
-        val username: String,
+        @Column(name = "name", nullable = false)
+        val name: String,
 
         @Column(name = "password", nullable = false)
         var password: Password,
