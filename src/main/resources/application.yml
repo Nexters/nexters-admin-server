@@ -29,5 +29,3 @@ springdoc:
   paths-to-match:
     - /api/**
     - /health-check
-
-
