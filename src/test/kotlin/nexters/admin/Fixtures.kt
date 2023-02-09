@@ -7,6 +7,7 @@ import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
+import nexters.admin.support.auth.JwtTokenProvider
 
 fun createNewMember(
         name: String = "정진우",
@@ -29,4 +30,11 @@ fun createNewGenerationMember(
         isManager: Boolean = false,
 ): GenerationMember {
     return GenerationMember(generation, position, subPosition, score, isCompletable, isManager)
+}
+
+fun createNewTestJwtTokenProvider(
+        secretKey: String = "testtesttesttesttesttesttesttest",
+        expirationTime: Long = 3600000,
+): JwtTokenProvider {
+    return JwtTokenProvider(secretKey, expirationTime)
 }
