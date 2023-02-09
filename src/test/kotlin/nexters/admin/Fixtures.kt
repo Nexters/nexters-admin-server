@@ -1,18 +1,32 @@
 package nexters.admin
 
+import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.generation_member.Position
+import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 
 fun createNewMember(
-        username: String = "정진우",
+        name: String = "정진우",
         password: String = "1234",
         email: String = "jweong@gmail.com",
         gender: Gender = Gender.MALE,
-        phoneNumber: String =  "01012345678",
+        phoneNumber: String = "010-1234-5678",
         status: MemberStatus = MemberStatus.NOT_COMPLETION,
-        hasChangedPassword: Boolean = false
+        hasChangedPassword: Boolean = false,
 ): Member {
-    return Member(username, Password(password), email, gender, phoneNumber, status, hasChangedPassword)
+    return Member(name, Password(password), email, gender, phoneNumber, status, hasChangedPassword)
+}
+
+fun createNewGenerationMember(
+        generation: Int = 22,
+        position: Position = Position.DEVELOPER,
+        subPosition: SubPosition = SubPosition.BE,
+        score: Int = 100,
+        isCompletable: Boolean = true,
+        isManager: Boolean = false,
+): GenerationMember {
+    return GenerationMember(generation, position, subPosition, score, isCompletable, isManager)
 }
