@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Tag(name = "Hello", description = "health check 용도")
+@Tag(name = "Hello", description = "헬스 체킹 용도")
 @RestController()
 class HelloController {
 
-    @Operation(summary = "서버 살아있나?", description = "내용 없음")
+    @Operation(summary = "서버 살아있나?")
     @GetMapping("/health-check")
     fun healthCheck(): ResponseEntity<String> {
         return ResponseEntity.ok("{\"result\": \"ok\"}")
