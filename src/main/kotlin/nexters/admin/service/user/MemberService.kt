@@ -99,7 +99,7 @@ class MemberService(
         findMember.updateStatus(MemberStatus.from(status))
     }
 
-    fun updateMemberPositionByAdministrator(id: Long, position: String?, subPosition: String?) {
+    fun updatePositionByAdministrator(id: Long, position: String?, subPosition: String?) {
         val findGenerationMember = generationMemberRepository.findAllByMemberId(id)
                 .last()
         findGenerationMember.updatePosition(

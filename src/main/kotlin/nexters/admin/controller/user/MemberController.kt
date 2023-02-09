@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
-@Tag(name = "Users", description = "유저")
+@Tag(name = "Members", description = "유저")
 @RequestMapping("/api/members")
 @RestController
 class MemberController(
@@ -62,15 +62,15 @@ class MemberController(
         return ResponseEntity.ok().build()
     }
 
-    @Operation(summary = "[관리자 페이지] 회원 활동구분 수정")
+    @Operation(summary = "[관리자 페이지] 회원 직군 수정")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/{id}/position")
-    fun updateStatus(
+    fun updatePosition(
             @PathVariable id: Long,
             @LoggedInAdmin administrator: Administrator,
             @RequestBody @Valid request: UpdateMemberPositionRequest,
     ): ResponseEntity<Void> {
-        memberService.updateMemberPositionByAdministrator(id, request.position, request.subPosition)
+        memberService.updatePositionByAdministrator(id, request.position, request.subPosition)
         return ResponseEntity.ok().build()
     }
 
@@ -95,5 +95,4 @@ class MemberController(
         memberService.deleteByAdministrator(id)
         return ResponseEntity.ok().build()
     }
-
 }

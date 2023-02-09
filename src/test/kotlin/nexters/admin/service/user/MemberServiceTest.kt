@@ -101,7 +101,7 @@ class MemberServiceTest(
         }
 
         When("관리자가 해당 회원에 대한 직군 정보를 수정하면") {
-            memberService.updateMemberPositionByAdministrator(member.id, "디자이너", null)
+            memberService.updatePositionByAdministrator(member.id, "디자이너", null)
 
             Then("회원의 직군 정보가 수정된다") {
                 val generations = generationMemberRepository.findAllByMemberId(member.id)
