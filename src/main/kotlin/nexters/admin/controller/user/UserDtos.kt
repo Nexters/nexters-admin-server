@@ -1,6 +1,7 @@
 package nexters.admin.controller.user
 
 import nexters.admin.domain.user.Password
+import javax.validation.constraints.Email
 import javax.validation.constraints.Pattern
 
 data class UpdatePasswordRequest(
@@ -11,3 +12,12 @@ data class UpdatePasswordRequest(
 )
 
 data class TokenResponse(val data: String)
+
+data class UpdateMemberRequest(
+        val name: String,
+        val gender: String,
+        @field:Email
+        val email: String,
+        val phoneNumber: String,
+        val generations: List<Int>,
+)

@@ -28,8 +28,8 @@ data class FindMemberResponse(
                     member.email,
                     member.phoneNumber,
                     generationMembers.map { it.generation },
-                    generationMembers.last().position.value,
-                    generationMembers.last().subPosition.value,
+                    generationMembers.last().position?.value ?: "",
+                    generationMembers.last().subPosition?.value ?: "",
                     member.status.value,
                     generationMembers.last().isManager
             )

@@ -7,9 +7,10 @@ import javax.persistence.*
 @Table(name = "member")
 class Member(
         @Column(name = "name", nullable = false)
-        val name: String,
+        var name: String,
 
-        @Column(name = "password", nullable = false)
+        @AttributeOverride(name = "value", column = Column(name = "password", nullable = false))
+        @Embedded
         var password: Password,
 
         @Column(name = "email", nullable = false)
@@ -17,7 +18,7 @@ class Member(
 
         @Enumerated(EnumType.STRING)
         @Column(name = "gender", nullable = false, length = 10)
-        val gender: Gender,
+        var gender: Gender,
 
         @Column(name = "phone_number", nullable = false, length = 15)
         var phoneNumber: String,
@@ -27,14 +28,25 @@ class Member(
         var status: MemberStatus = MemberStatus.NOT_COMPLETION,
 
         @Column(name = "has_changed_password", nullable = false)
-        var hasChangedPassword: Boolean = false
+        var hasChangedPassword: Boolean = false,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
+    fun update(
+            name: String,
+            gender: Gender,
+            // email: String, // 현재는 이메일이 사실 상 식별자 역할인데, update를 허용해도될까..?
+            phoneNumber: String,
+    ) {
+        this.name = name
+        this.gender = gender
+        this.phoneNumber = phoneNumber
+    }
+
     fun isSamePassword(password: Password): Boolean {
-       return this.password.value == password.value
+        return this.password.value == password.value
     }
 
     fun updatePassword(password: Password) {

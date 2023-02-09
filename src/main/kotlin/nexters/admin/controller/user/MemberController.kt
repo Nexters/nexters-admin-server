@@ -30,6 +30,15 @@ class MemberController(
         return ResponseEntity.ok(TokenResponse(token))
     }
 
+    @PutMapping("/{id}")
+    fun update(
+            @LoggedInAdmin administrator: Administrator,
+            @RequestBody @Valid request: UpdateMemberRequest,
+    ): ResponseEntity<Void> {
+        memberService.updateMemberByAdministrator(request)
+        return ResponseEntity.ok().build()
+    }
+
     @PutMapping("/password")
     fun updatePassword(
             @LoggedInMember member: Member,
