@@ -8,7 +8,7 @@ import nexters.admin.domain.user.member.MemberStatus
 import java.time.LocalDateTime
 
 fun createNewMember(
-        username: String = "정진우",
+        name: String = "정진우",
         password: String = "1234",
         email: String = "jweong@gmail.com",
         gender: Gender = Gender.MALE,
@@ -16,7 +16,7 @@ fun createNewMember(
         status: MemberStatus = MemberStatus.NOT_COMPLETION,
         hasChangedPassword: Boolean = false
 ): Member {
-    return Member(username, Password(password), email, gender, phoneNumber, status, hasChangedPassword)
+    return Member(name, Password(password), email, gender, phoneNumber, status, hasChangedPassword)
 }
 
 fun createNewAdmin(
