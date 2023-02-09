@@ -47,11 +47,11 @@ class MemberService(
     fun updateMemberByAdministrator(id: Long, updateMemberRequest: UpdateMemberRequest) {
         val findMember = memberRepository.findByIdOrNull(id)
                 ?: throw NotFoundException.memberNotFound()
-        updateMemberInfo(findMember, updateMemberRequest)
-        updateGenerateMemberInfo(updateMemberRequest, findMember)
+        updateMember(findMember, updateMemberRequest)
+        updateGenerateMember(updateMemberRequest, findMember)
     }
 
-    private fun updateMemberInfo(findMember: Member, updateMemberRequest: UpdateMemberRequest) {
+    private fun updateMember(findMember: Member, updateMemberRequest: UpdateMemberRequest) {
         findMember.update(
                 updateMemberRequest.name,
                 Gender.from(updateMemberRequest.gender),
@@ -59,7 +59,7 @@ class MemberService(
         )
     }
 
-    private fun updateGenerateMemberInfo(updateMemberRequest: UpdateMemberRequest, findMember: Member) {
+    private fun updateGenerateMember(updateMemberRequest: UpdateMemberRequest, findMember: Member) {
         val findGenerationMembers = generationMemberRepository.findAllByMemberId(findMember.id)
         addRequestedGenerationMembers(updateMemberRequest, findGenerationMembers, findMember)
         deleteUnrequestedGenerationMembers(findGenerationMembers, updateMemberRequest)
