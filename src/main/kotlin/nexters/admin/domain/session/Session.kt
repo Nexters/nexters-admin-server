@@ -8,12 +8,12 @@ import javax.persistence.*
 @Table(name = "session")
 class Session(
         @Column(name = "title")
-        var title: String,
+        var title: String? = null,
 
         @Column(name = "description")
-        var description: String,
+        var description: String? = null,
 
-        @Column(name = "generation")
+        @Column(name = "generation", nullable = false)
         var generation: Int,
 
         @Column(name = "session_time")
