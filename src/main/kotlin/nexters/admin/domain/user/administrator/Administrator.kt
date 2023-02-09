@@ -10,11 +10,12 @@ class Administrator(
         @Column(name = "username", nullable = false)
         val username: String,
 
-        @Column(name = "password", nullable = false)
+        @AttributeOverride(name = "value", column = Column(name = "password", nullable = false))
+        @Embedded
         var password: Password,
 
         @Column(name = "last_access_time")
-        var lastAccessTime: LocalDateTime? = null
+        var lastAccessTime: LocalDateTime? = null,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
