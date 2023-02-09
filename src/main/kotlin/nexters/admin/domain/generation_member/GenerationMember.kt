@@ -2,6 +2,8 @@ package nexters.admin.domain.generation_member
 
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -16,9 +18,11 @@ class GenerationMember(
         @Column(name = "generation", length = 20)
         val generation: Int,
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "position", length = 30)
         val position: Position?,
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "sub_position", length = 30)
         val subPosition: SubPosition?,
 
