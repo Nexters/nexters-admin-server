@@ -42,10 +42,11 @@ class MemberController(
     @SecurityRequirement(name = "JWT")
     @PutMapping("/{id}")
     fun update(
+            @PathVariable id: Long,
             @LoggedInAdmin administrator: Administrator,
             @RequestBody @Valid request: UpdateMemberRequest,
     ): ResponseEntity<Void> {
-        memberService.updateMemberByAdministrator(request)
+        memberService.updateMemberByAdministrator(id, request)
         return ResponseEntity.ok().build()
     }
 

@@ -55,6 +55,7 @@ class MemberServiceTest(
 
         When("관리자가 해당 회원에 대한 정보를 수정하면") {
             memberService.updateMemberByAdministrator(
+                    member.id,
                     UpdateMemberRequest(
                             name = "김태현",
                             gender = "남자",

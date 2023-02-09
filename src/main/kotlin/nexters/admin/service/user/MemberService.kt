@@ -8,8 +8,10 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Transactional
 @Service
@@ -27,8 +29,9 @@ class MemberService(
                         })
     }
 
-    fun updateMemberByAdministrator(updateMemberRequest: UpdateMemberRequest) {
-        val findMember = getByEmail(updateMemberRequest.email)
+    fun updateMemberByAdministrator(id: Long, updateMemberRequest: UpdateMemberRequest) {
+        val findMember = memberRepository.findByIdOrNull(id)
+                ?: throw NotFoundException.memberNotFound()
         updateMemberInfo(findMember, updateMemberRequest)
         updateGenerateMemberInfo(updateMemberRequest, findMember)
     }
