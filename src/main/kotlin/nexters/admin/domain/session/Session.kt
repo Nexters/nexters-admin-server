@@ -7,8 +7,11 @@ import javax.persistence.*
 @Entity
 @Table(name = "session")
 class Session(
+        @Column(name = "title")
+        var title: String,
+
         @Column(name = "description")
-        var description: String? = null,
+        var description: String,
 
         @Column(name = "generation")
         var generation: Int,
