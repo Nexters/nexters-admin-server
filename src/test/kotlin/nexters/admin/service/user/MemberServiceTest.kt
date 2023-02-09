@@ -35,8 +35,8 @@ class MemberServiceTest(
     Given("회원 전체가 있는 경우") {
         val member1: Member = memberRepository.save(createNewMember())
         val member2: Member = memberRepository.save(createNewMember(name = "김태현", email = "kth990303@naver.com"))
-        val generationMember1: GenerationMember = createNewGenerationMember(memberId = member1.id)
-        val generationMember2: GenerationMember = createNewGenerationMember(memberId = member2.id)
+        val generationMember1: GenerationMember = createNewGenerationMember(memberId = member1.id, generation = 22)
+        val generationMember2: GenerationMember = createNewGenerationMember(memberId = member2.id, generation = 15)
 
         generationMemberRepository.save(generationMember1)
         generationMemberRepository.save(generationMember2)

@@ -23,12 +23,25 @@ class MemberService(
 ) {
     @Transactional(readOnly = true)
     fun findAllByAdministrator(): FindAllMembersResponse {
-        return FindAllMembersResponse(
-                memberRepository.findAll()
-                        .map {
-                            val generationMembers = generationMemberRepository.findAllByMemberId(it.id)
-                            FindMemberResponse.of(it, generationMembers)
-                        })
+        val members = memberRepository.findAll()
+        val generationMembers = generationMemberRepository.findAll()
+                .groupBy { it.memberId }
+
+        return findAllGenerationMembersByMemberId(generationMembers, members)
+    }
+
+    private fun findAllGenerationMembersByMemberId(
+            generationMembers: Map<Long?, List<GenerationMember>>,
+            members: List<Member>,
+    ): FindAllMembersResponse {
+        val findAllMembers: MutableList<FindMemberResponse> = mutableListOf()
+        var currentMemberIndex = 0
+
+        generationMembers.forEach {
+            findAllMembers.add(FindMemberResponse.of(members[currentMemberIndex++], it.value))
+        }
+
+        return FindAllMembersResponse(findAllMembers)
     }
 
     fun updateMemberByAdministrator(id: Long, updateMemberRequest: UpdateMemberRequest) {
@@ -47,23 +60,37 @@ class MemberService(
     }
 
     private fun updateGenerateMemberInfo(updateMemberRequest: UpdateMemberRequest, findMember: Member) {
+        val findGenerationMembers = generationMemberRepository.findAllByMemberId(findMember.id)
+        addRequestedGenerationMembers(updateMemberRequest, findGenerationMembers, findMember)
+        deleteUnrequestedGenerationMembers(findGenerationMembers, updateMemberRequest)
+    }
+
+    private fun addRequestedGenerationMembers(
+            updateMemberRequest: UpdateMemberRequest,
+            findGenerationMembers: List<GenerationMember>,
+            findMember: Member,
+    ) {
         updateMemberRequest.generations
-                .map {
-                    // 해당 기수의 기수회원 정보가 존재하지 않으면 기수회원을 생성해줌.
-                    generationMemberRepository.findByGenerationAndMemberId(it, findMember.id)
-                            ?: generationMemberRepository.save(
-                                    GenerationMember(
-                                            memberId = findMember.id,
-                                            generation = it,
-                                            position = null,
-                                            subPosition = null
-                                    )
+                .filterNot { it1 -> findGenerationMembers.map { it.generation }.contains(it1) }
+                .forEach {
+                    generationMemberRepository.save(
+                            GenerationMember(
+                                    memberId = findMember.id,
+                                    generation = it,
+                                    position = null,
+                                    subPosition = null
                             )
+                    )
                 }
-        // 요청으로 들어온 기수회원 외에 다른 기수회원의 정보가 있다면 삭제해줌
-        generationMemberRepository.findAllByMemberId(findMember.id)
+    }
+
+    private fun deleteUnrequestedGenerationMembers(
+            findGenerationMembers: List<GenerationMember>,
+            updateMemberRequest: UpdateMemberRequest,
+    ) {
+        findGenerationMembers
                 .filterNot { updateMemberRequest.generations.contains(it.generation) }
-                .map { generationMemberRepository.deleteById(it.id) }
+                .forEach { generationMemberRepository.deleteById(it.id) }
     }
 
     fun updateStatusByAdministrator(id: Long, status: String) {
