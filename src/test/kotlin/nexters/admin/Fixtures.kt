@@ -22,6 +22,7 @@ fun createNewMember(
 }
 
 fun createNewGenerationMember(
+        memberId: Long = 0L,
         generation: Int = 22,
         position: Position = Position.DEVELOPER,
         subPosition: SubPosition = SubPosition.BE,
@@ -29,7 +30,7 @@ fun createNewGenerationMember(
         isCompletable: Boolean = true,
         isManager: Boolean = false,
 ): GenerationMember {
-    return GenerationMember(generation, position, subPosition, score, isCompletable, isManager)
+    return GenerationMember(memberId, generation, position, subPosition, score, isCompletable, isManager)
 }
 
 fun createNewTestJwtTokenProvider(
