@@ -90,4 +90,12 @@ class MemberService(
         return memberRepository.findByEmail(email)
                 ?: throw NotFoundException.memberNotFound()
     }
+
+    fun deleteByAdministrator(id: Long) {
+        // 회원에 해당되는 기수회원 정보들 삭제
+        generationMemberRepository.findAllByMemberId(id)
+                .map { generationMemberRepository.deleteById(it.id) }
+
+        memberRepository.deleteById(id)
+    }
 }

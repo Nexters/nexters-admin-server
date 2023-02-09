@@ -19,6 +19,7 @@ import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
@@ -122,6 +123,20 @@ class MemberServiceTest(
 
             Then("해당 회원을 조회할 수 있다") {
                 findMember.email shouldBe member.email
+            }
+        }
+
+        When("관리자가 해당 회원을 삭제하면") {
+            memberService.deleteByAdministrator(member.id)
+
+            Then("해당 회원은 삭제된다") {
+                memberRepository.findByIdOrNull(member.id) shouldBe null
+            }
+
+            Then("해당 회원의 기수회원 정보들도 삭제된다") {
+                val generations = generationMemberRepository.findAllByMemberId(member.id)
+
+                generations shouldHaveSize 0
             }
         }
     }

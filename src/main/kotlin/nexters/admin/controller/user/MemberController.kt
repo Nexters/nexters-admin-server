@@ -84,4 +84,16 @@ class MemberController(
         memberService.updatePassword(member, request.password)
         return ResponseEntity.ok().build()
     }
+
+    @Operation(summary = "[관리자 페이지] 회원 삭제")
+    @SecurityRequirement(name = "JWT")
+    @DeleteMapping("/{id}")
+    fun delete(
+            @PathVariable id: Long,
+            @LoggedInAdmin administrator: Administrator,
+    ): ResponseEntity<Void> {
+        memberService.deleteByAdministrator(id)
+        return ResponseEntity.ok().build()
+    }
+
 }
