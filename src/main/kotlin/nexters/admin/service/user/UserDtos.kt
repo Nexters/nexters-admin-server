@@ -14,8 +14,8 @@ data class FindMemberResponse(
         val email: String,
         val phoneNumber: String,
         val generations: List<Int>,
-        val position: String,
-        val subPosition: String,
+        val position: String?,
+        val subPosition: String?,
         val status: String,
         val isManager: Boolean,
 ) {
