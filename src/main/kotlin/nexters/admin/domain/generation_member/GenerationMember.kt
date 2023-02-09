@@ -20,11 +20,11 @@ class GenerationMember(
 
         @Enumerated(EnumType.STRING)
         @Column(name = "position", length = 30)
-        val position: Position?,
+        var position: Position?,
 
         @Enumerated(EnumType.STRING)
         @Column(name = "sub_position", length = 30)
-        val subPosition: SubPosition?,
+        var subPosition: SubPosition?,
 
         @Column(name = "score", nullable = false)
         var score: Int = 100,
@@ -33,9 +33,14 @@ class GenerationMember(
         var isCompletable: Boolean = true,
 
         @Column(name = "is_manager", nullable = false)
-        val isManager: Boolean = false,
+        var isManager: Boolean = false,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun updatePosition(position: Position?, subPosition: SubPosition?) {
+        this.position = position
+        this.subPosition = subPosition
+    }
 }

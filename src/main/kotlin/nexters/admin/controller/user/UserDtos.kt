@@ -21,3 +21,12 @@ data class UpdateMemberRequest(
         val phoneNumber: String,
         val generations: List<Int>,
 )
+
+data class UpdateMemberStatusRequest(
+        val status: String,
+)
+
+data class UpdateMemberPositionRequest(
+        val position: String?,
+        val subPosition: String?,
+)

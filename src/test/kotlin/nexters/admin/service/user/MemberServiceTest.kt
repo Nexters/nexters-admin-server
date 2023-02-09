@@ -10,8 +10,10 @@ import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.createNewGenerationMember
 import nexters.admin.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Member
+import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
@@ -83,6 +85,27 @@ class MemberServiceTest(
 
                 generations shouldHaveSize 1
                 generations[0].generation shouldNotBe 22
+            }
+        }
+
+        When("관리자가 해당 회원에 대한 활동 정보를 수정하면") {
+            memberService.updateStatusByAdministrator(member.id, "수료")
+
+            Then("회원의 활동 정보가 수정된다") {
+                val findMember = memberRepository.findByEmail(member.email)
+                        ?: throw NotFoundException.memberNotFound()
+
+                findMember.status shouldBe MemberStatus.CERTIFICATED
+            }
+        }
+
+        When("관리자가 해당 회원에 대한 직군 정보를 수정하면") {
+            memberService.updateMemberPositionByAdministrator(member.id, "디자이너", null)
+
+            Then("회원의 직군 정보가 수정된다") {
+                val generations = generationMemberRepository.findAllByMemberId(member.id)
+
+                generations[0].position shouldBe Position.DESIGNER
             }
         }
 

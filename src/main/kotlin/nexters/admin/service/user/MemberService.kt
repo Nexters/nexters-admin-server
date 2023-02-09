@@ -2,16 +2,18 @@ package nexters.admin.service.user
 
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.generation_member.Position
+import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
+import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Transactional
 @Service
@@ -62,6 +64,21 @@ class MemberService(
         generationMemberRepository.findAllByMemberId(findMember.id)
                 .filterNot { updateMemberRequest.generations.contains(it.generation) }
                 .map { generationMemberRepository.deleteById(it.id) }
+    }
+
+    fun updateStatusByAdministrator(id: Long, status: String) {
+        val findMember = memberRepository.findByIdOrNull(id)
+                ?: throw NotFoundException.memberNotFound()
+        findMember.updateStatus(MemberStatus.from(status))
+    }
+
+    fun updateMemberPositionByAdministrator(id: Long, position: String?, subPosition: String?) {
+        val findGenerationMember = generationMemberRepository.findAllByMemberId(id)
+                .last()
+        findGenerationMember.updatePosition(
+                Position.from(position),
+                SubPosition.from(subPosition)
+        )
     }
 
     fun updatePassword(loggedInMember: Member, newPassword: Password) {

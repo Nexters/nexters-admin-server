@@ -45,6 +45,10 @@ class Member(
         this.phoneNumber = phoneNumber
     }
 
+    fun updateStatus(status: MemberStatus) {
+        this.status = status
+    }
+
     fun isSamePassword(password: Password): Boolean {
         return this.password.value == password.value
     }

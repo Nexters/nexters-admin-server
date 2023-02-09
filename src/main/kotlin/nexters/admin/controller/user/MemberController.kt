@@ -50,6 +50,30 @@ class MemberController(
         return ResponseEntity.ok().build()
     }
 
+    @Operation(summary = "[관리자 페이지] 회원 활동구분 수정")
+    @SecurityRequirement(name = "JWT")
+    @PutMapping("/{id}/status")
+    fun updateStatus(
+            @PathVariable id: Long,
+            @LoggedInAdmin administrator: Administrator,
+            @RequestBody @Valid request: UpdateMemberStatusRequest,
+    ): ResponseEntity<Void> {
+        memberService.updateStatusByAdministrator(id, request.status)
+        return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "[관리자 페이지] 회원 활동구분 수정")
+    @SecurityRequirement(name = "JWT")
+    @PutMapping("/{id}/position")
+    fun updateStatus(
+            @PathVariable id: Long,
+            @LoggedInAdmin administrator: Administrator,
+            @RequestBody @Valid request: UpdateMemberPositionRequest,
+    ): ResponseEntity<Void> {
+        memberService.updateMemberPositionByAdministrator(id, request.position, request.subPosition)
+        return ResponseEntity.ok().build()
+    }
+
     @Operation(summary = "비밀번호 업데이트")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/password")

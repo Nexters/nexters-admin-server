@@ -17,6 +17,15 @@ class MemberTest {
     }
 
     @Test
+    fun `회원 활동 정보 수정`() {
+        val member = createNewMember()
+
+        member.updateStatus(MemberStatus.CERTIFICATED)
+
+        member.status shouldBe MemberStatus.CERTIFICATED
+    }
+
+    @Test
     fun `비밀번호 일치 여부 반환`() {
         val password = "abcd1234"
         val member = createNewMember(password = password)
