@@ -7,13 +7,14 @@ import nexters.admin.support.auth.LoggedInMember
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.auth.AuthService
 import nexters.admin.service.auth.LoginRequest
+import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @Tag(name = "Users", description = "유저")
-@RequestMapping("/api/users")
+@RequestMapping("/api/members")
 @RestController
 class MemberController(
         private val authService: AuthService,
@@ -53,5 +54,19 @@ class MemberController(
     ): ResponseEntity<Void> {
         memberService.updatePassword(member, request.password)
         return ResponseEntity.ok().build()
+    }
+
+    /**
+     * GET /api/members/me
+     * Authorization: Bearer member.jwt.token
+     * RequestBody {
+     * }
+     */
+    @Operation(summary = "내 정보 조회")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/me")
+    fun findProfile(@LoggedInMember member: Member): ResponseEntity<FindProfileResponse> {
+        val findProfileResponse = memberService.getProfile(member)
+        return ResponseEntity.ok(findProfileResponse)
     }
 }

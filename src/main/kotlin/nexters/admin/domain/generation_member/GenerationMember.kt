@@ -5,6 +5,9 @@ import javax.persistence.*
 @Entity
 @Table(name = "generation_member")
 class GenerationMember(
+        @Column(name = "member_id")
+        var memberId: Long? = null,
+
         @Column(name = "generation", length = 20)
         val generation: Int,
 
@@ -26,7 +29,4 @@ class GenerationMember(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
-
-    @Column(name = "member_id")
-    var memberId: Long? = null
 }
