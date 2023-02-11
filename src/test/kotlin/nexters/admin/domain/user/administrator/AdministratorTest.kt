@@ -23,6 +23,6 @@ class AdministratorTest {
         val admin = createNewAdmin(lastAccessTime = prevAccessTime)
 
         admin.updateLastAccessTime()
-        admin.lastAccessTime!! shouldBeGreaterThan prevAccessTime
+        admin.lastAccessTime shouldBeGreaterThan prevAccessTime
     }
 }

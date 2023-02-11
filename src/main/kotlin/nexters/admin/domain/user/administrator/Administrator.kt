@@ -14,7 +14,7 @@ class Administrator(
         var password: Password,
 
         @Column(name = "last_access_time")
-        var lastAccessTime: LocalDateTime? = null,
+        var lastAccessTime: LocalDateTime = LocalDateTime.now(),
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
