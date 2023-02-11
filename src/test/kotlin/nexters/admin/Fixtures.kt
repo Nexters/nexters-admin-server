@@ -10,12 +10,14 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import java.time.LocalDateTime
 
+const val PHONE_NUMBER = "01012345678"
+
 fun createNewMember(
         name: String = "정진우",
         password: String = "1234",
         email: String = "jweong@gmail.com",
         gender: Gender = Gender.MALE,
-        phoneNumber: String = "010-1234-5678",
+        phoneNumber: String = PHONE_NUMBER,
         status: MemberStatus = MemberStatus.NOT_COMPLETION,
         hasChangedPassword: Boolean = false,
 ): Member {

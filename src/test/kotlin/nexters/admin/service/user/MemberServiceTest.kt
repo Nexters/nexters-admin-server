@@ -3,6 +3,7 @@ package nexters.admin.service.user
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.PHONE_NUMBER
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.createNewGenerationMember
@@ -44,7 +45,7 @@ class MemberServiceTest(
                         "김태현",
                         "남자",
                         "kth990303@naver.com",
-                        "01012345678",
+                        PHONE_NUMBER,
                         mutableListOf(22),
                         "개발자",
                         "백엔드",
@@ -66,7 +67,7 @@ class MemberServiceTest(
                         "김태현",
                         "남자",
                         "kth990303@naver.com",
-                        "01012345678",
+                        PHONE_NUMBER,
                         mutableListOf(14, 19, 22),
                         "개발자",
                         "백엔드",
@@ -90,7 +91,7 @@ class MemberServiceTest(
                         "김태현",
                         "남자",
                         "kth990303@naver.com",
-                        "01012345678",
+                        PHONE_NUMBER,
                         mutableListOf(14, 19, 22),
                         "개발자",
                         "백엔드",
@@ -114,7 +115,7 @@ class MemberServiceTest(
                         "김태현",
                         "남자",
                         "kth990303@naver.com",
-                        "01012345678",
+                        PHONE_NUMBER,
                         mutableListOf(14, 19, 22),
                         "개발자",
                         "백엔드",

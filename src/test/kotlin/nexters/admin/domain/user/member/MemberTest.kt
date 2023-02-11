@@ -1,6 +1,7 @@
 package nexters.admin.domain.user.member
 
 import io.kotest.matchers.shouldBe
+import nexters.admin.PHONE_NUMBER
 import nexters.admin.createNewMember
 import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ class MemberTest {
     fun `회원 정보 수정`() {
         val member = createNewMember()
 
-        member.update("김태현", Gender.MALE, "010-1111-1111")
+        member.update("김태현", Gender.MALE, PHONE_NUMBER)
 
         member.name shouldBe "김태현"
     }
