@@ -36,9 +36,7 @@ class MemberTest {
     @Test
     fun `비밀번호 수정시 초기화 여부도 수정`() {
         val member = createNewMember()
-        val newPassword = Password("abcd1234!")
-
-        member.updatePassword(newPassword)
+        member.updatePassword(Password("abcd1234!"))
 
         member.hasChangedPassword shouldBe true
     }

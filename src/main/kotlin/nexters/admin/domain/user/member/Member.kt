@@ -37,7 +37,6 @@ class Member(
     fun update(
             name: String,
             gender: Gender,
-            // email: String, // 현재는 이메일이 사실 상 식별자 역할인데, update를 허용해도될까..?
             phoneNumber: String,
     ) {
         this.name = name

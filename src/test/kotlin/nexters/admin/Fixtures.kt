@@ -4,10 +4,11 @@ import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
+import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
-import nexters.admin.support.auth.JwtTokenProvider
+import java.time.LocalDateTime
 
 fun createNewMember(
         name: String = "정진우",
@@ -33,9 +34,10 @@ fun createNewGenerationMember(
     return GenerationMember(memberId, generation, position, subPosition, score, isCompletable, isManager)
 }
 
-fun createNewTestJwtTokenProvider(
-        secretKey: String = "testtesttesttesttesttesttesttest",
-        expirationTime: Long = 3600000,
-): JwtTokenProvider {
-    return JwtTokenProvider(secretKey, expirationTime)
+fun createNewAdmin(
+        username: String = "root",
+        password: String = "1234",
+        lastAccessTime: LocalDateTime = LocalDateTime.now(),
+): Administrator {
+    return Administrator(username, Password(password), lastAccessTime)
 }
