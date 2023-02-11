@@ -42,7 +42,6 @@ class MemberService(
     }
 
     private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest) {
-        // 이전 기수 회원 저장 (이전 기수의 직군은 최신직군으로 저장, 이전 기수의 점수는 null 로 저장)
         generationMemberRepository.save(
                 GenerationMember(
                         memberId = savedMember.id,
@@ -91,7 +90,6 @@ class MemberService(
         val findAllMembers: MutableList<FindMemberResponse> = mutableListOf()
         var currentMemberIndex = 0
 
-        // 만약 현재기수의 직군 정보가 없으면 일단은 가장 최근 기수의 직군 정보를 반환하도록 구현
         generationMembers.forEach {
             findAllMembers.add(FindMemberResponse.of(members[currentMemberIndex++], it.value))
         }
@@ -180,7 +178,6 @@ class MemberService(
     }
 
     fun deleteByAdministrator(id: Long) {
-        // 회원에 해당되는 기수회원 정보들 삭제
         generationMemberRepository.findAllByMemberId(id)
                 .map { generationMemberRepository.deleteById(it.id) }
 
