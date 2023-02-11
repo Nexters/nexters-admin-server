@@ -10,7 +10,7 @@ class Administrator(
         @Column(name = "username", unique = true, nullable = false)
         val username: String,
 
-        @Column(name = "password", nullable = false)
+        @Embedded
         var password: Password,
 
         @Column(name = "last_access_time")
