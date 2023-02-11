@@ -2,6 +2,7 @@ package nexters.admin.domain.user.member
 
 import io.kotest.matchers.shouldBe
 import nexters.admin.createNewMember
+import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 
 class MemberTest {
@@ -11,7 +12,7 @@ class MemberTest {
         val password = "abcd1234"
         val member = createNewMember(password = password)
 
-        member.isSamePassword(password) shouldBe true
+        member.isSamePassword(Password(password)) shouldBe true
     }
 
     @Test

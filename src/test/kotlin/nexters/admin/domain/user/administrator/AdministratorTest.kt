@@ -3,6 +3,7 @@ package nexters.admin.domain.user.administrator
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import nexters.admin.createNewAdmin
+import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -14,7 +15,7 @@ class AdministratorTest {
         val password = "abcd1234"
         val admin = createNewAdmin(password = password)
 
-        admin.isSamePassword(password) shouldBe true
+        admin.isSamePassword(Password(password)) shouldBe true
     }
 
     @Test

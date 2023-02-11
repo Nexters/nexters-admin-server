@@ -1,6 +1,5 @@
 package nexters.admin.controller.user
 
-import nexters.admin.domain.user.Password
 import javax.validation.constraints.Pattern
 
 data class UpdatePasswordRequest(
