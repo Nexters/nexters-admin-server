@@ -7,7 +7,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "administrator")
 class Administrator(
-        @Column(name = "username", nullable = false)
+        @Column(name = "username", unique = true, nullable = false)
         val username: String,
 
         @Column(name = "password", nullable = false)
