@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class MemberService(
         private val memberRepository: MemberRepository
 ) {
-    fun updatePassword(loggedInMember: Member, newPassword: Password) {
+    fun updatePassword(loggedInMember: Member, newPassword: String) {
         loggedInMember.updatePassword(newPassword)
         memberRepository.save(loggedInMember)
     }

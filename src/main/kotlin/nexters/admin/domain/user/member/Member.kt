@@ -34,11 +34,11 @@ class Member(
     var id: Long = 0L
 
     fun isSamePassword(password: Password): Boolean {
-       return this.password.value == password.value
+        return this.password.isSamePassword(password)
     }
 
-    fun updatePassword(password: Password) {
-        this.password = password
+    fun updatePassword(password: String) {
+        this.password = Password(password)
         this.hasChangedPassword = true
     }
 }

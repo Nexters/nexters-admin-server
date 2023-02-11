@@ -14,9 +14,17 @@ class Administrator(
         var password: Password,
 
         @Column(name = "last_access_time")
-        var lastAccessTime: LocalDateTime? = null
+        var lastAccessTime: LocalDateTime = LocalDateTime.now(),
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun isSamePassword(password: Password): Boolean {
+        return this.password.isSamePassword(password)
+    }
+
+    fun updateLastAccessTime() {
+        this.lastAccessTime = LocalDateTime.now()
+    }
 }
