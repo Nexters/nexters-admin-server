@@ -28,4 +28,8 @@ data class Password(var value: String) {
     init {
         value = value.sha256Encrypt()
     }
+
+    fun isSamePassword(password: Password): Boolean {
+        return this.value == password.value
+    }
 }

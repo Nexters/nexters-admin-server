@@ -34,7 +34,7 @@ class Member(
     var id: Long = 0L
 
     fun isSamePassword(password: Password): Boolean {
-       return this.password.value == password.value
+        return this.password.isSamePassword(password)
     }
 
     fun updatePassword(password: Password) {
