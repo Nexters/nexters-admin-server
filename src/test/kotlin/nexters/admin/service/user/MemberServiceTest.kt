@@ -3,11 +3,13 @@ package nexters.admin.service.user
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.createNewGenerationMember
 import nexters.admin.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
+import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
@@ -33,6 +35,97 @@ class MemberServiceTest(
     fun tearDown() {
         memberRepository.deleteAll()
         generationMemberRepository.deleteAll()
+    }
+
+    @Test
+    fun `회원 저장`() {
+        memberService.createMemberByAdministrator(
+                CreateMemberRequest(
+                        "김태현",
+                        "남자",
+                        "kth990303@naver.com",
+                        "010-1234-5678",
+                        mutableListOf(22),
+                        "개발자",
+                        "백엔드",
+                        "미이수",
+                        false
+                )
+        )
+
+        val actual = memberRepository.findByEmail("kth990303@naver.com")
+
+        actual shouldNotBe null
+        actual?.name shouldBe "김태현"
+    }
+
+    @Test
+    fun `회원 저장 시 최신 기수회원 정보 저장`() {
+        val memberId = memberService.createMemberByAdministrator(
+                CreateMemberRequest(
+                        "김태현",
+                        "남자",
+                        "kth990303@naver.com",
+                        "010-1234-5678",
+                        mutableListOf(14, 19, 22),
+                        "개발자",
+                        "백엔드",
+                        "미이수",
+                        false
+                )
+        )
+
+        val currentGenerationMember = generationMemberRepository.findByGenerationAndMemberId(22, memberId)
+
+        currentGenerationMember shouldNotBe null
+        currentGenerationMember?.position shouldBe Position.DEVELOPER
+        currentGenerationMember?.subPosition shouldBe SubPosition.BE
+        currentGenerationMember?.score shouldBe 100
+    }
+
+    @Test
+    fun `회원 저장 시 이전 기수회원 정보의 직군은 최신직군으로, 점수는 null 로 저장`() {
+        val memberId = memberService.createMemberByAdministrator(
+                CreateMemberRequest(
+                        "김태현",
+                        "남자",
+                        "kth990303@naver.com",
+                        "010-1234-5678",
+                        mutableListOf(14, 19, 22),
+                        "개발자",
+                        "백엔드",
+                        "미이수",
+                        false
+                )
+        )
+
+        val currentGenerationMember = generationMemberRepository.findByGenerationAndMemberId(14, memberId)
+
+        currentGenerationMember shouldNotBe null
+        currentGenerationMember?.position shouldBe Position.DEVELOPER
+        currentGenerationMember?.subPosition shouldBe SubPosition.BE
+        currentGenerationMember?.score shouldBe null
+    }
+
+    @Test
+    fun `회원 저장 시 회원이 활동하지 않은 기수는 저장되지 않는지 확인`() {
+        val memberId = memberService.createMemberByAdministrator(
+                CreateMemberRequest(
+                        "김태현",
+                        "남자",
+                        "kth990303@naver.com",
+                        "010-1234-5678",
+                        mutableListOf(14, 19, 22),
+                        "개발자",
+                        "백엔드",
+                        "미이수",
+                        false
+                )
+        )
+
+        val currentGenerationMember = generationMemberRepository.findByGenerationAndMemberId(999, memberId)
+
+        currentGenerationMember shouldBe null
     }
 
     @Test

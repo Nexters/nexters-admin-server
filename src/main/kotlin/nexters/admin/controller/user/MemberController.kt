@@ -22,6 +22,16 @@ class MemberController(
         private val authService: AuthService,
         private val memberService: MemberService,
 ) {
+    @Operation(summary = "[관리자 페이지] 회원 단건 생성")
+    @SecurityRequirement(name = "JWT")
+    @PostMapping
+    fun createMemberByAdministrator(
+            @LoggedInAdmin administrator: Administrator,
+            @RequestBody @Valid request: CreateMemberRequest,
+    ): ResponseEntity<Void> {
+        memberService.createMemberByAdministrator(request)
+        return ResponseEntity.ok().build()
+    }
 
     @Operation(summary = "[관리자 페이지] 회원 전체 조회")
     @SecurityRequirement(name = "JWT")

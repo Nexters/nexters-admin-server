@@ -1,5 +1,6 @@
 package nexters.admin.service.user
 
+import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
@@ -15,12 +16,65 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private const val DEFAULT_PASSWORD_LENGTH = 4
+
 @Transactional
 @Service
 class MemberService(
         private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
 ) {
+    fun createMemberByAdministrator(request: CreateMemberRequest): Long {
+        val savedMember = memberRepository.save(
+                Member(
+                        request.name,
+                        Password(createDefaultPassword(request.phoneNumber)),
+                        request.email,
+                        Gender.from(request.gender),
+                        request.phoneNumber,
+                        MemberStatus.from(request.status)
+                )
+        )
+        createCurrentGenerationMember(savedMember, request)
+        createBeforeGenerationMembers(request, savedMember)
+
+        return savedMember.id
+    }
+
+    private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest) {
+        // 이전 기수 회원 저장 (이전 기수의 직군은 최신직군으로 저장, 이전 기수의 점수는 null 로 저장)
+        generationMemberRepository.save(
+                GenerationMember(
+                        memberId = savedMember.id,
+                        generation = request.generations.last(),
+                        position = Position.from(request.position),
+                        subPosition = SubPosition.from(request.subPosition),
+                        isManager = request.isManager
+                )
+        )
+        request.generations.removeLast()
+    }
+
+    private fun createBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
+        request.generations
+                .forEach {
+                    generationMemberRepository.save(
+                            GenerationMember(
+                                    memberId = savedMember.id,
+                                    generation = it,
+                                    position = Position.from(request.position),
+                                    subPosition = SubPosition.from(request.subPosition),
+                                    score = null,
+                                    isManager = request.isManager
+                            )
+                    )
+                }
+    }
+
+    private fun createDefaultPassword(phoneNumber: String): String {
+        return phoneNumber.substring(phoneNumber.length - DEFAULT_PASSWORD_LENGTH, phoneNumber.length)
+    }
+
     @Transactional(readOnly = true)
     fun findAllByAdministrator(): FindAllMembersResponse {
         val members = memberRepository.findAll()
@@ -37,6 +91,7 @@ class MemberService(
         val findAllMembers: MutableList<FindMemberResponse> = mutableListOf()
         var currentMemberIndex = 0
 
+        // 만약 현재기수의 직군 정보가 없으면 일단은 가장 최근 기수의 직군 정보를 반환하도록 구현
         generationMembers.forEach {
             findAllMembers.add(FindMemberResponse.of(members[currentMemberIndex++], it.value))
         }

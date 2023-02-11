@@ -3,6 +3,19 @@ package nexters.admin.controller.user
 import javax.validation.constraints.Email
 import javax.validation.constraints.Pattern
 
+data class CreateMemberRequest(
+        val name: String,
+        val gender: String,
+        @field:Email
+        val email: String,
+        val phoneNumber: String,
+        val generations: MutableList<Int>,
+        val position: String?,
+        val subPosition: String?,
+        val status: String,
+        val isManager: Boolean,
+)
+
 data class UpdatePasswordRequest(
         @field:Pattern(
                 regexp = "^[a-zA-Z0-9!@#$%^*]{8,20}$",

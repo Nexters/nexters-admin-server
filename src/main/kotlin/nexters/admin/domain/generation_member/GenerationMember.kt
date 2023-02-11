@@ -26,8 +26,8 @@ class GenerationMember(
         @Column(name = "sub_position", length = 30)
         var subPosition: SubPosition?,
 
-        @Column(name = "score", nullable = false)
-        var score: Int = 100,
+        @Column(name = "score")
+        var score: Int? = 100,
 
         @Column(name = "is_completable", nullable = false)
         var isCompletable: Boolean = true,
