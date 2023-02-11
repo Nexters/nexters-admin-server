@@ -149,7 +149,7 @@ class MemberServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
         generationMemberRepository.save(generationMember)
 
-        memberService.updatePassword(member, Password("2345"))
+        memberService.updatePassword(member, "2345")
 
         member.password shouldBe Password("2345")
     }

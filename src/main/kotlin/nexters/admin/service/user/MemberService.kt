@@ -108,8 +108,8 @@ class MemberService(
         )
     }
 
-    fun updatePassword(loggedInMember: Member, newPassword: Password) {
-        loggedInMember.updatePassword(newPassword)
+    fun updatePassword(loggedInMember: Member, newPassword: String) {
+        loggedInMember.updatePassword(Password(newPassword))
     }
 
     @Transactional(readOnly = true)
