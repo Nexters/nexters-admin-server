@@ -7,6 +7,8 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import java.time.LocalDateTime
 
+const val ADMIN_USERNAME = "admin"
+
 fun createNewMember(
         name: String = "정진우",
         password: String = "1234",
