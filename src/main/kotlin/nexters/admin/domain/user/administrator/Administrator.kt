@@ -20,7 +20,7 @@ class Administrator(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    fun isSamePassword(password: Password): Boolean {
+    fun isSamePassword(password: String): Boolean {
         return this.password.isSamePassword(password)
     }
 

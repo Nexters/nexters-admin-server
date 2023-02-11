@@ -33,12 +33,12 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    fun isSamePassword(password: Password): Boolean {
+    fun isSamePassword(password: String): Boolean {
         return this.password.isSamePassword(password)
     }
 
-    fun updatePassword(password: Password) {
-        this.password = password
+    fun updatePassword(password: String) {
+        this.password = Password(password)
         this.hasChangedPassword = true
     }
 }

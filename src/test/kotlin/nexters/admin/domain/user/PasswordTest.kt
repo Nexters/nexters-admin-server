@@ -15,9 +15,9 @@ class PasswordTest {
 
     @Test
     fun `비밀번호 일치 여부 반환`() {
-        val password = Password("abcd")
-        val differentPassword = Password("abcd1234")
+        val value = "abcd"
+        val password = Password(value)
 
-        password.isSamePassword(differentPassword) shouldBe false
+        password.isSamePassword(value) shouldBe true
     }
 }
