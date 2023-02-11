@@ -1,8 +1,5 @@
 package nexters.admin.service.user
 
-import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringTestExtension
-import io.kotest.extensions.spring.SpringTestLifecycleMode
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -17,6 +14,8 @@ import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
@@ -27,117 +26,165 @@ import org.springframework.transaction.annotation.Transactional
 class MemberServiceTest(
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val generationMemberRepository: GenerationMemberRepository,
-) : BehaviorSpec({
-    extensions(SpringTestExtension(SpringTestLifecycleMode.Root))
-
+) {
     val memberService = MemberService(memberRepository, generationMemberRepository)
 
-    Given("회원 전체가 있는 경우") {
+    @AfterEach
+    fun tearDown() {
+        memberRepository.deleteAll()
+        generationMemberRepository.deleteAll()
+    }
+
+    @Test
+    fun `회원 전체 조회`() {
         val member1: Member = memberRepository.save(createNewMember())
         val member2: Member = memberRepository.save(createNewMember(name = "김태현", email = "kth990303@naver.com"))
         val generationMember1: GenerationMember = createNewGenerationMember(memberId = member1.id, generation = 22)
         val generationMember2: GenerationMember = createNewGenerationMember(memberId = member2.id, generation = 15)
-
         generationMemberRepository.save(generationMember1)
         generationMemberRepository.save(generationMember2)
 
-        When("관리자가 회원 관리 페이지에 접속하면") {
-            val actual = memberService.findAllByAdministrator()
+        val actual = memberService.findAllByAdministrator()
 
-            Then("회원 전체를 조회할 수 있다") {
-                actual.data shouldHaveSize 2
-            }
-        }
+        actual.data shouldHaveSize 2
     }
 
-    Given("특정 회원이 있는 경우") {
+    @Test
+    fun `회원 정보 수정`() {
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
-
         generationMemberRepository.save(generationMember)
 
-        When("관리자가 해당 회원에 대한 정보를 수정하면") {
-            memberService.updateMemberByAdministrator(
-                    member.id,
-                    UpdateMemberRequest(
-                            name = "김태현",
-                            gender = "남자",
-                            email = member.email,
-                            phoneNumber = member.phoneNumber,
-                            generations = listOf(21)
-                    )
-            )
+        memberService.updateMemberByAdministrator(
+                member.id,
+                UpdateMemberRequest(
+                        name = "김태현",
+                        gender = "남자",
+                        email = member.email,
+                        phoneNumber = member.phoneNumber,
+                        generations = listOf(21)
+                )
+        )
 
-            Then("회원 정보가 수정된다") {
-                val findMember = memberRepository.findByEmail(member.email)
-                        ?: throw NotFoundException.memberNotFound()
-                findMember.name shouldBe "김태현"
-            }
-
-            Then("수정 요청된 기수에 대한 정보가 추가된다") {
-                val generations = generationMemberRepository.findAllByMemberId(member.id)
-
-                generations shouldHaveSize 1
-                generations[0].generation shouldBe 21
-            }
-
-            Then("수정 요청된 기수 외의 정보는 삭제된다") {
-                val generations = generationMemberRepository.findAllByMemberId(member.id)
-
-                generations shouldHaveSize 1
-                generations[0].generation shouldNotBe 22
-            }
-        }
-
-        When("관리자가 해당 회원에 대한 활동 정보를 수정하면") {
-            memberService.updateStatusByAdministrator(member.id, "수료")
-
-            Then("회원의 활동 정보가 수정된다") {
-                val findMember = memberRepository.findByEmail(member.email)
-                        ?: throw NotFoundException.memberNotFound()
-
-                findMember.status shouldBe MemberStatus.CERTIFICATED
-            }
-        }
-
-        When("관리자가 해당 회원에 대한 직군 정보를 수정하면") {
-            memberService.updatePositionByAdministrator(member.id, "디자이너", null)
-
-            Then("회원의 직군 정보가 수정된다") {
-                val generations = generationMemberRepository.findAllByMemberId(member.id)
-
-                generations[0].position shouldBe Position.DESIGNER
-            }
-        }
-
-        When("해당 회원이 비밀번호를 수정하면") {
-            memberService.updatePassword(member, Password("2345"))
-
-            Then("비밀번호를 수정할 수 있다") {
-                member.password shouldBe Password("2345")
-            }
-        }
-
-        When("해당 회원의 이메일로 회원을 조회하면") {
-            val findMember = memberService.getByEmail(member.email)
-
-            Then("해당 회원을 조회할 수 있다") {
-                findMember.email shouldBe member.email
-            }
-        }
-
-        When("관리자가 해당 회원을 삭제하면") {
-            memberService.deleteByAdministrator(member.id)
-
-            Then("해당 회원은 삭제된다") {
-                memberRepository.findByIdOrNull(member.id) shouldBe null
-            }
-
-            Then("해당 회원의 기수회원 정보들도 삭제된다") {
-                val generations = generationMemberRepository.findAllByMemberId(member.id)
-
-                generations shouldHaveSize 0
-            }
-        }
+        val findMember = memberRepository.findByEmail(member.email)
+                ?: throw NotFoundException.memberNotFound()
+        findMember.name shouldBe "김태현"
     }
-})
+
+    @Test
+    fun `회원 정보 수정 시 기수 추가가 올바르게 되는지 확인`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.updateMemberByAdministrator(
+                member.id,
+                UpdateMemberRequest(
+                        name = "김태현",
+                        gender = "남자",
+                        email = member.email,
+                        phoneNumber = member.phoneNumber,
+                        generations = listOf(21)
+                )
+        )
+
+        val generations = generationMemberRepository.findAllByMemberId(member.id)
+
+        generations shouldHaveSize 1
+        generations[0].generation shouldBe 21
+    }
+
+    @Test
+    fun `회원 정보 수정 시 기수 삭제가 올바르게 되는지 확인`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.updateMemberByAdministrator(
+                member.id,
+                UpdateMemberRequest(
+                        name = "김태현",
+                        gender = "남자",
+                        email = member.email,
+                        phoneNumber = member.phoneNumber,
+                        generations = listOf(21)
+                )
+        )
+
+        val generations = generationMemberRepository.findAllByMemberId(member.id)
+
+        generations shouldHaveSize 1
+        generations[0].generation shouldNotBe 22
+    }
+
+    @Test
+    fun `회원 활동구분 수정`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.updateStatusByAdministrator(member.id, "수료")
+
+        val findMember = memberRepository.findByEmail(member.email)
+                ?: throw NotFoundException.memberNotFound()
+
+        findMember.status shouldBe MemberStatus.CERTIFICATED
+    }
+
+    @Test
+    fun `회원 직군 수정`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.updatePositionByAdministrator(member.id, "디자이너", null)
+
+        val generations = generationMemberRepository.findAllByMemberId(member.id)
+        generations[0].position shouldBe Position.DESIGNER
+    }
+
+    @Test
+    fun `회원 비밀번호 수정`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.updatePassword(member, Password("2345"))
+
+        member.password shouldBe Password("2345")
+    }
+
+    @Test
+    fun `회원 이메일로 해당 회원 조회`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        val findMember = memberService.getByEmail(member.email)
+
+        findMember.email shouldBe member.email
+    }
+
+    @Test
+    fun `회원 삭제`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.deleteByAdministrator(member.id)
+
+        memberRepository.findByIdOrNull(member.id) shouldBe null
+    }
+
+    @Test
+    fun `회원 삭제 시 관련 기수회원 정보 삭제 확인`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
+        generationMemberRepository.save(generationMember)
+
+        memberService.deleteByAdministrator(member.id)
+
+        val generations = generationMemberRepository.findAllByMemberId(member.id)
+        generations shouldHaveSize 0
+    }
+}

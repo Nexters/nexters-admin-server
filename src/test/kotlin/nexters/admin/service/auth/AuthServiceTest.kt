@@ -2,51 +2,59 @@ package nexters.admin.service.auth
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
 import nexters.admin.createNewMember
-import nexters.admin.createNewTestJwtTokenProvider
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.UnauthenticatedException
 import nexters.admin.repository.MemberRepository
+import nexters.admin.support.auth.JwtTokenProvider
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
-class AuthServiceTest : BehaviorSpec({
-    val memberRepository = mockk<MemberRepository>()
-    val tokenProvider = createNewTestJwtTokenProvider()
-
+@SpringBootTest
+class AuthServiceTest(
+        @Autowired private val memberRepository: MemberRepository,
+        @Autowired private val tokenProvider: JwtTokenProvider,
+) {
     val authService = AuthService(memberRepository, tokenProvider)
 
-    Given("가입된 회원이 있는 경우") {
+    @AfterEach
+    fun tearDown() {
+        memberRepository.deleteAll()
+    }
+
+    @Test
+    fun `로그인 시 토큰 발행`() {
         val member: Member = createNewMember()
-        val invalidEmail = "invalid@email.com"
 
-        every { memberRepository.findByEmail(member.email) } returns member
-        every { memberRepository.findByEmail(invalidEmail) } returns null
+        memberRepository.save(member)
 
-        When("해당 회원이 올바르게 로그인을 하면") {
-            Then("토큰이 발행될 수 있다") {
-                shouldNotThrow<UnauthenticatedException> {
-                    authService.generateMemberToken(LoginRequest(member.email, member.password))
-                }
-            }
-        }
-
-        When("해당 회원이 잘못된 비밀번호로 로그인을 하면") {
-            Then("예외가 발생한다") {
-                shouldThrow<UnauthenticatedException> {
-                    authService.generateMemberToken(LoginRequest(member.email, Password("invalid")))
-                }
-            }
-        }
-
-        When("해당 회원이 잘못된 비밀번호로 로그인을 하면") {
-            Then("예외가 발생한다") {
-                shouldThrow<UnauthenticatedException> {
-                    authService.generateMemberToken(LoginRequest(invalidEmail, Password("invalid")))
-                }
-            }
+        shouldNotThrow<UnauthenticatedException> {
+            authService.generateMemberToken(LoginRequest(member.email, member.password))
         }
     }
-})
+
+    @Test
+    fun `로그인 시 잘못된 비밀번호로 입력할 경우 예외 발생`() {
+        val member: Member = createNewMember()
+
+        memberRepository.save(member)
+
+        shouldThrow<UnauthenticatedException> {
+            authService.generateMemberToken(LoginRequest(member.email, Password("invalid")))
+        }
+    }
+
+    @Test
+    fun `미회원이 로그인할 경우 예외 발생`() {
+        val member: Member = createNewMember()
+
+        memberRepository.save(member)
+
+        shouldThrow<UnauthenticatedException> {
+            authService.generateMemberToken(LoginRequest("invalid@email.com", member.password))
+        }
+    }
+}
