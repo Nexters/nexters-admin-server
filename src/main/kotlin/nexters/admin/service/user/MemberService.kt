@@ -126,7 +126,7 @@ class MemberService(
             findMember: Member,
     ) {
         updateMemberRequest.generations
-                .filterNot { it1 -> findGenerationMembers.map { it.generation }.contains(it1) }
+                .filterNot { checkIfRequestedGenerationsExists(findGenerationMembers, it) }
                 .forEach {
                     generationMemberRepository.save(
                             GenerationMember(
@@ -139,14 +139,20 @@ class MemberService(
                 }
     }
 
+    private fun checkIfRequestedGenerationsExists(findGenerationMembers: List<GenerationMember>, it1: Int) =
+            findGenerationMembers.map { it.generation }.contains(it1)
+
     private fun deleteUnrequestedGenerationMembers(
             findGenerationMembers: List<GenerationMember>,
             updateMemberRequest: UpdateMemberRequest,
     ) {
         findGenerationMembers
-                .filterNot { updateMemberRequest.generations.contains(it.generation) }
+                .filterNot { checkIfRequestedGenerations(updateMemberRequest, it) }
                 .forEach { generationMemberRepository.deleteById(it.id) }
     }
+
+    private fun checkIfRequestedGenerations(updateMemberRequest: UpdateMemberRequest, it: GenerationMember) =
+            updateMemberRequest.generations.contains(it.generation)
 
     fun updateStatusByAdministrator(id: Long, status: String) {
         val findMember = memberRepository.findByIdOrNull(id)
