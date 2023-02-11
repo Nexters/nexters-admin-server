@@ -4,14 +4,13 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import nexters.admin.ADMIN_USERNAME
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.administrator.Administrator
-import org.junit.jupiter.api.AfterEach
+import nexters.admin.testsupport.RepositoryTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
-@DataJpaTest
+@RepositoryTest
 class AdminCacheRepositoryTest(
         @Autowired private val adminRepository: AdministratorRepository,
 ) {
@@ -20,11 +19,6 @@ class AdminCacheRepositoryTest(
     @BeforeEach
     fun setUp() {
         adminRepository.save(Administrator(ADMIN_USERNAME, Password("1234")))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        adminRepository.deleteAll()
     }
 
     @Test
