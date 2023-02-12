@@ -7,10 +7,16 @@ import javax.persistence.*
 @Entity
 @Table(name = "session")
 class Session(
+        @Column(name = "title")
+        var title: String? = null,
+
         @Column(name = "description")
         var description: String? = null,
 
-        @Column(name = "generation")
+        @Column(name = "message")
+        var message: String? = null,
+
+        @Column(name = "generation", nullable = false)
         var generation: Int,
 
         @Column(name = "session_time")

@@ -5,4 +5,9 @@ enum class MemberStatus(val value: String) {
     COMPLETION("이수"),
     CERTIFICATED("수료"),
     EXPULSION("제명"),
+    ;
+
+    companion object {
+        fun from(value: String): MemberStatus = values().first { it.value == value }
+    }
 }
