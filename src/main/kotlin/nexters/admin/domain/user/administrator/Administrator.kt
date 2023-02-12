@@ -2,7 +2,14 @@ package nexters.admin.domain.user.administrator
 
 import nexters.admin.domain.user.Password
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.AttributeOverride
+import javax.persistence.Column
+import javax.persistence.Embedded
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "administrator")
@@ -10,7 +17,8 @@ class Administrator(
         @Column(name = "username", nullable = false)
         val username: String,
 
-        @Column(name = "password", nullable = false)
+        @AttributeOverride(name = "value", column = Column(name = "password", nullable = false))
+        @Embedded
         var password: Password,
 
         @Column(name = "last_access_time")
