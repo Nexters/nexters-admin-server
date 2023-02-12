@@ -3,11 +3,9 @@ package nexters.admin.controller.user
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.user.FindAllMembersResponse
 import nexters.admin.service.user.MemberService
-import nexters.admin.support.auth.LoggedInAdmin
 import nexters.admin.support.auth.LoggedInMember
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -22,10 +20,7 @@ class MemberController(
     @Operation(summary = "[관리자 페이지] 회원 단건 생성")
     @SecurityRequirement(name = "JWT")
     @PostMapping
-    fun createMemberByAdministrator(
-            @LoggedInAdmin administrator: Administrator,
-            @RequestBody @Valid request: CreateMemberRequest,
-    ): ResponseEntity<Void> {
+    fun createMemberByAdministrator(@RequestBody @Valid request: CreateMemberRequest): ResponseEntity<Void> {
         memberService.createMemberByAdministrator(request)
         return ResponseEntity.ok().build()
     }
@@ -33,7 +28,7 @@ class MemberController(
     @Operation(summary = "[관리자 페이지] 회원 전체 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping
-    fun findAllByAdministrator(@LoggedInAdmin administrator: Administrator): ResponseEntity<FindAllMembersResponse> {
+    fun findAllByAdministrator(): ResponseEntity<FindAllMembersResponse> {
         val findAllMembersResponse = memberService.findAllByAdministrator()
         return ResponseEntity.ok(findAllMembersResponse)
     }
@@ -43,7 +38,6 @@ class MemberController(
     @PutMapping("/{id}")
     fun update(
             @PathVariable id: Long,
-            @LoggedInAdmin administrator: Administrator,
             @RequestBody @Valid request: UpdateMemberRequest,
     ): ResponseEntity<Void> {
         memberService.updateMemberByAdministrator(id, request)
@@ -55,7 +49,6 @@ class MemberController(
     @PutMapping("/{id}/status")
     fun updateStatus(
             @PathVariable id: Long,
-            @LoggedInAdmin administrator: Administrator,
             @RequestBody @Valid request: UpdateMemberStatusRequest,
     ): ResponseEntity<Void> {
         memberService.updateStatusByAdministrator(id, request.status)
@@ -67,7 +60,6 @@ class MemberController(
     @PutMapping("/{id}/position")
     fun updatePosition(
             @PathVariable id: Long,
-            @LoggedInAdmin administrator: Administrator,
             @RequestBody @Valid request: UpdateMemberPositionRequest,
     ): ResponseEntity<Void> {
         memberService.updatePositionByAdministrator(id, request.position, request.subPosition)
@@ -88,10 +80,7 @@ class MemberController(
     @Operation(summary = "[관리자 페이지] 회원 삭제")
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/{id}")
-    fun delete(
-            @PathVariable id: Long,
-            @LoggedInAdmin administrator: Administrator,
-    ): ResponseEntity<Void> {
+    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         memberService.deleteByAdministrator(id)
         return ResponseEntity.ok().build()
     }
