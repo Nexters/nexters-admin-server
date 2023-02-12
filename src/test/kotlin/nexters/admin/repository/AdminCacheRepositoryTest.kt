@@ -1,7 +1,7 @@
 package nexters.admin.repository
 
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import nexters.admin.ADMIN_USERNAME
+import nexters.admin.testsupport.ADMIN_USERNAME
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.testsupport.RepositoryTest

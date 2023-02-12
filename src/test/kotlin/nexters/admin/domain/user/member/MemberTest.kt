@@ -1,8 +1,8 @@
 package nexters.admin.domain.user.member
 
 import io.kotest.matchers.shouldBe
-import nexters.admin.PHONE_NUMBER
-import nexters.admin.createNewMember
+import nexters.admin.testsupport.PHONE_NUMBER
+import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 

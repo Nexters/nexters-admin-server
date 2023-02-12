@@ -2,7 +2,7 @@ package nexters.admin.domain.user.administrator
 
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
-import nexters.admin.createNewAdmin
+import nexters.admin.testsupport.createNewAdmin
 import nexters.admin.domain.user.Password
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

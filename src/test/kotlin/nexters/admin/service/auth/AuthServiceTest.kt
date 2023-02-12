@@ -2,8 +2,8 @@ package nexters.admin.service.auth
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import nexters.admin.createNewAdmin
-import nexters.admin.createNewMember
+import nexters.admin.testsupport.createNewAdmin
+import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.UnauthenticatedException

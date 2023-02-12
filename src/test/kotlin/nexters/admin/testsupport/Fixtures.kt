@@ -1,4 +1,4 @@
-package nexters.admin
+package nexters.admin.testsupport
 
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position

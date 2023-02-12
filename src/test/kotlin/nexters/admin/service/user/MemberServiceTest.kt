@@ -3,11 +3,11 @@ package nexters.admin.service.user
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import nexters.admin.PHONE_NUMBER
+import nexters.admin.testsupport.PHONE_NUMBER
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
-import nexters.admin.createNewGenerationMember
-import nexters.admin.createNewMember
+import nexters.admin.testsupport.createNewGenerationMember
+import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
