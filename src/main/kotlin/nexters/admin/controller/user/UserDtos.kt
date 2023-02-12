@@ -23,8 +23,6 @@ data class UpdatePasswordRequest(
         val password: String,
 )
 
-data class TokenResponse(val data: String)
-
 data class UpdateMemberRequest(
         val name: String,
         val gender: String,

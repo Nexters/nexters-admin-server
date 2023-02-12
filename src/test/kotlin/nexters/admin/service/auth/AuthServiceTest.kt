@@ -36,7 +36,7 @@ class AuthServiceTest(
         memberRepository.save(member)
 
         shouldNotThrow<UnauthenticatedException> {
-            authService.generateMemberToken(LoginRequest(member.email, "1234"))
+            authService.generateMemberToken(MemberLoginRequest(member.email, "1234"))
         }
     }
 
@@ -58,7 +58,7 @@ class AuthServiceTest(
         memberRepository.save(member)
 
         shouldThrow<UnauthenticatedException> {
-            authService.generateMemberToken(LoginRequest(member.email, "invalid"))
+            authService.generateMemberToken(MemberLoginRequest(member.email, "invalid"))
         }
     }
 
@@ -69,7 +69,7 @@ class AuthServiceTest(
         memberRepository.save(member)
 
         shouldThrow<UnauthenticatedException> {
-            authService.generateMemberToken(LoginRequest("invalid@email.com", member.password.value))
+            authService.generateMemberToken(MemberLoginRequest("invalid@email.com", member.password.value))
         }
     }
 }

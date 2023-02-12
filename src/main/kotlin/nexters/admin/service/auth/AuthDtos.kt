@@ -7,7 +7,7 @@ data class AdminLoginRequest(
         val password: String,
 )
 
-data class LoginRequest(
+data class MemberLoginRequest(
         @field:Email
         val email: String,
         val password: String,

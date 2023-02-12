@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Member
-import nexters.admin.service.auth.AuthService
-import nexters.admin.service.auth.LoginRequest
 import nexters.admin.service.user.FindAllMembersResponse
 import nexters.admin.service.user.MemberService
 import nexters.admin.support.auth.LoggedInAdmin
@@ -19,7 +17,6 @@ import javax.validation.Valid
 @RequestMapping("/api/members")
 @RestController
 class MemberController(
-        private val authService: AuthService,
         private val memberService: MemberService,
 ) {
     @Operation(summary = "[관리자 페이지] 회원 단건 생성")
@@ -39,13 +36,6 @@ class MemberController(
     fun findAllByAdministrator(@LoggedInAdmin administrator: Administrator): ResponseEntity<FindAllMembersResponse> {
         val findAllMembersResponse = memberService.findAllByAdministrator()
         return ResponseEntity.ok(findAllMembersResponse)
-    }
-
-    @Operation(summary = "로그인")
-    @PostMapping("/login")
-    fun login(@RequestBody @Valid request: LoginRequest): ResponseEntity<TokenResponse> {
-        val token = authService.generateMemberToken(request)
-        return ResponseEntity.ok(TokenResponse(token))
     }
 
     @Operation(summary = "[관리자 페이지] 회원 정보수정")
