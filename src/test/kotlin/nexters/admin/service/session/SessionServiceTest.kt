@@ -66,6 +66,40 @@ class SessionServiceTest(
     }
 
     @Test
+    fun `특정 기수의 세션 조회`() {
+        sessionService.createSession(
+                CreateSessionRequest(
+                        title = "Test title0",
+                        description = "Test description",
+                        message = "Test message",
+                        generation = 22,
+                        sessionTime = LocalDate.now(),
+                        week = 2,
+                        startAttendTime = LocalDateTime.now(),
+                        endAttendTime = LocalDateTime.now()
+                )
+        )
+        sessionService.createSession(
+                CreateSessionRequest(
+                        title = "Test title1",
+                        description = "Test description",
+                        message = "Test message",
+                        generation = 22,
+                        sessionTime = LocalDate.now(),
+                        week = 3,
+                        startAttendTime = LocalDateTime.now(),
+                        endAttendTime = LocalDateTime.now()
+                )
+        )
+
+        val founds = sessionService.findSessionByGeneration(22)
+
+        founds.forEach {
+            it.generation shouldBe 22
+        }
+    }
+
+    @Test
     fun `세션 수정`() {
         val id = sessionService.createSession(
                 CreateSessionRequest(

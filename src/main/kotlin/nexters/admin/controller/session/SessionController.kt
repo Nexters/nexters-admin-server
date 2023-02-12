@@ -24,7 +24,23 @@ class SessionController(
     @Operation(summary = "메인 세션 조회")
     @GetMapping("/home")
     fun getSessionHome() {
+        //Todo jwt에서 유저아이디 가져온다음 유저에 따라 다른 response 를 줘야함
+        // ResponseBody {
+        //    sessionDate: LocalDate
+        //    title: string
+        //    description: string
+        //		sessionStatus: string // PENDING=출석 체크 시작 전, ONGOING=출석 중, EXPIRED=출석 종료
+        //    attendanceStatus: string // PENDING, TARDY, ATTENDED, UNAUTHORIZED_ABSENCE, AUTHORIZED_ABSENCE
+        //    attendanceTime: LocalDateTime
+        // }
+    }
 
+    @Operation(summary = "[관리자 페이지] 특정 기수의 세션 조회")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("")
+    fun findSessionByGeneration(@RequestParam generation: Int): ResponseEntity<List<Session>> {
+        val sessions = sessionService.findSessionByGeneration(generation)
+        return ResponseEntity.ok(sessions)
     }
 
     @Operation(summary = "[관리자 페이지] 세션 생성")

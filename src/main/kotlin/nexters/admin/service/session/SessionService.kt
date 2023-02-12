@@ -11,6 +11,10 @@ class SessionService(
         private val sessionRepository: SessionRepository
 ) {
 
+    fun findSessionByGeneration(generation: Int): List<Session> {
+        return sessionRepository.findByGeneration(generation)
+    }
+
     fun createSession(request: CreateSessionRequest): Long {
         val savedSession = sessionRepository.save(
                 Session(
