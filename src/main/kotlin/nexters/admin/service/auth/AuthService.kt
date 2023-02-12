@@ -1,17 +1,17 @@
 package nexters.admin.service.auth
 
 import nexters.admin.domain.user.Password
-import nexters.admin.support.auth.JwtTokenProvider
 import nexters.admin.exception.UnauthenticatedException
 import nexters.admin.repository.AdministratorRepository
 import nexters.admin.repository.MemberRepository
+import nexters.admin.support.auth.JwtTokenProvider
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
         private val adminRepository: AdministratorRepository,
         private val memberRepository: MemberRepository,
-        private val jwtTokenProvider: JwtTokenProvider
+        private val jwtTokenProvider: JwtTokenProvider,
 ) {
     fun generateAdminToken(request: AdminLoginRequest): String {
         val admin = adminRepository.findByUsername(request.username)
