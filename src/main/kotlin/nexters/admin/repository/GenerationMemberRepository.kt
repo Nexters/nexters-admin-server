@@ -8,5 +8,5 @@ interface GenerationMemberRepository : JpaRepository<GenerationMember, Long> {
 
     fun findByGenerationAndMemberId(generation: Int, memberId: Long): GenerationMember?
 
-    fun findTopByMemberIdOrderByGenerationDesc(memberId: Long): GenerationMember
+    fun findTopByMemberIdOrderByGenerationDesc(memberId: Long): GenerationMember?
 }
