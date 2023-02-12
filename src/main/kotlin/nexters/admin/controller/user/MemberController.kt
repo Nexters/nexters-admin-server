@@ -7,8 +7,8 @@ import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.auth.AuthService
 import nexters.admin.service.auth.LoginRequest
-import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.FindAllMembersResponse
+import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
 import nexters.admin.support.auth.LoggedInAdmin
 import nexters.admin.support.auth.LoggedInMember
@@ -96,12 +96,6 @@ class MemberController(
         return ResponseEntity.ok().build()
     }
 
-    /**
-     * GET /api/members/me
-     * Authorization: Bearer member.jwt.token
-     * RequestBody {
-     * }
-     */
     @Operation(summary = "내 정보 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/me")
