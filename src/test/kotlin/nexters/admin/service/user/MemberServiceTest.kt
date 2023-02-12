@@ -17,27 +17,17 @@ import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
-import org.junit.jupiter.api.AfterEach
+import nexters.admin.testsupport.ApplicationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.transaction.annotation.Transactional
 
-@Transactional
-@SpringBootTest
+@ApplicationTest
 class MemberServiceTest(
+        @Autowired private val memberService: MemberService,
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val generationMemberRepository: GenerationMemberRepository,
 ) {
-    val memberService = MemberService(memberRepository, generationMemberRepository)
-
-    @AfterEach
-    fun tearDown() {
-        memberRepository.deleteAll()
-        generationMemberRepository.deleteAll()
-    }
-
     @Test
     fun `회원 저장`() {
         memberService.createMemberByAdministrator(

@@ -14,7 +14,6 @@ class AdminServiceTest(
         @Autowired private val adminService: AdminService,
         @Autowired private val adminRepository: AdministratorRepository,
 ) {
-
     @Test
     fun `아이디에 해당되는 어드민의 존재 여부 반환`() {
         adminRepository.save(Administrator(ADMIN_USERNAME, Password("1234")))
