@@ -12,3 +12,8 @@ data class MemberLoginRequest(
         val email: String,
         val password: String,
 )
+
+data class MemberLoginResponse(
+        val token: String,
+        val needPasswordReset: Boolean,
+)
