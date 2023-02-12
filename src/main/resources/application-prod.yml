@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: 'jdbc:postgresql://pg-f8s8l.vpc-pub-cdb-kr.ntruss.com:5432/nexters'
+    username: ${DB-USER}
+    password: ${DB-PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
