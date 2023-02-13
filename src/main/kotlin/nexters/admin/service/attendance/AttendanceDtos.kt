@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 data class FindAttendanceProfileResponse(
         @get:JsonProperty(value = "isGenerationMember")
         val isGenerationMember: Boolean,
-        val data: AttendanceProfileResponse?
+        val attendanceData: AttendanceProfileResponse?
 ) {
     companion object {
         fun of(): FindAttendanceProfileResponse {

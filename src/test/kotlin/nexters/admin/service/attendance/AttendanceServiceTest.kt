@@ -55,7 +55,7 @@ class AttendanceServiceTest(
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
         attendanceProfile.isGenerationMember shouldBe true
-        attendanceProfile.data!!.run {
+        attendanceProfile.attendanceData!!.run {
             score shouldBe 100
             isCompletable shouldBe true
             attendances.run {
@@ -83,7 +83,7 @@ class AttendanceServiceTest(
         generateAttendance(pendingSession, generationMember, AttendanceStatus.PENDING)
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
-        attendanceProfile.data!!.attendances.run {
+        attendanceProfile.attendanceData!!.attendances.run {
             size shouldBe 4
             map { it.attendanceStatus } shouldNotContain AttendanceStatus.PENDING
         }
@@ -96,7 +96,7 @@ class AttendanceServiceTest(
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
         attendanceProfile.isGenerationMember shouldBe false
-        attendanceProfile.data shouldBe null
+        attendanceProfile.attendanceData shouldBe null
     }
 
     @Test
@@ -115,7 +115,7 @@ class AttendanceServiceTest(
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
-        attendanceProfile.data!!.attendances shouldBeSortedWith { a, b -> b.week.compareTo(a.week) }
+        attendanceProfile.attendanceData!!.attendances shouldBeSortedWith { a, b -> b.week.compareTo(a.week) }
     }
 
     @ParameterizedTest
@@ -129,7 +129,7 @@ class AttendanceServiceTest(
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
-        attendanceProfile.data!!.attendances.getOrNull(0)!!.score shouldBe attendanceStatus.score
+        attendanceProfile.attendanceData!!.attendances.getOrNull(0)!!.score shouldBe attendanceStatus.score
     }
 
     private fun generateAttendance(
