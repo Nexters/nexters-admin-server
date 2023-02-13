@@ -297,7 +297,7 @@ class MemberServiceTest(
 
 
     @Test
-    fun `기수 정보가 있는 회원이 내 정보 조회시 최신 기수 정보 조회`() {
+    fun `두 개 이상의 기수 정보가 있는 회원이 내 정보 조회시 최신 기수 정보 조회`() {
         val member: Member = memberRepository.save(createNewMember())
         val generationMember1: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 21, position = Position.DEVELOPER)
         val generationMember2: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DESIGNER)
@@ -319,5 +319,4 @@ class MemberServiceTest(
         profile.generation shouldBe 0
         profile.position shouldBe ""
     }
-
 }
