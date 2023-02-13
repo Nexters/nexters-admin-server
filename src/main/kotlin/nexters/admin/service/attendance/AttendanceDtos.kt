@@ -1,5 +1,6 @@
 package nexters.admin.service.attendance
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
@@ -8,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class FindAttendanceProfileResponse(
+        @get:JsonProperty(value = "isGenerationMember")
         val isGenerationMember: Boolean,
         val data: AttendanceProfileResponse?
 ) {
@@ -24,6 +26,7 @@ data class FindAttendanceProfileResponse(
 
 data class AttendanceProfileResponse(
         val score: Int,
+        @get:JsonProperty(value = "isCompletable")
         val isCompletable: Boolean,
         val attendances: List<AttendanceResponse>
 ) {
