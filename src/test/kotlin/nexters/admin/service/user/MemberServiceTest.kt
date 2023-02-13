@@ -284,13 +284,13 @@ class MemberServiceTest(
 
     @Test
     fun `내 정보 조회`() {
-        val member: Member = memberRepository.save(createNewMember(name = "김태현"))
+        val member: Member = memberRepository.save(createNewMember(name = "정설희"))
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DEVELOPER)
         generationMemberRepository.save(generationMember)
 
         val profile = memberService.getProfile(member)
 
-        profile.name shouldBe "김태현"
+        profile.name shouldBe "정설희"
         profile.generation shouldBe 22
         profile.position shouldBe Position.DEVELOPER.value
     }
