@@ -49,19 +49,8 @@ class AttendanceServiceTest(
                 .save(createNewGenerationMember(memberId = member.id))
         val session1: Session = sessionRepository.save(createNewSession())
         val session2: Session = sessionRepository.save(createNewSession(week = 2))
-        attendanceRepository.save(
-                createNewAttendance(
-                        sessionId = session1.id,
-                        generationMemberId = generationMember.id
-                )
-        )
-        attendanceRepository.save(
-                createNewAttendance(
-                        sessionId = session2.id,
-                        generationMemberId = generationMember.id,
-                        attendanceStatus = AttendanceStatus.TARDY
-                )
-        )
+        generateAttendance(session1, generationMember, AttendanceStatus.ATTENDED)
+        generateAttendance(session2, generationMember, AttendanceStatus.TARDY)
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
