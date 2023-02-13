@@ -18,9 +18,7 @@ class AdminCacheRepository(
     }
 
     private fun updateCache(username: String) {
-        val admin = adminRepository.findByUsername(username)
-        if (admin != null) {
-            cacheRepository[username] = admin
-        }
+        adminRepository.findByUsername(username)
+                ?.let { cacheRepository[username] = it }
     }
 }
