@@ -129,7 +129,7 @@ class AttendanceServiceTest(
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
 
-        attendanceProfile.attendanceData!!.attendances.getOrNull(0)!!.score shouldBe attendanceStatus.score
+        attendanceProfile.attendanceData!!.attendances.getOrNull(0)!!.penaltyScore shouldBe attendanceStatus.penaltyScore
     }
 
     private fun generateAttendance(

@@ -1,6 +1,6 @@
 package nexters.admin.domain.attendance
 
-enum class AttendanceStatus(val value: String, val score: Int) {
+enum class AttendanceStatus(val value: String, val penaltyScore: Int) {
     PENDING("대기", 0),
     ATTENDED("출석", 0),
     TARDY("지각", -5),

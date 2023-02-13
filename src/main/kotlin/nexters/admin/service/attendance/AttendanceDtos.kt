@@ -49,7 +49,7 @@ data class AttendanceResponse(
         val sessionDate: LocalDate?,
         val attendanceStatus: AttendanceStatus,
         val attendanceTime: LocalDateTime?,
-        val score: Int
+        val penaltyScore: Int
 ) {
     companion object {
         fun of(session: Session, attendance: Attendance): AttendanceResponse {
@@ -59,7 +59,7 @@ data class AttendanceResponse(
                     session.sessionTime,
                     attendance.attendanceStatus,
                     attendance.attendTime,
-                    attendance.attendanceStatus.score
+                    attendance.attendanceStatus.penaltyScore
             )
         }
     }
