@@ -1,5 +1,6 @@
 package nexters.admin.service.attendance
 
+import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.member.Member
@@ -9,6 +10,7 @@ import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.SessionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Transactional
 @Service
@@ -25,17 +27,28 @@ class AttendanceService(
                 generationMemberRepository.findByGenerationAndMemberId(ongoingGeneration, loggedInMember.id)
                         ?: return FindAttendanceProfileResponse.of()
 
-        val statuses = AttendanceStatus.values().toMutableList()
-        statuses.remove(AttendanceStatus.PENDING)
+        val statuses = getValidAttendanceStatuses()
 
         val attendances = attendanceRepository.findAllByGenerationMemberIdAndAttendanceStatusIn(generationMember.id, statuses)
         val sessions = sessionRepository.findAllByGeneration(ongoingGeneration)
 
+        val sessionToAttendance = getWeekSortedSessionToAttendance(attendances, sessions)
+        return FindAttendanceProfileResponse.of(generationMember, sessionToAttendance)
+    }
+
+    private fun getWeekSortedSessionToAttendance(
+            attendances: List<Attendance>,
+            sessions: List<Session>): SortedMap<Session, Attendance> {
         val sessionToAttendance = attendances.associateBy {
             sessions.findLast { session -> session.id == it.sessionId }
                     ?: throw NotFoundException.sessionNotFound()
         }
-        val weekSortedSessionToAttendance = sessionToAttendance.toSortedMap(compareBy<Session> { it.week }.reversed())
-        return FindAttendanceProfileResponse.of(generationMember, weekSortedSessionToAttendance)
+        return sessionToAttendance.toSortedMap(compareBy<Session> { it.week }.reversed())
+    }
+
+    private fun getValidAttendanceStatuses(): List<AttendanceStatus> {
+        val statuses = AttendanceStatus.values().toMutableList()
+        statuses.remove(AttendanceStatus.PENDING)
+        return statuses;
     }
 }
