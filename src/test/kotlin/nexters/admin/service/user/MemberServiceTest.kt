@@ -271,4 +271,42 @@ class MemberServiceTest(
         val generations = generationMemberRepository.findAllByMemberId(member.id)
         generations shouldHaveSize 0
     }
+
+    @Test
+    fun `내 정보 조회`() {
+        val member: Member = memberRepository.save(createNewMember(name = "정설희"))
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DEVELOPER)
+        generationMemberRepository.save(generationMember)
+
+        val profile = memberService.getProfile(member)
+
+        profile.name shouldBe "정설희"
+        profile.generation shouldBe 22
+        profile.position shouldBe Position.DEVELOPER.value
+    }
+
+
+    @Test
+    fun `두 개 이상의 기수 정보가 있는 회원이 내 정보 조회시 최신 기수 정보 조회`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember1: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 21, position = Position.DEVELOPER)
+        val generationMember2: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DESIGNER)
+        generationMemberRepository.save(generationMember1)
+        generationMemberRepository.save(generationMember2)
+
+        val profile = memberService.getProfile(member)
+
+        profile.generation shouldBe 22
+        profile.position shouldBe Position.DESIGNER.value
+    }
+
+    @Test
+    fun `기수 정보가 없는 회원이 내 정보 조회시 0기로 표시`() {
+        val member: Member = memberRepository.save(createNewMember())
+
+        val profile = memberService.getProfile(member)
+
+        profile.generation shouldBe 0
+        profile.position shouldBe ""
+    }
 }

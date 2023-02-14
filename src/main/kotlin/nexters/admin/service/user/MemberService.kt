@@ -187,4 +187,10 @@ class MemberService(
 
         memberRepository.deleteById(id)
     }
+    
+    @Transactional(readOnly = true)
+    fun getProfile(loggedInMember: Member): FindProfileResponse {
+        val generationMember = generationMemberRepository.findTopByMemberIdOrderByGenerationDesc(loggedInMember.id)
+        return FindProfileResponse.of(loggedInMember, generationMember)
+    }
 }
