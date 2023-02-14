@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: 'jdbc:postgresql://pg-f8s8l.vpc-pub-cdb-kr.ntruss.com:5432/nexters'
+    url: ${DB-URL}
     username: ${DB-USER}
     password: ${DB-PASSWORD}
   jpa:
@@ -14,8 +14,8 @@ spring:
         format_sql: true
 
 security.jwt.token:
-  secret-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
-  validity: 18000000
+  secret-key: ${JWT-SECRET-KEY}
+  validity: ${JWT-VALIDITY}
 
 springdoc:
   default-consumes-media-type: application/json
