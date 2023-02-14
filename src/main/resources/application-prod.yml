@@ -13,3 +13,22 @@ spring:
         show_sql: true
         format_sql: true
 
+security.jwt.token:
+  secret-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  validity: 18000000
+
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+  paths-to-match:
+    - /api/**
+    - /health-check
+
