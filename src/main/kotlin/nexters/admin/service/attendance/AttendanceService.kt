@@ -20,6 +20,7 @@ class AttendanceService(
         private val sessionRepository: SessionRepository
 ) {
     // TODO: 현재 진행중인 기수를 알 방법이 없음!!! 일단 22기로 박고 진행
+    @Transactional(readOnly = true)
     fun getAttendanceProfile(loggedInMember: Member): FindAttendanceProfileResponse {
         val ongoingGeneration = 22;
 
