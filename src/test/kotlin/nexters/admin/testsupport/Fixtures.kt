@@ -38,7 +38,7 @@ fun createNewGenerationMember(
 }
 
 fun createNewAdmin(
-        username: String = "root",
+        username: String = ADMIN_USERNAME,
         password: String = "1234",
         lastAccessTime: LocalDateTime = LocalDateTime.now(),
 ): Administrator {
