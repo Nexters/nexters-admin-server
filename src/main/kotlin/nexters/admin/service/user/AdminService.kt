@@ -17,7 +17,7 @@ class AdminService(
 ) {
     fun createAdministrator(request: CreateAdministratorRequest) {
         adminCacheRepository.findByUsername(request.username)
-                ?.run { throw BadRequestException.alreadyExistsAdministrator() }
+                ?.let { throw BadRequestException.alreadyExistsAdministrator() }
 
         val administrator = Administrator(request.username, Password(request.password))
         administratorRepository.save(administrator)
