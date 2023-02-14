@@ -16,6 +16,11 @@ data class CreateMemberRequest(
         val isManager: Boolean,
 )
 
+data class CreateAdministratorRequest(
+        val username: String,
+        val password: String,
+)
+
 data class UpdatePasswordRequest(
         @field:Pattern(
                 regexp = "^[a-zA-Z0-9!@#$%^*]{8,20}$",

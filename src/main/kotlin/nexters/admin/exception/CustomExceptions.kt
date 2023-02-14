@@ -1,6 +1,10 @@
 package nexters.admin.exception
 
-class BadRequestException(message: String?) : RuntimeException(message)
+class BadRequestException(message: String?) : RuntimeException(message) {
+    companion object {
+        fun alreadyExistsAdministrator() = BadRequestException("이미 존재하는 관리자 아이디입니다.")
+    }
+}
 
 class UnauthenticatedException(message: String?) : RuntimeException(message) {
     companion object {
