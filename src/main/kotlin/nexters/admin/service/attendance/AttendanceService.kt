@@ -37,6 +37,12 @@ class AttendanceService(
         return FindAttendanceProfileResponse.of(generationMember, sessionToAttendance)
     }
 
+    private fun getValidAttendanceStatuses(): List<AttendanceStatus> {
+        val statuses = AttendanceStatus.values().toMutableList()
+        statuses.remove(AttendanceStatus.PENDING)
+        return statuses;
+    }
+
     private fun getWeekSortedSessionToAttendance(
             attendances: List<Attendance>,
             sessions: List<Session>): SortedMap<Session, Attendance> {
@@ -45,11 +51,5 @@ class AttendanceService(
                     ?: throw NotFoundException.sessionNotFound()
         }
         return sessionToAttendance.toSortedMap(compareBy<Session> { it.week }.reversed())
-    }
-
-    private fun getValidAttendanceStatuses(): List<AttendanceStatus> {
-        val statuses = AttendanceStatus.values().toMutableList()
-        statuses.remove(AttendanceStatus.PENDING)
-        return statuses;
     }
 }
