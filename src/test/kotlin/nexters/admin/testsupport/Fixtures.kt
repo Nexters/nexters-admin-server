@@ -1,4 +1,4 @@
-package nexters.admin
+package nexters.admin.testsupport
 
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
@@ -14,6 +14,7 @@ import nexters.admin.domain.user.member.MemberStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+const val ADMIN_USERNAME = "admin"
 const val PHONE_NUMBER = "01012345678"
 
 fun createNewMember(
