@@ -35,9 +35,7 @@ data class AttendanceProfileResponse(
             return AttendanceProfileResponse(
                     generationMember.score ?: 100,
                     generationMember.isCompletable,
-                    sessionToAttendance.map { (session, attendance) ->
-                        AttendanceResponse.of(session, attendance)
-                    }
+                    sessionToAttendance.map { AttendanceResponse.of(it.key, it.value) }
             )
         }
     }
