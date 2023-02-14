@@ -8,6 +8,7 @@ import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.repository.findGenerationAttendancesIn
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -30,7 +31,7 @@ class AttendanceService(
 
         val statuses = getValidAttendanceStatuses()
 
-        val attendances = attendanceRepository.findAllByGenerationMemberIdAndAttendanceStatusIn(generationMember.id, statuses)
+        val attendances = attendanceRepository.findGenerationAttendancesIn(generationMember.id, statuses)
         val sessions = sessionRepository.findAllByGeneration(ongoingGeneration)
 
         val sessionToAttendance = getWeekSortedSessionToAttendance(attendances, sessions)
