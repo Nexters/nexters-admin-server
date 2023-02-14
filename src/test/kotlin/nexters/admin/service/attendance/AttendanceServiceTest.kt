@@ -70,23 +70,26 @@ class AttendanceServiceTest(
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
-        val session1: Session = sessionRepository.save(createNewSession())
-        val session2: Session = sessionRepository.save(createNewSession(week = 2))
-        val session3: Session = sessionRepository.save(createNewSession(week = 3))
-        val session4: Session = sessionRepository.save(createNewSession(week = 4))
-        val pendingSession: Session = sessionRepository.save(createNewSession(week = 5))
-
-        generateAttendance(session1, generationMember, AttendanceStatus.ATTENDED)
-        generateAttendance(session2, generationMember, AttendanceStatus.TARDY)
-        generateAttendance(session3, generationMember, AttendanceStatus.UNAUTHORIZED_ABSENCE)
-        generateAttendance(session4, generationMember, AttendanceStatus.AUTHORIZED_ABSENCE)
-        generateAttendance(pendingSession, generationMember, AttendanceStatus.PENDING)
+        saveAttendanceDataWithStatuses(generationMember)
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
         attendanceProfile.attendanceData!!.attendances.run {
             size shouldBe 4
             map { it.attendanceStatus } shouldNotContain AttendanceStatus.PENDING
         }
+    }
+
+    private fun saveAttendanceDataWithStatuses(generationMember: GenerationMember) {
+        val session1: Session = sessionRepository.save(createNewSession())
+        val session2: Session = sessionRepository.save(createNewSession(week = 2))
+        val session3: Session = sessionRepository.save(createNewSession(week = 3))
+        val session4: Session = sessionRepository.save(createNewSession(week = 4))
+        val pendingSession: Session = sessionRepository.save(createNewSession(week = 5))
+        generateAttendance(session1, generationMember, AttendanceStatus.ATTENDED)
+        generateAttendance(session2, generationMember, AttendanceStatus.TARDY)
+        generateAttendance(session3, generationMember, AttendanceStatus.UNAUTHORIZED_ABSENCE)
+        generateAttendance(session4, generationMember, AttendanceStatus.AUTHORIZED_ABSENCE)
+        generateAttendance(pendingSession, generationMember, AttendanceStatus.PENDING)
     }
 
     @Test
@@ -104,6 +107,14 @@ class AttendanceServiceTest(
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
+        saveUnorderedAttendanceData(generationMember)
+
+        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+
+        attendanceProfile.attendanceData!!.attendances shouldBeSortedWith { a, b -> b.week.compareTo(a.week) }
+    }
+
+    private fun saveUnorderedAttendanceData(generationMember: GenerationMember) {
         val session1: Session = sessionRepository.save(createNewSession(week = 1))
         val session2: Session = sessionRepository.save(createNewSession(week = 4))
         val session3: Session = sessionRepository.save(createNewSession(week = 2))
@@ -112,10 +123,6 @@ class AttendanceServiceTest(
         generateAttendance(session2, generationMember)
         generateAttendance(session3, generationMember)
         generateAttendance(session4, generationMember)
-
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
-
-        attendanceProfile.attendanceData!!.attendances shouldBeSortedWith { a, b -> b.week.compareTo(a.week) }
     }
 
     @ParameterizedTest
