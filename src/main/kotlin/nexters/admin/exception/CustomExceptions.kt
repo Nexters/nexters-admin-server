@@ -1,6 +1,13 @@
 package nexters.admin.exception
 
-class BadRequestException(message: String?) : RuntimeException(message)
+class BadRequestException(message: String?) : RuntimeException(message) {
+    companion object {
+        fun wrongGender() = BadRequestException("올바르지 않은 성별입니다.")
+        fun wrongPosition() = BadRequestException("올바르지 않은 직군입니다.")
+        fun wrongMemberStatus() = BadRequestException("올바르지 않은 활동구분입니다.")
+        fun wrongSubPosition() = BadRequestException("올바르지 않은 세부직군입니다.")
+    }
+}
 
 class UnauthenticatedException(message: String?) : RuntimeException(message) {
     companion object {
