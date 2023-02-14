@@ -4,10 +4,6 @@ import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
-import nexters.admin.createNewAttendance
-import nexters.admin.createNewGenerationMember
-import nexters.admin.createNewMember
-import nexters.admin.createNewSession
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.session.Session
@@ -16,6 +12,10 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.testsupport.createNewAttendance
+import nexters.admin.testsupport.createNewGenerationMember
+import nexters.admin.testsupport.createNewMember
+import nexters.admin.testsupport.createNewSession
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
