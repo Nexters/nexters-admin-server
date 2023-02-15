@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.user.FindAllMembersResponse
+import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
 import nexters.admin.support.auth.LoggedInMember
 import org.springframework.http.ResponseEntity
@@ -75,6 +76,14 @@ class MemberController(
     ): ResponseEntity<Void> {
         memberService.updatePassword(member, request.password)
         return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "내 정보 조회")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/me")
+    fun findProfile(@LoggedInMember member: Member): ResponseEntity<FindProfileResponse> {
+        val findProfileResponse = memberService.getProfile(member)
+        return ResponseEntity.ok(findProfileResponse)
     }
 
     @Operation(summary = "[관리자 페이지] 회원 삭제")

@@ -16,6 +16,7 @@ class InterceptorConfig(
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(AdminAuthInterceptor(jwtTokenProvider, adminService))
                 .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/admin") // TODO: DB 연동 시 제거
                 .excludePathPatterns("/api/auth/login/**")
                 .excludePathPatterns("/api/members/me")
                 .excludePathPatterns("/api/members/password")
