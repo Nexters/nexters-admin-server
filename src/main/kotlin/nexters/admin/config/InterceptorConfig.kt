@@ -22,5 +22,6 @@ class InterceptorConfig(
                 .excludePathPatterns("/api/members/password")
                 .excludePathPatterns("/api/sessions/home")
                 .excludePathPatterns("/api/attendance")
+                .excludePathPatterns("/api/attendance/me")
     }
 }
