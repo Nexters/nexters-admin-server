@@ -7,6 +7,7 @@ class BadRequestException(message: String?) : RuntimeException(message) {
         fun wrongPosition() = BadRequestException("올바르지 않은 직군입니다.")
         fun wrongMemberStatus() = BadRequestException("올바르지 않은 활동구분입니다.")
         fun wrongSubPosition() = BadRequestException("올바르지 않은 세부직군입니다.")
+        fun wrongQrCodeType() = BadRequestException("QR 코드 타입은 ATTENDED 혹은 TARDY만 허용됩니다.")
     }
 }
 

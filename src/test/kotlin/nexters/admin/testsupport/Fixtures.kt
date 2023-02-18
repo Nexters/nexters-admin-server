@@ -2,6 +2,7 @@ package nexters.admin.testsupport
 
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
+import nexters.admin.domain.attendance.QrCode
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
@@ -69,4 +70,13 @@ fun createNewAttendance(
         attendanceStatus: AttendanceStatus = AttendanceStatus.ATTENDED
 ): Attendance {
     return Attendance(attendTime, generationMemberId, sessionId, attendanceStatus)
+}
+
+fun createNewQrCode(
+        sessionId: Long = 1L,
+        value: String = "ASDFGH",
+        attendanceType: AttendanceStatus = AttendanceStatus.ATTENDED,
+        expirationTime: LocalDateTime = LocalDateTime.now().plusSeconds(60)
+): QrCode {
+    return QrCode(sessionId, value, attendanceType, expirationTime)
 }
