@@ -2,7 +2,6 @@ package nexters.admin.repository
 
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.attendance.QrCode
-import nexters.admin.exception.NotFoundException
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -17,8 +16,12 @@ class QrCodeRepository {
         return this.qrCodes.toList()
     }
 
-    fun getCurrentValidCode(): QrCode {
-        return qrCodes.firstOrNull { !it.isExpired() } ?: throw NotFoundException.qrCodeNotFound()
+    fun getCurrentSessionId(): Long? {
+        return qrCodes.firstOrNull()?.sessionId
+    }
+
+    fun findCurrentValidCode(): QrCode? {
+        return qrCodes.firstOrNull { !it.isExpired() }
     }
 
     fun initializeCodes(sessionId: Long, type: AttendanceStatus) {

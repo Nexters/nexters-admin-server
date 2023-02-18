@@ -1,11 +1,9 @@
 package nexters.admin.repository
 
 import io.kotest.assertions.throwables.shouldNotThrowAny
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.attendance.QrCode
-import nexters.admin.exception.NotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -19,10 +17,8 @@ class QrCodeRepositoryTest {
     }
 
     @Test
-    fun `코드 초기화 이전에 유효한 QR 코드 조회 시도시 예외 발생`() {
-        shouldThrow<NotFoundException> {
-            qrCodeRepository.getCurrentValidCode()
-        }
+    fun `코드 초기화 이전에 유효한 QR 코드 조회시 null 반환`() {
+        qrCodeRepository.findCurrentValidCode() shouldBe null
     }
 
     @Test
@@ -68,13 +64,11 @@ class QrCodeRepositoryTest {
     }
 
     @Test
-    fun `저장소를 비운 이후에 유효한 QR 코드 조회 시도시 예외 발생`() {
+    fun `저장소를 비운 이후에 유효한 QR 코드 조회시 null 반환`() {
         qrCodeRepository.initializeCodes(1L, AttendanceStatus.ATTENDED)
-
         qrCodeRepository.clear()
-        shouldThrow<NotFoundException> {
-            qrCodeRepository.getCurrentValidCode()
-        }
+
+        qrCodeRepository.findCurrentValidCode() shouldBe null
     }
 
     private fun validateOneMinuteInterval(qrCodes: List<QrCode>) {
