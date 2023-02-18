@@ -3,6 +3,10 @@ package nexters.admin.controller.attendance
 import nexters.admin.domain.attendance.QrCode
 import java.time.LocalDateTime
 
+data class ValidateQrCodeRequest(
+        val nonce: String,
+)
+
 data class CurrentQrCodeResponse(
         val sessionId: Long,
         val qrCode: String,

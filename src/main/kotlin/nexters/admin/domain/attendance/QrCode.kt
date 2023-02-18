@@ -24,6 +24,10 @@ class QrCode(
         }
     }
 
+    fun isSameValue(value: String): Boolean {
+        return this.value == value
+    }
+
     fun isExpired(): Boolean {
         return expirationTime.isBefore(LocalDateTime.now())
     }

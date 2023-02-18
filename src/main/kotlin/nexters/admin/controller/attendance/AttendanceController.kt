@@ -19,6 +19,17 @@ class AttendanceController(
         private val attendanceService: AttendanceService,
         private val qrCodeService: QrCodeService,
 ) {
+    @Operation(summary = "출석 체크")
+    @SecurityRequirement(name = "JWT")
+    @PostMapping
+    fun attend(
+            @LoggedInMember member: Member,
+            @RequestBody @Valid request: ValidateQrCodeRequest
+    ): ResponseEntity<Void> {
+        attendanceService.attendWithQrCode(member, request.nonce)
+        return ResponseEntity.ok().build()
+    }
+
     @Operation(summary = "내 출석 정보 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/me")

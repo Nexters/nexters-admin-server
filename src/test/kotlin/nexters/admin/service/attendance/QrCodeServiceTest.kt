@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 @ApplicationTest
 class QrCodeServiceTest(
-        @Autowired  private val qrCodeService: QrCodeService,
+        @Autowired private val qrCodeService: QrCodeService,
 ) {
     @Test
     fun `출석 체크 시작 전에 QR 코드 조회 시도시 예외 발생`() {
