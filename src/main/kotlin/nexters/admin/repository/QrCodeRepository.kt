@@ -11,7 +11,11 @@ const val BACKUP_CODE_COUNT = 10
 @Component
 class QrCodeRepository {
 
-    internal var qrCodes: MutableList<QrCode> = ArrayList()
+    private var qrCodes: MutableList<QrCode> = ArrayList()
+
+    fun getQrCodes(): List<QrCode> {
+        return this.qrCodes.toList()
+    }
 
     fun getCurrentValidCode(): QrCode {
         return qrCodes.firstOrNull { !it.isExpired() } ?: throw NotFoundException.qrCodeNotFound()

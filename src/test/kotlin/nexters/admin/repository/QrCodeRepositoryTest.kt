@@ -31,13 +31,14 @@ class QrCodeRepositoryTest {
         val type = AttendanceStatus.ATTENDED
         qrCodeRepository.initializeCodes(sessionId, type)
 
-        for (actual in qrCodeRepository.qrCodes) {
+        val qrCodes = qrCodeRepository.getQrCodes()
+        for (actual in qrCodes) {
             actual.sessionId shouldBe sessionId
             actual.type shouldBe type
             actual.isExpired() shouldBe false
         }
-        qrCodeRepository.qrCodes.size shouldBe 10
-        validateOneMinuteInterval(qrCodeRepository.qrCodes)
+        qrCodes.size shouldBe 10
+        validateOneMinuteInterval(qrCodes)
     }
 
     @Test
@@ -47,13 +48,14 @@ class QrCodeRepositoryTest {
         qrCodeRepository.initializeCodes(sessionId, type)
         qrCodeRepository.updateValidCodes()
 
-        for (actual in qrCodeRepository.qrCodes) {
+        val qrCodes = qrCodeRepository.getQrCodes()
+        for (actual in qrCodes) {
             actual.sessionId shouldBe sessionId
             actual.type shouldBe type
             actual.isExpired() shouldBe false
         }
-        qrCodeRepository.qrCodes.size shouldBe 10
-        validateOneMinuteInterval(qrCodeRepository.qrCodes)
+        qrCodes.size shouldBe 10
+        validateOneMinuteInterval(qrCodes)
     }
 
     @Test
@@ -75,7 +77,7 @@ class QrCodeRepositoryTest {
         }
     }
 
-    private fun validateOneMinuteInterval(qrCodes: MutableList<QrCode>) {
+    private fun validateOneMinuteInterval(qrCodes: List<QrCode>) {
         var prev = qrCodes.first()
         for (idx: Int in 1 until qrCodes.size) {
             prev.expirationTime.plusMinutes(1) shouldBe qrCodes[idx].expirationTime
