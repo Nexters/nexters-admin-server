@@ -9,18 +9,18 @@ const val LENGTH = 6
 class QrCode(
         val sessionId: Long,
         val value: String = randomStringLengthOf(LENGTH),
-        val attendanceType: AttendanceStatus,
+        val type: AttendanceStatus,
         val expirationTime: LocalDateTime
 ) {
     init {
-        if (attendanceType != AttendanceStatus.ATTENDED && attendanceType != AttendanceStatus.TARDY) {
+        if (type != AttendanceStatus.ATTENDED && type != AttendanceStatus.TARDY) {
             throw BadRequestException.wrongQrCodeType()
         }
     }
 
     companion object {
         fun of(sessionId: Long, attendanceType: AttendanceStatus, expirationTime: LocalDateTime): QrCode {
-            return QrCode(sessionId = sessionId, attendanceType = attendanceType, expirationTime = expirationTime)
+            return QrCode(sessionId = sessionId, type = attendanceType, expirationTime = expirationTime)
         }
     }
 

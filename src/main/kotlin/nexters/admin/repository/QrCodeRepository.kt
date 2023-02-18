@@ -29,12 +29,12 @@ class QrCodeRepository {
         val existingCode = qrCodes.firstOrNull() ?: return
         qrCodes = qrCodes.filter { !it.isExpired() }.toMutableList()
         if (qrCodes.isEmpty()) {
-            initializeCodes(existingCode.sessionId, existingCode.attendanceType)
+            initializeCodes(existingCode.sessionId, existingCode.type)
             return
         }
         while (qrCodes.size < BACKUP_CODE_COUNT) {
             val lastCode = qrCodes[qrCodes.size - 1]
-            qrCodes.add(QrCode.of(lastCode.sessionId, lastCode.attendanceType, lastCode.expirationTime.plusMinutes(1)))
+            qrCodes.add(QrCode.of(lastCode.sessionId, lastCode.type, lastCode.expirationTime.plusMinutes(1)))
         }
     }
 

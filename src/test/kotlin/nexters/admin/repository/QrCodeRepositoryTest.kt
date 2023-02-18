@@ -33,7 +33,7 @@ class QrCodeRepositoryTest {
 
         for (actual in qrCodeRepository.qrCodes) {
             actual.sessionId shouldBe sessionId
-            actual.attendanceType shouldBe type
+            actual.type shouldBe type
             actual.isExpired() shouldBe false
         }
         qrCodeRepository.qrCodes.size shouldBe 10
@@ -49,7 +49,7 @@ class QrCodeRepositoryTest {
 
         for (actual in qrCodeRepository.qrCodes) {
             actual.sessionId shouldBe sessionId
-            actual.attendanceType shouldBe type
+            actual.type shouldBe type
             actual.isExpired() shouldBe false
         }
         qrCodeRepository.qrCodes.size shouldBe 10
