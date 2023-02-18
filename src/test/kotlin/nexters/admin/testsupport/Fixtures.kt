@@ -1,5 +1,6 @@
 package nexters.admin.testsupport
 
+import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
@@ -27,6 +28,20 @@ fun createNewMember(
         hasChangedPassword: Boolean = false,
 ): Member {
     return Member(name, Password(password), email, gender, phoneNumber, status, hasChangedPassword)
+}
+
+fun generateCreateMemberRequest(
+        name: String = "김태현",
+        gender: String = "남자",
+        email: String = "kth990303@naver.com",
+        phoneNumber: String = "01012345678",
+        generation: MutableList<Int> = mutableListOf(22),
+        position: String = "개발자",
+        subPosition: String = "백엔드",
+        status: String = "미이수",
+        isManager: Boolean = false,
+): CreateMemberRequest {
+    return CreateMemberRequest(name, gender, email, phoneNumber, generation, position, subPosition, status, isManager)
 }
 
 fun createNewGenerationMember(
