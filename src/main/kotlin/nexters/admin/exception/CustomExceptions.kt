@@ -24,5 +24,6 @@ class NotFoundException(message: String?) : RuntimeException(message) {
     companion object {
         fun memberNotFound() = NotFoundException("존재하지 않는 회원입니다.")
         fun sessionNotFound() = NotFoundException("존재하지 않는 세션입니다.")
+        fun qrCodeNotFound() = NotFoundException("유효한 QR 코드가 존재하지 않습니다.")
     }
 }
