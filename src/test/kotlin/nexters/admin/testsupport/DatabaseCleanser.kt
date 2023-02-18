@@ -1,6 +1,8 @@
 package nexters.admin.testsupport
 
+import nexters.admin.repository.QrCodeRepository
 import org.springframework.beans.factory.InitializingBean
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.Entity
@@ -13,6 +15,7 @@ import javax.persistence.metamodel.EntityType
 class DatabaseCleanser(
         @PersistenceContext private val entityManager: EntityManager,
         private val tableNames: MutableList<String> = mutableListOf(),
+        @Autowired private val qrCodeRepository: QrCodeRepository,
 ) : InitializingBean {
 
     override fun afterPropertiesSet() {
@@ -31,6 +34,7 @@ class DatabaseCleanser(
     fun execute() {
         entityManager.flush()
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate()
+        qrCodeRepository.clear()
         tableNames.forEach {
             entityManager.createNativeQuery("TRUNCATE TABLE $it").executeUpdate()
             entityManager.createNativeQuery("ALTER TABLE $it ALTER COLUMN ID RESTART WITH 1").executeUpdate()
