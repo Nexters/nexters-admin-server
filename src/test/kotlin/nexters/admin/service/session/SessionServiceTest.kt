@@ -2,19 +2,18 @@ package nexters.admin.service.session
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.junit.jupiter.api.AfterEach
 import nexters.admin.repository.SessionRepository
+import nexters.admin.testsupport.ApplicationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
 @ApplicationTest
 class SessionServiceTest(
-        @Autowired private val sessionService: SessionService
+    @Autowired private val sessionService: SessionService,
+    @Autowired private val sessionRepository: SessionRepository,
 ) {
 
     @Test
