@@ -15,4 +15,11 @@ class GenerationMemberTest {
         generationMember.position shouldBe Position.DESIGNER
         generationMember.subPosition shouldBe null
     }
+
+    @Test
+    fun `운영진 여부 반환`() {
+        val generationMember =  createNewGenerationMember(position = Position.MANAGER)
+
+        generationMember.isManager() shouldBe true
+    }
 }

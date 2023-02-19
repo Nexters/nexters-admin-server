@@ -40,7 +40,6 @@ class MemberServiceTest(
                         "개발자",
                         "백엔드",
                         "미이수",
-                        false
                 )
         )
 
@@ -62,7 +61,6 @@ class MemberServiceTest(
                         "개발자",
                         "백엔드",
                         "미이수",
-                        false
                 )
         )
 
@@ -86,7 +84,6 @@ class MemberServiceTest(
                         "개발자",
                         "백엔드",
                         "미이수",
-                        false
                 )
         )
 
@@ -110,7 +107,6 @@ class MemberServiceTest(
                         "개발자",
                         "백엔드",
                         "미이수",
-                        false
                 )
         )
 

@@ -36,9 +36,8 @@ fun createNewGenerationMember(
         subPosition: SubPosition = SubPosition.BE,
         score: Int = 100,
         isCompletable: Boolean = true,
-        isManager: Boolean = false,
 ): GenerationMember {
-    return GenerationMember(memberId, generation, position, subPosition, score, isCompletable, isManager)
+    return GenerationMember(memberId, generation, position, subPosition, score, isCompletable)
 }
 
 fun createNewAdmin(
