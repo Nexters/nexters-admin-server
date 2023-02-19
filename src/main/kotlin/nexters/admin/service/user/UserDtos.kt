@@ -1,5 +1,6 @@
 package nexters.admin.service.user
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.user.member.Member
 
@@ -17,6 +18,7 @@ data class FindMemberResponse(
         val position: String?,
         val subPosition: String?,
         val status: String,
+        @get:JsonProperty(value = "isManager")
         val isManager: Boolean,
 ) {
     companion object {
@@ -31,7 +33,7 @@ data class FindMemberResponse(
                     generationMembers.last().position?.value ?: "",
                     generationMembers.last().subPosition?.value ?: "",
                     member.status.value,
-                    generationMembers.last().isManager
+                    generationMembers.last().isManager()
             )
         }
     }
