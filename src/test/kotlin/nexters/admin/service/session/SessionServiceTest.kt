@@ -12,17 +12,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.transaction.Transactional
 
-@Transactional
-@SpringBootTest
+@ApplicationTest
 class SessionServiceTest(
-        @Autowired private val sessionRepository: SessionRepository
+        @Autowired private val sessionService: SessionService
 ) {
-    val sessionService = SessionService(sessionRepository)
-
-    @AfterEach
-    fun tearDown() {
-        sessionRepository.deleteAll()
-    }
 
     @Test
     fun `세션 생성`() {
