@@ -43,4 +43,8 @@ class GenerationMember(
         this.position = position
         this.subPosition = subPosition
     }
+
+    fun isManager(): Boolean {
+        return this.position == Position.MANAGER
+    }
 }
