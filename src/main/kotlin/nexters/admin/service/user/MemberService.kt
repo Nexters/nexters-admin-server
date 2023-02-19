@@ -1,18 +1,15 @@
 package nexters.admin.service.user
 
-import nexters.admin.controller.user.CreateAdministratorRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
-import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
-import nexters.admin.repository.AdministratorRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -26,7 +23,6 @@ private const val DEFAULT_PASSWORD_LENGTH = 4
 class MemberService(
         private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
-        private val administratorRepository: AdministratorRepository,
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
         val savedMember = memberRepository.save(
