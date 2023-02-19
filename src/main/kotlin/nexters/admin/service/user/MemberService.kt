@@ -24,13 +24,12 @@ class MemberService(
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
         val savedMember = memberRepository.save(
-                Member(
+                Member.of(
                         request.name,
-                        Password.fromPhoneNumber(request.phoneNumber),
                         request.email,
-                        Gender.from(request.gender),
+                        request.gender,
                         request.phoneNumber,
-                        MemberStatus.from(request.status)
+                        request.status
                 )
         )
         createCurrentGenerationMember(savedMember, request)

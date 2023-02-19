@@ -3,6 +3,8 @@ package nexters.admin.domain.user.member
 import nexters.admin.domain.user.Password
 import javax.persistence.*
 
+private const val DEFAULT_INITIAL_PASSWORD_LENGTH = 4
+
 @Entity
 @Table(name = "member")
 class Member(
@@ -32,6 +34,29 @@ class Member(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    companion object {
+        fun of(
+                name: String,
+                email: String,
+                gender: String,
+                phoneNumber: String,
+                status: String,
+        ): Member {
+            return Member(
+                    name = name,
+                    password = generateDefaultPassword(phoneNumber),
+                    email = email,
+                    gender = Gender.from(gender),
+                    phoneNumber = phoneNumber,
+                    status = MemberStatus.from(status)
+            )
+        }
+
+        private fun generateDefaultPassword(phoneNumber: String): Password {
+            return Password(phoneNumber.substring(phoneNumber.length - DEFAULT_INITIAL_PASSWORD_LENGTH, phoneNumber.length))
+        }
+    }
 
     fun update(
             name: String,
