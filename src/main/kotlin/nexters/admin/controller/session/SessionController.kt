@@ -37,7 +37,7 @@ class SessionController(
 
     @Operation(summary = "[관리자 페이지] 특정 기수의 세션 조회")
     @SecurityRequirement(name = "JWT")
-    @GetMapping("")
+    @GetMapping
     fun findSessionByGeneration(@RequestParam generation: Int): ResponseEntity<List<Session>> {
         val sessions = sessionService.findSessionByGeneration(generation)
         return ResponseEntity.ok(sessions)
