@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @Tag(name = "Session", description = "세션")
-@RequestMapping("/api/sessinos")
+@RequestMapping("/api/sessions")
 @RestController
 class SessionController(
         private val sessionService: SessionService,
@@ -22,7 +22,8 @@ class SessionController(
     @Operation(summary = "메인 세션 조회")
     @GetMapping("/home")
     fun getSessionHome() {
-        //Todo jwt에서 유저아이디 가져온다음 유저에 따라 다른 response 를 줘야함
+        // Todo
+        // jwt에서 유저아이디 가져온다음 유저에 따라 다른 response 를 줘야함
         // ResponseBody {
         //    sessionDate: LocalDate
         //    title: string
