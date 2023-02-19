@@ -10,6 +10,8 @@ class BadRequestException(message: String?) : RuntimeException(message) {
         fun wrongCsvFile() = BadRequestException("올바르지 않은 엑셀 파일 형식입니다.")
         fun duplicateEmail() = BadRequestException("복수의 회원이 동일한 이메일을 지니고 있습니다.")
         fun missingInfo(info: String) = BadRequestException("$info 정보가 누락되었습니다.")
+        fun sessionAlreadyExist() = BadRequestException("이미 존재하는 세션입니다.")
+        fun generationAlreadyExist() = BadRequestException("이미 존재하는 기수입니다.")
     }
 }
 
@@ -26,5 +28,7 @@ class NotFoundException(message: String?) : RuntimeException(message) {
     companion object {
         fun memberNotFound() = NotFoundException("존재하지 않는 회원입니다.")
         fun sessionNotFound() = NotFoundException("존재하지 않는 세션입니다.")
+
+        fun generationNotFound() = NotFoundException("존재하지 않는 기수입니다.")
     }
 }
