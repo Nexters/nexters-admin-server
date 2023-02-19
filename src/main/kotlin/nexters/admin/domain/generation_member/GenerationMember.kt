@@ -13,7 +13,7 @@ import javax.persistence.Table
 @Table(name = "generation_member")
 class GenerationMember(
         @Column(name = "member_id")
-        var memberId: Long? = null,
+        var memberId: Long? = null, // TODO: nullable looks dangerous. needs checkup.
 
         @Column(name = "generation", length = 20)
         val generation: Int,

@@ -2,7 +2,7 @@ package nexters.admin.domain.user.member
 
 import nexters.admin.exception.BadRequestException
 
-private const val EMAIL = "email"
+const val EMAIL = "email"
 private const val NAME = "name"
 private const val GENDER = "gender"
 private const val PHONE_NUMBER = "phone_number"
