@@ -12,7 +12,7 @@ class SessionService(
 ) {
 
     fun findSessionByGeneration(generation: Int): List<Session> {
-        return sessionRepository.findByGeneration(generation)
+        return sessionRepository.findAllByGeneration(generation)
     }
 
     fun createSession(request: CreateSessionRequest): Long {

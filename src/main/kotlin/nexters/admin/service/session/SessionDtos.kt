@@ -3,7 +3,6 @@ package nexters.admin.service.session
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 data class CreateSessionRequest(
         val title: String,
         val description: String,
