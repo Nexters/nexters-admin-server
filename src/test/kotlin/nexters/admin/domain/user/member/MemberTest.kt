@@ -11,18 +11,22 @@ class MemberTest {
     @Test
     fun `회원 정보 수정`() {
         val member = createNewMember()
+        val prevStatus = member.status
 
-        member.update("김태현", Gender.MALE, PHONE_NUMBER)
+        member.update(name = "김태현", gender = Gender.MALE, phoneNumber = PHONE_NUMBER)
 
         member.name shouldBe "김태현"
+        member.status shouldBe prevStatus
     }
 
     @Test
     fun `회원 활동 정보 수정`() {
         val member = createNewMember()
+        val prevName = member.name
 
-        member.updateStatus(MemberStatus.CERTIFICATED)
+        member.update(status = MemberStatus.CERTIFICATED)
 
+        member.name shouldBe prevName
         member.status shouldBe MemberStatus.CERTIFICATED
     }
 

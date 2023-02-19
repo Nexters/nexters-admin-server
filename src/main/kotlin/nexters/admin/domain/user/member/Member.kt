@@ -70,21 +70,6 @@ class Member(
         status?.let { this.status = status }
     }
 
-    // TODO: 구현된 범용 메서드로 대체
-    fun update(
-            name: String,
-            gender: Gender,
-            phoneNumber: String,
-    ) {
-        this.name = name
-        this.gender = gender
-        this.phoneNumber = phoneNumber
-    }
-
-    fun updateStatus(status: MemberStatus) {
-        this.status = status
-    }
-
     fun isSamePassword(password: Password): Boolean {
         return this.password.isSamePassword(password)
     }
