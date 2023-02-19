@@ -4,12 +4,10 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.domain.session.Session
-import nexters.admin.domain.user.administrator.Administrator
 import nexters.admin.service.session.CreateSessionRequest
 import nexters.admin.service.session.CreateSessionResponse
 import nexters.admin.service.session.SessionService
 import nexters.admin.service.session.UpdateSessionRequest
-import nexters.admin.support.auth.LoggedInAdmin
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
