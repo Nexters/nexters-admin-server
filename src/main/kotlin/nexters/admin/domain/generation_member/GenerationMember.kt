@@ -31,9 +31,6 @@ class GenerationMember(
 
         @Column(name = "is_completable", nullable = false)
         var isCompletable: Boolean = true,
-
-        @Column(name = "is_manager", nullable = false)
-        var isManager: Boolean = false,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
