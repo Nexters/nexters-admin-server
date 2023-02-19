@@ -9,7 +9,6 @@ class Member(
         @Column(name = "name", nullable = false)
         var name: String,
 
-        @AttributeOverride(name = "value", column = Column(name = "password", nullable = false))
         @Embedded
         var password: Password,
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import nexters.admin.support.extensions.sha256Encrypt
+import javax.persistence.Column
 import javax.persistence.Embeddable
 
 private class PasswordDeserializer : JsonDeserializer<Password>() {
@@ -24,7 +25,10 @@ private class PasswordSerializer : JsonSerializer<Password>() {
 @JsonSerialize(using = PasswordSerializer::class)
 @JsonDeserialize(using = PasswordDeserializer::class)
 @Embeddable
-data class Password(var value: String) {
+data class Password(
+        @Column(name = "password", nullable = false)
+        var value: String
+) {
     init {
         value = value.sha256Encrypt()
     }

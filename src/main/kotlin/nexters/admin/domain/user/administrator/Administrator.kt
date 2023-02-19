@@ -14,10 +14,9 @@ import javax.persistence.Table
 @Entity
 @Table(name = "administrator")
 class Administrator(
-        @Column(name = "username", nullable = false)
+        @Column(name = "username", unique = true, nullable = false)
         val username: String,
 
-        @AttributeOverride(name = "value", column = Column(name = "password", nullable = false))
         @Embedded
         var password: Password,
 

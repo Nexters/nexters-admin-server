@@ -12,6 +12,9 @@ class Attendance(
         @Column(name = "generation_member_id")
         val generationMemberId: Long,
 
+        @Column(name = "session_id")
+        val sessionId: Long,
+
         @Enumerated(EnumType.STRING)
         @Column(name = "attendance_status")
         val attendanceStatus: AttendanceStatus

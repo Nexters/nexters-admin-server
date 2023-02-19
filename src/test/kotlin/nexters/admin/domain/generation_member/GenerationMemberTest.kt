@@ -1,7 +1,7 @@
 package nexters.admin.domain.generation_member
 
 import io.kotest.matchers.shouldBe
-import nexters.admin.createNewGenerationMember
+import nexters.admin.testsupport.createNewGenerationMember
 import org.junit.jupiter.api.Test
 
 class GenerationMemberTest {

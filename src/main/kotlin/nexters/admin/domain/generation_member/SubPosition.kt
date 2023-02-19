@@ -1,5 +1,7 @@
 package nexters.admin.domain.generation_member
 
+import nexters.admin.exception.BadRequestException
+
 enum class SubPosition(val value: String?) {
     BE("백엔드"),
     FE("프론트엔드"),
@@ -15,6 +17,7 @@ enum class SubPosition(val value: String?) {
     ;
 
     companion object {
-        fun from(value: String?): SubPosition = values().first { it.value == value }
+        fun from(value: String?): SubPosition =
+                values().firstOrNull { it.value == value } ?: throw BadRequestException.wrongSubPosition()
     }
 }
