@@ -13,7 +13,6 @@ data class CreateMemberRequest(
         val position: String?,
         val subPosition: String?,
         val status: String,
-        val isManager: Boolean,
 )
 
 data class CreateAdministratorRequest(
