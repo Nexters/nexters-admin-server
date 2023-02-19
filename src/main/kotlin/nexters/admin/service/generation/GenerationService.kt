@@ -16,7 +16,7 @@ class GenerationService(
         val exist = generationRepository.findByIdOrNull(request.generation)
 
         if (exist != null) {
-            throw BadRequestException.gnerationAlreadyExist()
+            throw BadRequestException.generationAlreadyExist()
         }
 
         generationRepository.save(

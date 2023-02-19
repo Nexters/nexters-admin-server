@@ -8,7 +8,7 @@ class BadRequestException(message: String?) : RuntimeException(message) {
         fun wrongMemberStatus() = BadRequestException("올바르지 않은 활동구분입니다.")
         fun wrongSubPosition() = BadRequestException("올바르지 않은 세부직군입니다.")
         fun sessionAlreadyExist() = BadRequestException("이미 존재하는 세션입니다.")
-        fun gnerationAlreadyExist() = BadRequestException("이미 존재하는 기수입니다.")
+        fun generationAlreadyExist() = BadRequestException("이미 존재하는 기수입니다.")
     }
 }
 

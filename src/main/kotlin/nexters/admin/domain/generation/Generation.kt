@@ -1,7 +1,5 @@
 package nexters.admin.domain.generation
 
-import nexters.admin.exception.BadRequestException
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -16,7 +14,6 @@ class Generation(
         @Enumerated(EnumType.STRING)
         @Column
         var status: GenerationStatus = GenerationStatus.BEFORE_ACTIVITY,
-) {
-}
+)
 
 
