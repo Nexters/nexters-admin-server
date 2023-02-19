@@ -59,6 +59,19 @@ class Member(
     }
 
     fun update(
+            name: String? = null,
+            gender: Gender? = null,
+            phoneNumber: String? = null,
+            status: MemberStatus? = null,
+    ) {
+        name?.let { this.name = name }
+        gender?.let { this.gender = gender }
+        phoneNumber?.let { this.phoneNumber = phoneNumber }
+        status?.let { this.status = status }
+    }
+
+    // TODO: 구현된 범용 메서드로 대체
+    fun update(
             name: String,
             gender: Gender,
             phoneNumber: String,
