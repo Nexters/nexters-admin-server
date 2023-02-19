@@ -16,8 +16,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private const val DEFAULT_PASSWORD_LENGTH = 4
-
 @Transactional
 @Service
 class MemberService(
@@ -28,7 +26,7 @@ class MemberService(
         val savedMember = memberRepository.save(
                 Member(
                         request.name,
-                        Password(createDefaultPassword(request.phoneNumber)),
+                        Password.fromPhoneNumber(request.phoneNumber),
                         request.email,
                         Gender.from(request.gender),
                         request.phoneNumber,
@@ -66,10 +64,6 @@ class MemberService(
                             )
                     )
                 }
-    }
-
-    private fun createDefaultPassword(phoneNumber: String): String {
-        return phoneNumber.substring(phoneNumber.length - DEFAULT_PASSWORD_LENGTH, phoneNumber.length)
     }
 
     @Transactional(readOnly = true)
@@ -181,7 +175,7 @@ class MemberService(
 
         memberRepository.deleteById(id)
     }
-    
+
     @Transactional(readOnly = true)
     fun getProfile(loggedInMember: Member): FindProfileResponse {
         val generationMember = generationMemberRepository.findTopByMemberIdOrderByGenerationDesc(loggedInMember.id)

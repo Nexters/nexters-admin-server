@@ -12,6 +12,8 @@ import nexters.admin.support.extensions.sha256Encrypt
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
+private const val DEFAULT_PASSWORD_LENGTH = 4
+
 private class PasswordDeserializer : JsonDeserializer<Password>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Password = Password(p.text)
 }
@@ -35,5 +37,10 @@ data class Password(
 
     fun isSamePassword(password: Password): Boolean {
         return this.value == password.value
+    }
+    companion object {
+        fun fromPhoneNumber(phoneNumber: String): Password {
+            return Password(phoneNumber.substring(phoneNumber.length - DEFAULT_PASSWORD_LENGTH, phoneNumber.length))
+        }
     }
 }
