@@ -5,7 +5,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "generation")
 class Generation(
-        @Id
+        @Column(unique = true)
         var generation: Long = 0L,
 
         @Column
@@ -14,6 +14,8 @@ class Generation(
         @Enumerated(EnumType.STRING)
         @Column
         var status: GenerationStatus = GenerationStatus.BEFORE_ACTIVITY,
-)
-
-
+) {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long = 0L
+}

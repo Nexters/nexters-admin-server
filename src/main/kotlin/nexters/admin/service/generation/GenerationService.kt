@@ -4,21 +4,17 @@ import nexters.admin.domain.generation.Generation
 import nexters.admin.exception.BadRequestException
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class GenerationService(
         private val generationRepository: GenerationRepository
 ) {
-
     fun createGeneration(request: CreateGenerationRequest) {
-        val exist = generationRepository.findByIdOrNull(request.generation)
-
-        if (exist != null) {
+        val existingGenerationFound = generationRepository.findByGeneration(request.generation)
+        if (existingGenerationFound != null) {
             throw BadRequestException.generationAlreadyExist()
         }
-
         generationRepository.save(
                 Generation(
                         generation = request.generation,
@@ -28,28 +24,27 @@ class GenerationService(
     }
 
     fun deleteGeneration(generation: Long) {
-        generationRepository.deleteById(generation)
+        generationRepository.deleteByGeneration(generation)
     }
 
     fun updateGeneration(generation: Long, request: UpdateGenerationRequest) {
-        val found = generationRepository.findByIdOrNull(generation) ?: throw NotFoundException.generationNotFound()
-
+        val found = generationRepository.findByGeneration(generation) ?: throw NotFoundException.generationNotFound()
         found.apply {
             ceo = request.ceo
             status = request.status
         }
-
         generationRepository.save(found)
     }
 
     fun findGeneration(generation: Long): Generation {
-        return generationRepository.findByIdOrNull(generation) ?: throw NotFoundException.generationNotFound()
+        return generationRepository.findByGeneration(generation) ?: throw NotFoundException.generationNotFound()
     }
 
     fun findAllGeneration(): List<Generation> {
         return generationRepository.findAll()
     }
 
+    // TODO: MAX(generation) 사용하도록 수정
     fun findCurrentGeneration(): Generation {
         return generationRepository.findFirstByOrderByGenerationDesc() ?: throw NotFoundException.generationNotFound()
     }
