@@ -2,6 +2,7 @@ package nexters.admin.service.session
 
 import nexters.admin.domain.session.Session
 import nexters.admin.exception.BadRequestException
+import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.SessionRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -37,7 +38,7 @@ class SessionService(
     }
 
     fun updateSession(sessionId: Long, request: UpdateSessionRequest) {
-        val session = sessionRepository.findByIdOrNull(sessionId) ?: throw BadRequestException("session does not exist")
+        val session = sessionRepository.findByIdOrNull(sessionId) ?: throw NotFoundException.sessionNotFound()
 
         session.apply {
             title = request.title
@@ -54,7 +55,7 @@ class SessionService(
     }
 
     fun deleteSession(sessionId: Long) {
-        sessionRepository.findByIdOrNull(sessionId) ?: throw BadRequestException("session does not exist")
+        sessionRepository.findByIdOrNull(sessionId) ?: throw NotFoundException.sessionNotFound()
 
         sessionRepository.deleteById(sessionId)
     }
