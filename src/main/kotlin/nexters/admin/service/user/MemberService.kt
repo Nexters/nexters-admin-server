@@ -3,12 +3,14 @@ package nexters.admin.service.user
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.generation_member.GenerationMembers
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
+import nexters.admin.domain.user.member.Members
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
@@ -63,6 +65,21 @@ class MemberService(
                             )
                     )
                 }
+    }
+
+    // TODO: add tests
+    fun createGenerationMembers(generation: Long, memberMap: Map<String, List<String>>) {
+        val members = Members.of(memberMap)
+        val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
+        members.updateMembersWithMatchingEmail(existingMembers)
+        val savedMemberEmails = existingMembers.map { it.email }
+        val savedMembers =  memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
+        savedMembers.addAll(existingMembers)
+
+        val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
+        val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
+        generationMembers.updateGenerationMembersWithMatchingEmail(savedMembers, existingGenerationMembers)
+        generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(savedMembers.map { it.id }))
     }
 
     @Transactional(readOnly = true)
@@ -146,7 +163,7 @@ class MemberService(
     fun updateStatusByAdministrator(id: Long, status: String) {
         val findMember = memberRepository.findByIdOrNull(id)
                 ?: throw NotFoundException.memberNotFound()
-        findMember.updateStatus(MemberStatus.from(status))
+        findMember.update(status = MemberStatus.from(status))
     }
 
     fun updatePositionByAdministrator(id: Long, position: String?, subPosition: String?) {
