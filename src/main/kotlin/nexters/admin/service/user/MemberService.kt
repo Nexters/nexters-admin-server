@@ -52,7 +52,6 @@ class MemberService(
                         generation = request.generations.last(),
                         position = Position.from(request.position),
                         subPosition = SubPosition.from(request.subPosition),
-                        isManager = request.isManager
                 )
         )
         request.generations.removeLast()
@@ -68,7 +67,6 @@ class MemberService(
                                     position = Position.from(request.position),
                                     subPosition = SubPosition.from(request.subPosition),
                                     score = null,
-                                    isManager = request.isManager
                             )
                     )
                 }

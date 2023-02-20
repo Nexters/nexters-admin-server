@@ -12,6 +12,7 @@ class BadRequestException(message: String?) : RuntimeException(message) {
         fun wrongQrCodeValue() = BadRequestException("올바르지 않은 QR 코드입니다. 다시 시도해주시기 바랍니다.")
         fun wrongQrCodeType() = BadRequestException("QR 코드 타입은 ATTENDED 혹은 TARDY만 허용됩니다.")
         fun notGenerationMember() = BadRequestException("현재 활동 중인 기수가 아닙니다.")
+        fun generationAlreadyExist() = BadRequestException("이미 존재하는 기수입니다.")
     }
 }
 
@@ -29,5 +30,6 @@ class NotFoundException(message: String?) : RuntimeException(message) {
         fun memberNotFound() = NotFoundException("존재하지 않는 회원입니다.")
         fun sessionNotFound() = NotFoundException("존재하지 않는 세션입니다.")
         fun qrCodeNotFound() = NotFoundException("유효한 QR 코드가 존재하지 않습니다.")
+        fun generationNotFound() = NotFoundException("존재하지 않는 기수입니다.")
     }
 }

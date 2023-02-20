@@ -31,9 +31,6 @@ class GenerationMember(
 
         @Column(name = "is_completable", nullable = false)
         var isCompletable: Boolean = true,
-
-        @Column(name = "is_manager", nullable = false)
-        var isManager: Boolean = false,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +39,9 @@ class GenerationMember(
     fun updatePosition(position: Position?, subPosition: SubPosition?) {
         this.position = position
         this.subPosition = subPosition
+    }
+
+    fun isManager(): Boolean {
+        return this.position == Position.MANAGER
     }
 }
