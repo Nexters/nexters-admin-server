@@ -21,4 +21,8 @@ class AdminCacheRepository(
         adminRepository.findByUsername(username)
                 ?.let { cacheRepository[username] = it }
     }
+
+    fun deleteAll() {
+        cacheRepository = ConcurrentHashMap()
+    }
 }
