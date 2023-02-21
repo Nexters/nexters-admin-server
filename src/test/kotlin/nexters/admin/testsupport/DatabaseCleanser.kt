@@ -1,5 +1,6 @@
 package nexters.admin.testsupport
 
+import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.AdminCacheRepository
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,7 @@ import javax.persistence.metamodel.EntityType
 class DatabaseCleanser(
         @PersistenceContext private val entityManager: EntityManager,
         private val tableNames: MutableList<String> = mutableListOf(),
+        @Autowired private val qrCodeRepository: QrCodeRepository,
         @Autowired private val adminCacheRepository: AdminCacheRepository,
 ) : InitializingBean {
 
@@ -34,6 +36,7 @@ class DatabaseCleanser(
     fun execute() {
         entityManager.flush()
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate()
+        qrCodeRepository.clear()
         adminCacheRepository.deleteAll()
         tableNames.forEach {
             entityManager.createNativeQuery("TRUNCATE TABLE $it").executeUpdate()
