@@ -2,6 +2,8 @@ package nexters.admin.service.session
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.controller.session.CreateSessionRequest
+import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.session.SessionStatus
@@ -10,10 +12,10 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.testsupport.createNewSession
 import nexters.admin.testsupport.createNewAttendance
 import nexters.admin.testsupport.createNewGenerationMember
 import nexters.admin.testsupport.createNewMember
-import nexters.admin.testsupport.createNewSession
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -42,8 +44,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -63,8 +63,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -83,8 +81,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 2,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
         sessionService.createSession(
@@ -95,8 +91,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -109,35 +103,22 @@ class SessionServiceTest(
 
     @Test
     fun `세션 수정`() {
-        val id = sessionService.createSession(
-                CreateSessionRequest(
-                        title = "Test title",
-                        description = "Test description",
-                        message = "Test message",
-                        generation = 22,
-                        sessionTime = LocalDate.now(),
-                        week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
-                )
-        )
-
-        sessionService.updateSession(id, UpdateSessionRequest(
+        val session = createNewSession()
+        sessionRepository.save(session)
+        sessionService.updateSession(session.id, UpdateSessionRequest(
                 title = "Updated Title",
                 description = "Test description",
                 message = "Test message",
                 generation = 22,
                 sessionTime = LocalDate.now(),
                 week = 3,
-                startAttendTime = LocalDateTime.now(),
-                endAttendTime = LocalDateTime.now()
         ))
 
-
-        val found = sessionRepository.findByIdOrNull(id)
+        val found = sessionRepository.findByIdOrNull(session.id)
 
         found shouldNotBe null
         found?.title shouldBe "Updated Title"
+        found?.startAttendTime shouldBe session.startAttendTime
     }
 
     @Test
@@ -150,8 +131,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
