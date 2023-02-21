@@ -1,47 +1,44 @@
 package nexters.admin.service.attendance
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.member.Member
+import nexters.admin.exception.BadRequestException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
+import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.testsupport.ApplicationTest
 import nexters.admin.testsupport.createNewAttendance
 import nexters.admin.testsupport.createNewGenerationMember
 import nexters.admin.testsupport.createNewMember
 import nexters.admin.testsupport.createNewSession
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
-@SpringBootTest
+@ApplicationTest
 class AttendanceServiceTest(
+        @Autowired private val attendanceService: AttendanceService,
         @Autowired private val attendanceRepository: AttendanceRepository,
         @Autowired private val generationMemberRepository: GenerationMemberRepository,
         @Autowired private val sessionRepository: SessionRepository,
-        @Autowired private val memberRepository: MemberRepository
+        @Autowired private val memberRepository: MemberRepository,
+        @Autowired private val qrCodeRepository: QrCodeRepository,
 ) {
-    val attendanceService = AttendanceService(attendanceRepository, generationMemberRepository, sessionRepository)
-
-    @AfterEach
-    fun tearDown() {
-        attendanceRepository.deleteAll()
-        generationMemberRepository.deleteAll()
-        generationMemberRepository.deleteAll()
-    }
-
     @Test
     fun `내 출석정보 조회`() {
         val member: Member = memberRepository.save(createNewMember())
@@ -158,4 +155,57 @@ class AttendanceServiceTest(
                     generationMemberId = generationMember.id,
             )
     )
+
+    @Test
+    fun `유효한 QR 코드로 출석 성공시 출석 상태 수정`() {
+        val member = memberRepository.save(createNewMember())
+        val generationMember = generationMemberRepository
+                .save(createNewGenerationMember(memberId = member.id))
+        val session = sessionRepository.save(createNewSession())
+        val attendance = generateAttendance(session, generationMember, AttendanceStatus.PENDING)
+        qrCodeRepository.initializeCodes(session.id, AttendanceStatus.TARDY)
+        val validCode = qrCodeRepository.findCurrentValidCode()!!
+
+        attendanceService.attendWithQrCode(member, validCode.value)
+
+        attendance.attendanceStatus shouldBe AttendanceStatus.TARDY
+    }
+
+    @Test
+    fun `출석 체크 종료 이후에 PENDING 상태의 출석은 모두 무단 결석으로 처리`() {
+        val member = memberRepository.save(createNewMember())
+        val generationMember = generationMemberRepository
+                .save(createNewGenerationMember(memberId = member.id))
+        val session = sessionRepository.save(createNewSession())
+        val attendance = generateAttendance(session, generationMember, AttendanceStatus.PENDING)
+        qrCodeRepository.initializeCodes(session.id, AttendanceStatus.TARDY)
+
+        attendanceService.endAttendance()
+
+        val actual = attendanceRepository.findByIdOrNull(attendance.id)
+        actual?.attendanceStatus shouldBe AttendanceStatus.UNAUTHORIZED_ABSENCE
+        qrCodeRepository.getQrCodes() shouldHaveSize 0
+    }
+
+    @Test
+    fun `잘못된 QR 코드로 출석 시도시, 예외 발생`() {
+        val member = memberRepository.save(createNewMember())
+        qrCodeRepository.initializeCodes(1L, AttendanceStatus.ATTENDED)
+
+        shouldThrow<BadRequestException> {
+            attendanceService.attendWithQrCode(member, "INVALIDCODE")
+        }
+    }
+
+    @Test
+    fun `현재 활동기수가 아닌 회원이 QR 코드로 출석 시도시, 예외 발생`() {
+        val member = memberRepository.save(createNewMember())
+        val session = sessionRepository.save(createNewSession())
+        qrCodeRepository.initializeCodes(session.id, AttendanceStatus.TARDY)
+        val validCode = qrCodeRepository.findCurrentValidCode()!!
+
+        shouldThrow<BadRequestException> {
+            attendanceService.attendWithQrCode(member, validCode.value)
+        }
+    }
 }

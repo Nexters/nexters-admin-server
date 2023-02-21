@@ -17,9 +17,14 @@ class Attendance(
 
         @Enumerated(EnumType.STRING)
         @Column(name = "attendance_status")
-        val attendanceStatus: AttendanceStatus
+        var attendanceStatus: AttendanceStatus
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun updateStatus(attendanceStatus: AttendanceStatus) {
+        this.attendTime = LocalDateTime.now()
+        this.attendanceStatus = attendanceStatus
+    }
 }

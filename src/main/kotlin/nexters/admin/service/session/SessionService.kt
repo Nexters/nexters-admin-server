@@ -1,7 +1,8 @@
 package nexters.admin.service.session
 
+import nexters.admin.controller.session.CreateSessionRequest
+import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.domain.session.Session
-import nexters.admin.exception.BadRequestException
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.SessionRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -25,8 +26,6 @@ class SessionService(
                         generation = request.generation,
                         sessionTime = request.sessionTime,
                         week = request.week,
-                        startAttendTime = request.startAttendTime,
-                        endAttendTime = request.endAttendTime
                 )
         )
 
@@ -38,17 +37,16 @@ class SessionService(
     }
 
     fun updateSession(sessionId: Long, request: UpdateSessionRequest) {
-        val session = sessionRepository.findByIdOrNull(sessionId) ?: throw NotFoundException.sessionNotFound()
+        val session = sessionRepository.findByIdOrNull(sessionId)
+                ?: throw NotFoundException.sessionNotFound()
 
         session.apply {
             title = request.title
-            description = request.description
-            message = request.message
+            description = request.description ?: session.description
+            message = request.message ?: session.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week
-            startAttendTime = request.startAttendTime
-            endAttendTime = request.endAttendTime
         }
 
         sessionRepository.save(session)
