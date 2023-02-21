@@ -15,13 +15,13 @@ class CsvParseUtilsKtTest {
         val multipartFile = MockMultipartFile("testdata.csv", FileInputStream(File(url!!.path)))
         val actual = parseCsvFileToMap(multipartFile)
         val expected = mutableMapOf(
-                "name" to mutableListOf("정진우", "김민수"),
-                "gender" to mutableListOf("남자", "남자"),
-                "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com"),
-                "phone_number" to mutableListOf("01012345678", "01012345679"),
-                "position" to mutableListOf("개발자", "운영진"),
-                "sub_position" to mutableListOf("프론트엔드", "CTO"),
-                "status" to mutableListOf("미이수", "수료")
+                "name" to mutableListOf("정진우", "김민수", "최다예"),
+                "gender" to mutableListOf("남자", "남자", "여자"),
+                "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com", "dayeah@gmail.com"),
+                "phone_number" to mutableListOf("01012345678", "01012345679", "01012345670"),
+                "position" to mutableListOf("개발자", "운영진", "디자이너"),
+                "sub_position" to mutableListOf("프론트엔드", "CTO", ""),
+                "status" to mutableListOf("미이수", "수료", "제명")
         )
         actual shouldBe expected
     }
