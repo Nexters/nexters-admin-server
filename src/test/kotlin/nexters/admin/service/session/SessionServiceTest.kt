@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.session.Session
+import nexters.admin.domain.session.SessionStatus
 import nexters.admin.domain.user.member.Member
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
@@ -175,7 +176,7 @@ class SessionServiceTest(
     }
 
     @Test
-    fun `세션이 존재하지 않으면 null 데이터를 반환한다`() {
+    fun `세션 홈 조회시 세션이 존재하지 않으면 null 데이터를 반환한다`() {
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
         generationMemberRepository.save(generationMember)
@@ -185,7 +186,73 @@ class SessionServiceTest(
         actual.title shouldBe null
     }
 
-    private fun generateSessions(): List<Session> {
+    @Test
+    fun `세션 홈 조회시 출석이 시작하지 않은 상태면 세션상태는 PENDING 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val pendingSession: Session = createNewSession(
+                title = "PENDING 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = null,
+                endAttendTime = null)
+        sessionRepository.save(pendingSession)
+        sessions.add(pendingSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.title shouldBe "PENDING 세션"
+        actual.sessionStatus shouldBe SessionStatus.PENDING
+    }
+
+    @Test
+    fun `세션 홈 조회시 출석진행중인 세션상태는 ONGOING 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val ongoingSession: Session = createNewSession(
+                title = "ONGOING 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = LocalDateTime.now().minusMinutes(3),
+                endAttendTime = null)
+        sessionRepository.save(ongoingSession)
+        sessions.add(ongoingSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.title shouldBe "ONGOING 세션"
+        actual.sessionStatus shouldBe SessionStatus.ONGOING
+    }
+
+    @Test
+    fun `세션 홈 조회시 출석완료된 세션상태는 EXPIRED 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val expiredSession: Session = createNewSession(
+                title = "EXPIRED 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = LocalDateTime.now().minusMinutes(10),
+                endAttendTime = LocalDateTime.now().minusMinutes(3))
+        sessionRepository.save(expiredSession)
+        sessions.add(expiredSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.title shouldBe "EXPIRED 세션"
+        actual.sessionStatus shouldBe SessionStatus.EXPIRED
+    }
+
+    private fun generateSessions(): MutableList<Session> {
         val today: LocalDate = LocalDate.now()
         val session1: Session = createNewSession(generation = 22, sessionTime = today.minusDays(3))
         val session2: Session = createNewSession(generation = 22, sessionTime = today.plusDays(10))
@@ -197,7 +264,7 @@ class SessionServiceTest(
         sessionRepository.save(session3)
         sessionRepository.save(session4)
 
-        return listOf(session1, session2, session3, session4)
+        return mutableListOf(session1, session2, session3, session4)
     }
 
     private fun generateAttendances(sessions: List<Session>, generationMember: GenerationMember) {
