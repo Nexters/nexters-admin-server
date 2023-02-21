@@ -70,13 +70,13 @@ class GenerationMembers(
 
     fun updateGenerationMembersWithMatchingEmail(
             members: List<Member>,
-            curGenMembers: List<GenerationMember>,
+            currentGenerationMembers: List<GenerationMember>,
     ) {
-        val curGenMemberMap = mapByMemberId(curGenMembers)
+        val memberIdToGenerationMemberMap = mapByMemberId(currentGenerationMembers)
         for (member in members) {
-            val curGenMember = curGenMemberMap[member.id]
+            val currentGenerationMember = memberIdToGenerationMemberMap[member.id]
             values[member.id]?.let {
-                curGenMember?.updatePosition(it.position, it.subPosition)
+                currentGenerationMember?.updatePosition(it.position, it.subPosition)
             }
         }
     }
@@ -84,9 +84,7 @@ class GenerationMembers(
     private fun mapByMemberId(curGenMembers: List<GenerationMember>): MutableMap<Long, GenerationMember> {
         val curGenMemberMap = mutableMapOf<Long, GenerationMember>()
         for (genMember in curGenMembers) {
-            genMember.memberId?.let {
-                curGenMemberMap[it] = genMember
-            }
+            genMember.memberId.let { curGenMemberMap[it] = genMember }
         }
         return curGenMemberMap
     }
