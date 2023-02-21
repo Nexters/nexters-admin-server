@@ -2,6 +2,8 @@ package nexters.admin.service.session
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.controller.session.CreateSessionRequest
+import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.repository.SessionRepository
 import nexters.admin.testsupport.ApplicationTest
 import org.junit.jupiter.api.Test
@@ -12,8 +14,8 @@ import java.time.LocalDateTime
 
 @ApplicationTest
 class SessionServiceTest(
-    @Autowired private val sessionService: SessionService,
-    @Autowired private val sessionRepository: SessionRepository,
+        @Autowired private val sessionService: SessionService,
+        @Autowired private val sessionRepository: SessionRepository,
 ) {
 
     @Test
