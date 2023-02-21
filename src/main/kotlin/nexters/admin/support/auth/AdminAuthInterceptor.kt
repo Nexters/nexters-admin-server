@@ -1,6 +1,7 @@
 package nexters.admin.support.auth
 
 import nexters.admin.service.user.AdminService
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.web.servlet.HandlerInterceptor
 import javax.servlet.http.HttpServletRequest
@@ -14,6 +15,9 @@ class AdminAuthInterceptor(
     override fun preHandle(request: HttpServletRequest,
                            response: HttpServletResponse,
                            handler: Any): Boolean {
+        if (request.method == HttpMethod.OPTIONS.name) {
+            return true
+        }
         val token = AuthorizationHeaderUtils.extractBearerToken(request)
         val username = jwtTokenProvider.getPayload(token)
         if (adminService.checkByUsername(username)) {
