@@ -39,9 +39,8 @@ fun generateCreateMemberRequest(
         position: String = "개발자",
         subPosition: String = "백엔드",
         status: String = "미이수",
-        isManager: Boolean = false,
 ): CreateMemberRequest {
-    return CreateMemberRequest(name, gender, email, phoneNumber, generation, position, subPosition, status, isManager)
+    return CreateMemberRequest(name, gender, email, phoneNumber, generation, position, subPosition, status)
 }
 
 fun createNewGenerationMember(
