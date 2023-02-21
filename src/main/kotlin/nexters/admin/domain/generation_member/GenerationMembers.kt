@@ -3,6 +3,8 @@ package nexters.admin.domain.generation_member
 import nexters.admin.domain.user.member.EMAIL
 import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.BadRequestException
+import nexters.admin.support.utils.hasNoDuplicates
+import nexters.admin.support.utils.validateCsvColumns
 
 private const val POSITION = "position"
 private const val SUB_POSITION = "sub_position"
@@ -19,7 +21,10 @@ class GenerationMembers(
                 generationMembers: Map<String, List<String>>,
                 savedMembers: List<Member>,
         ): GenerationMembers {
-            validate(generationMembers)
+            validateCsvColumns(generationMembers, REQUIRED_KEYS)
+            if (!hasNoDuplicates(generationMembers, EMAIL)) {
+                throw BadRequestException.duplicateEmail()
+            }
             val emailToMemberIdMap = mapMemberIdByEmail(savedMembers)
             val values = mutableMapOf<Long, GenerationMember>()
             for (idx in 0 until generationMembers[EMAIL]!!.size) {
@@ -35,18 +40,6 @@ class GenerationMembers(
                 ))
             }
             return GenerationMembers(values.toMap())
-        }
-
-        private fun validate(members: Map<String, List<String>>) {
-            if (members.isEmpty()) {
-                throw BadRequestException.wrongCsvFile()
-            }
-            if (!members.keys.containsAll(REQUIRED_KEYS)) {
-                throw BadRequestException.wrongCsvFile()
-            }
-            if (members[EMAIL]!!.size != setOf(members[EMAIL]).size) {
-                throw BadRequestException.duplicateEmail()
-            }
         }
 
         private fun mapMemberIdByEmail(savedMembers: List<Member>): Map<String, Long> {

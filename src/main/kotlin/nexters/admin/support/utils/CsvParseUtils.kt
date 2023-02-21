@@ -1,6 +1,8 @@
 package nexters.admin.support.utils
 
 import com.opencsv.CSVReader
+import nexters.admin.domain.user.member.EMAIL
+import nexters.admin.exception.BadRequestException
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 
@@ -22,4 +24,17 @@ fun parseCsvFileToMap(file: MultipartFile): Map<String, List<String>> {
         }
         return columnValues
     }
+}
+
+fun validateCsvColumns(members: Map<String, List<String>>, requiredKeys: List<String>) {
+    if (members.isEmpty()) {
+        throw BadRequestException.wrongCsvFile()
+    }
+    if (!members.keys.containsAll(requiredKeys)) {
+        throw BadRequestException.wrongCsvFile()
+    }
+}
+
+fun hasNoDuplicates(members: Map<String, List<String>>, uniqueKey: String): Boolean {
+    return members[uniqueKey]!!.size != setOf(members[uniqueKey]).size
 }

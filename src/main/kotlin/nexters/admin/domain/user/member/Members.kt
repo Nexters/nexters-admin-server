@@ -1,6 +1,8 @@
 package nexters.admin.domain.user.member
 
 import nexters.admin.exception.BadRequestException
+import nexters.admin.support.utils.hasNoDuplicates
+import nexters.admin.support.utils.validateCsvColumns
 
 const val EMAIL = "email"
 private const val NAME = "name"
@@ -16,8 +18,11 @@ class Members(
 ) {
     companion object {
         fun of(members: Map<String, List<String>>): Members {
-            validate(members)
-            val values = mutableMapOf<String, Member>();
+            validateCsvColumns(members, REQUIRED_KEYS)
+            if (!hasNoDuplicates(members, EMAIL)) {
+                throw BadRequestException.duplicateEmail()
+            }
+            val values = mutableMapOf<String, Member>()
             for (idx in 0 until members[EMAIL]!!.size) {
                 val email = members[EMAIL]?.get(idx) ?: throw BadRequestException.missingInfo("회원의 이메일")
                 values[email] = (Member.of(
@@ -30,18 +35,6 @@ class Members(
                 ))
             }
             return Members(values.toMap())
-        }
-
-        private fun validate(members: Map<String, List<String>>) {
-            if (members.isEmpty()) {
-                throw BadRequestException.wrongCsvFile()
-            }
-            if (!members.keys.containsAll(REQUIRED_KEYS)) {
-                throw BadRequestException.wrongCsvFile()
-            }
-            if (members[EMAIL]!!.size != setOf(members[EMAIL]).size) {
-                throw BadRequestException.duplicateEmail()
-            }
         }
     }
 
