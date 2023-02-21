@@ -2,18 +2,20 @@ package nexters.admin.service.session
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.controller.session.CreateSessionRequest
+import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.repository.SessionRepository
 import nexters.admin.testsupport.ApplicationTest
+import nexters.admin.testsupport.createNewSession
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ApplicationTest
 class SessionServiceTest(
-    @Autowired private val sessionService: SessionService,
-    @Autowired private val sessionRepository: SessionRepository,
+        @Autowired private val sessionService: SessionService,
+        @Autowired private val sessionRepository: SessionRepository,
 ) {
 
     @Test
@@ -26,8 +28,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -47,8 +47,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -67,8 +65,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 2,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
         sessionService.createSession(
@@ -79,8 +75,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -93,35 +87,22 @@ class SessionServiceTest(
 
     @Test
     fun `세션 수정`() {
-        val id = sessionService.createSession(
-                CreateSessionRequest(
-                        title = "Test title",
-                        description = "Test description",
-                        message = "Test message",
-                        generation = 22,
-                        sessionTime = LocalDate.now(),
-                        week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
-                )
-        )
-
-        sessionService.updateSession(id, UpdateSessionRequest(
+        val session = createNewSession()
+        sessionRepository.save(session)
+        sessionService.updateSession(session.id, UpdateSessionRequest(
                 title = "Updated Title",
                 description = "Test description",
                 message = "Test message",
                 generation = 22,
                 sessionTime = LocalDate.now(),
                 week = 3,
-                startAttendTime = LocalDateTime.now(),
-                endAttendTime = LocalDateTime.now()
         ))
 
-
-        val found = sessionRepository.findByIdOrNull(id)
+        val found = sessionRepository.findByIdOrNull(session.id)
 
         found shouldNotBe null
         found?.title shouldBe "Updated Title"
+        found?.startAttendTime shouldBe session.startAttendTime
     }
 
     @Test
@@ -134,8 +115,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
