@@ -58,7 +58,7 @@ class AttendanceController(
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/qr")
     fun endAttendance(): ResponseEntity<Void> {
-        qrCodeService.endAttendance()
+        attendanceService.endAttendance()
         return ResponseEntity.ok().build()
     }
 }

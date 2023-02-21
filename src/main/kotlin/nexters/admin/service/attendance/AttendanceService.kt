@@ -10,6 +10,7 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.repository.findAllPendingAttendanceOf
 import nexters.admin.repository.findGenerationAttendancesIn
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,8 +66,19 @@ class AttendanceService(
         }
         val generationMember = generationMemberRepository.findByGenerationAndMemberId(CURRENT_ONGOING_GENERATION, loggedInMember.id)
                 ?: throw BadRequestException.notGenerationMember()
-        val attendance = attendanceRepository. findByGenerationMemberIdAndSessionId(generationMember.id, validCode.sessionId)
-                ?:throw NotFoundException.sessionNotFound()
+        val attendance = attendanceRepository.findByGenerationMemberIdAndSessionId(generationMember.id, validCode.sessionId)
+                ?: throw NotFoundException.sessionNotFound()
         attendance.updateStatus(validCode.type)
+    }
+
+    fun endAttendance() {
+        val activeSessionId = qrCodeRepository.getCurrentSessionId()
+                ?: throw BadRequestException.attendanceNotStarted()
+        qrCodeRepository.clear()
+
+        val pendingAttendances = attendanceRepository.findAllPendingAttendanceOf(activeSessionId)
+        pendingAttendances.forEach {
+            it.updateStatus(AttendanceStatus.UNAUTHORIZED_ABSENCE)
+        }
     }
 }
