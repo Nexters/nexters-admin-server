@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ApplicationTest
 class SessionServiceTest(
@@ -28,8 +27,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -49,8 +46,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -69,8 +64,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 2,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
         sessionService.createSession(
@@ -81,8 +74,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -103,8 +94,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 
@@ -115,10 +104,7 @@ class SessionServiceTest(
                 generation = 22,
                 sessionTime = LocalDate.now(),
                 week = 3,
-                startAttendTime = LocalDateTime.now(),
-                endAttendTime = LocalDateTime.now()
         ))
-
 
         val found = sessionRepository.findByIdOrNull(id)
 
@@ -136,8 +122,6 @@ class SessionServiceTest(
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
-                        startAttendTime = LocalDateTime.now(),
-                        endAttendTime = LocalDateTime.now()
                 )
         )
 

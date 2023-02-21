@@ -26,8 +26,6 @@ class SessionService(
                         generation = request.generation,
                         sessionTime = request.sessionTime,
                         week = request.week,
-                        startAttendTime = request.startAttendTime,
-                        endAttendTime = request.endAttendTime
                 )
         )
 
@@ -44,13 +42,11 @@ class SessionService(
 
         session.apply {
             title = request.title
-            description = request.description
-            message = request.message
+            description = request.description ?: session.description
+            message = request.message ?: session.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week
-            startAttendTime = request.startAttendTime
-            endAttendTime = request.endAttendTime
         }
 
         sessionRepository.save(session)

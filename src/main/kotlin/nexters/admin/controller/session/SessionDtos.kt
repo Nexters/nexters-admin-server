@@ -1,7 +1,6 @@
 package nexters.admin.controller.session
 
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 data class CreateSessionRequest(
         val title: String,
@@ -10,8 +9,6 @@ data class CreateSessionRequest(
         val generation: Int,
         val sessionTime: LocalDate,
         val week: Int,
-        val startAttendTime: LocalDateTime,
-        val endAttendTime: LocalDateTime
 )
 
 data class UpdateSessionRequest(
@@ -21,6 +18,4 @@ data class UpdateSessionRequest(
         val generation: Int,
         val sessionTime: LocalDate,
         val week: Int,
-        val startAttendTime: LocalDateTime,
-        val endAttendTime: LocalDateTime
 )
