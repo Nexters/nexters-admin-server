@@ -92,7 +92,7 @@ class MemberService(
     }
 
     private fun findAllGenerationMembersByMemberId(
-            generationMembers: Map<Long?, List<GenerationMember>>,
+            generationMembers: Map<Long, List<GenerationMember>>,
             members: List<Member>,
     ): FindAllMembersResponse {
         val findAllMembers: MutableList<FindMemberResponse> = mutableListOf()
