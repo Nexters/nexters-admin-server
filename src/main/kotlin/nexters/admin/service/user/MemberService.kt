@@ -67,19 +67,18 @@ class MemberService(
                 }
     }
 
-    // TODO: add tests
     fun createGenerationMembers(generation: Long, memberMap: Map<String, List<String>>) {
         val members = Members.of(memberMap)
         val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
         members.updateMembersWithMatchingEmail(existingMembers)
         val savedMemberEmails = existingMembers.map { it.email }
-        val savedMembers =  memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
+        val savedMembers = memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
         savedMembers.addAll(existingMembers)
 
         val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
         val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
-        generationMembers.updateGenerationMembersWithMatchingEmail(savedMembers, existingGenerationMembers)
-        generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(savedMembers.map { it.id }))
+        generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
+        generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId }))
     }
 
     @Transactional(readOnly = true)

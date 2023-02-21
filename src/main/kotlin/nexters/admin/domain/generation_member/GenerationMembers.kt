@@ -34,9 +34,9 @@ class GenerationMembers(
                         memberId = memberId,
                         generation = generation.toInt(),
                         position = generationMembers[POSITION]?.get(idx)?.let { Position.from(it) }
-                                ?: throw BadRequestException.missingInfo("회원의 전화번호"),
+                                ?: throw BadRequestException.missingInfo("회원의 직군"),
                         subPosition = generationMembers[SUB_POSITION]?.get(idx)?.let { SubPosition.from(it) }
-                                ?: throw BadRequestException.missingInfo("회원의 전화번호"),
+                                ?: throw BadRequestException.missingInfo("회원의 세부직군"),
                 ))
             }
             return GenerationMembers(values.toMap())
@@ -61,24 +61,13 @@ class GenerationMembers(
         return members
     }
 
-    fun updateGenerationMembersWithMatchingEmail(
-            members: List<Member>,
+    fun updateGenerationMembersWithMatchingMemberId(
             currentGenerationMembers: List<GenerationMember>,
     ) {
-        val memberIdToGenerationMemberMap = mapByMemberId(currentGenerationMembers)
-        for (member in members) {
-            val currentGenerationMember = memberIdToGenerationMemberMap[member.id]
-            values[member.id]?.let {
-                currentGenerationMember?.updatePosition(it.position, it.subPosition)
+        for (currentGenerationMember in currentGenerationMembers) {
+            values[currentGenerationMember.memberId]?.let {
+                currentGenerationMember.updatePosition(it.position, it.subPosition)
             }
         }
-    }
-
-    private fun mapByMemberId(curGenMembers: List<GenerationMember>): MutableMap<Long, GenerationMember> {
-        val curGenMemberMap = mutableMapOf<Long, GenerationMember>()
-        for (genMember in curGenMembers) {
-            genMember.memberId.let { curGenMemberMap[it] = genMember }
-        }
-        return curGenMemberMap
     }
 }

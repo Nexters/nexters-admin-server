@@ -116,6 +116,78 @@ class MemberServiceTest(
     }
 
     @Test
+    fun `회원 복수 생성시 엑셀 정보를 토대로 회원과 기수 회원 모두 생성`() {
+        val generation = 22L
+        val excelInput = mutableMapOf(
+                "name" to mutableListOf("정진우", "김민수", "최다예"),
+                "gender" to mutableListOf("남자", "남자", "여자"),
+                "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com", "dayeah@gmail.com"),
+                "phone_number" to mutableListOf("01012345678", "01012345679", "01012345670"),
+                "position" to mutableListOf("개발자", "운영진", "디자이너"),
+                "sub_position" to mutableListOf("프론트엔드", "CTO", ""),
+                "status" to mutableListOf("미이수", "수료", "제명")
+        )
+
+        memberService.createGenerationMembers(generation, excelInput)
+        memberRepository.flush()
+        generationMemberRepository.flush()
+
+        val actualMemberIds = memberRepository.findAll().map { it.id }
+        val actualGenerationMembers = generationMemberRepository.findAllByMemberIdIn(actualMemberIds)
+        actualMemberIds shouldHaveSize 3
+        actualGenerationMembers shouldHaveSize 3
+    }
+
+    @Test
+    fun `회원 복수 생성시 이메일을 기준으로 이미 생성된 회원 정보는 이메일을 그대로 덮어씌어짐`() {
+        val generation = 22
+        val excelInput = mutableMapOf(
+                "name" to mutableListOf("정진우", "김민수", "최다예"),
+                "gender" to mutableListOf("남자", "남자", "여자"),
+                "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com", "dayeah@gmail.com"),
+                "phone_number" to mutableListOf("01012345678", "01012345679", "01012345670"),
+                "position" to mutableListOf("개발자", "운영진", "디자이너"),
+                "sub_position" to mutableListOf("프론트엔드", "CTO", ""),
+                "status" to mutableListOf("미이수", "수료", "제명")
+        )
+        val existingMember = memberRepository.save(createNewMember(email = "jinwoo@gmail.com", name = "기존이름"))
+        memberRepository.save(createNewMember(email = "not@matching.email"))
+        memberService.createGenerationMembers(generation.toLong(), excelInput)
+        memberRepository.flush()
+        generationMemberRepository.flush()
+
+        memberRepository.findByEmail(existingMember.email)?.name shouldBe "정진우"
+        memberRepository.findAll() shouldHaveSize 4
+        generationMemberRepository.findAll() shouldHaveSize 3
+    }
+
+    @Test
+    fun `회원 복수 생성시 이메일과 기수 정보를 기준으로 이미 생성된 기수회원의 직군 정보만 그대로 덮어씌어짐`() {
+        val generation = 22
+        val excelInput = mutableMapOf(
+                "name" to mutableListOf("정진우", "김민수", "최다예"),
+                "gender" to mutableListOf("남자", "남자", "여자"),
+                "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com", "dayeah@gmail.com"),
+                "phone_number" to mutableListOf("01012345678", "01012345679", "01012345670"),
+                "position" to mutableListOf("개발자", "운영진", "디자이너"),
+                "sub_position" to mutableListOf("프론트엔드", "CTO", ""),
+                "status" to mutableListOf("미이수", "수료", "제명")
+        )
+        val existingMember = memberRepository.save(createNewMember(email = "jinwoo@gmail.com"))
+        val existingMatchingGenerationMember = generationMemberRepository.save(
+                createNewGenerationMember(memberId = existingMember.id, generation = generation, position = Position.NULL)
+        )
+        generationMemberRepository.save(createNewGenerationMember(memberId = existingMember.id, generation = 99999))
+        memberService.createGenerationMembers(generation.toLong(), excelInput)
+        memberRepository.flush()
+        generationMemberRepository.flush()
+
+        generationMemberRepository.findByIdOrNull(existingMatchingGenerationMember.id)?.position shouldBe Position.DEVELOPER
+        memberRepository.findAll() shouldHaveSize 3
+        generationMemberRepository.findAll() shouldHaveSize 4
+    }
+
+    @Test
     fun `회원 전체 조회`() {
         val member1: Member = memberRepository.save(createNewMember())
         val member2: Member = memberRepository.save(createNewMember(name = "김태현", email = "kth990303@naver.com"))
@@ -280,7 +352,6 @@ class MemberServiceTest(
         profile.generation shouldBe 22
         profile.position shouldBe Position.DEVELOPER.value
     }
-
 
     @Test
     fun `두 개 이상의 기수 정보가 있는 회원이 내 정보 조회시 최신 기수 정보 조회`() {

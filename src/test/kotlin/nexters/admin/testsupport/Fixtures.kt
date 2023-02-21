@@ -22,7 +22,7 @@ const val PHONE_NUMBER = "01012345678"
 fun createNewMember(
         name: String = "정진우",
         password: String = "1234",
-        email: String = "jweong@gmail.com",
+        email: String = "jwjeong@gmail.com",
         gender: Gender = Gender.MALE,
         phoneNumber: String = PHONE_NUMBER,
         status: MemberStatus = MemberStatus.NOT_COMPLETION,
