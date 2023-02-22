@@ -70,8 +70,8 @@ fun createNewSession(
         generation: Int = 22,
         sessionTime: LocalDate = LocalDate.of(2023, 1, 7),
         week: Int = 1,
-        startAttendTime: LocalDateTime = LocalDateTime.of(2023, 1, 7, 14, 0),
-        endAttendTime: LocalDateTime = LocalDateTime.of(2023, 1, 7, 14, 5),
+        startAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 0),
+        endAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 5),
 ): Session {
     return Session(title, description, message, generation, sessionTime, week, startAttendTime, endAttendTime)
 }

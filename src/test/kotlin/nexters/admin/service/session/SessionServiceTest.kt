@@ -4,18 +4,28 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.controller.session.CreateSessionRequest
 import nexters.admin.controller.session.UpdateSessionRequest
+import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.session.Session
+import nexters.admin.domain.session.SessionStatus
+import nexters.admin.domain.user.member.Member
+import nexters.admin.repository.AttendanceRepository
+import nexters.admin.repository.GenerationMemberRepository
+import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
-import nexters.admin.testsupport.ApplicationTest
-import nexters.admin.testsupport.createNewSession
+import nexters.admin.testsupport.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @ApplicationTest
 class SessionServiceTest(
         @Autowired private val sessionService: SessionService,
         @Autowired private val sessionRepository: SessionRepository,
+        @Autowired private val memberRepository: MemberRepository,
+        @Autowired private val generationMemberRepository: GenerationMemberRepository,
+        @Autowired private val attendanceRepository: AttendanceRepository
 ) {
 
     @Test
@@ -124,4 +134,120 @@ class SessionServiceTest(
 
         found shouldBe null
     }
+
+    @Test
+    fun `세션 홈 조회시 해당 기수 세션중 가장 가까운 다가오는 날짜의 세션이 조회된다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "다가오는 세션"
+    }
+
+    @Test
+    fun `세션 홈 조회시 세션이 존재하지 않으면 null 데이터를 반환한다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.data shouldBe null
+    }
+
+    @Test
+    fun `세션 홈 조회시 출석이 시작하지 않은 상태면 세션상태는 PENDING 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val pendingSession: Session = createNewSession(
+                title = "PENDING 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = null,
+                endAttendTime = null)
+        sessionRepository.save(pendingSession)
+        sessions.add(pendingSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "PENDING 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.PENDING
+    }
+
+    @Test
+    fun `세션 홈 조회시 출석진행중인 세션상태는 ONGOING 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val ongoingSession: Session = createNewSession(
+                title = "ONGOING 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = LocalDateTime.now().minusMinutes(3),
+                endAttendTime = null)
+        sessionRepository.save(ongoingSession)
+        sessions.add(ongoingSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "ONGOING 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.ONGOING
+    }
+
+    @Test
+    fun `세션 홈 조회시 출석완료된 세션상태는 EXPIRED 이다`() {
+        val member: Member = memberRepository.save(createNewMember())
+        val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
+        generationMemberRepository.save(generationMember)
+        val sessions = generateSessions()
+        val expiredSession: Session = createNewSession(
+                title = "EXPIRED 세션",
+                generation = 22,
+                sessionTime = LocalDate.now(),
+                startAttendTime = LocalDateTime.now().minusMinutes(10),
+                endAttendTime = LocalDateTime.now().minusMinutes(3))
+        sessionRepository.save(expiredSession)
+        sessions.add(expiredSession)
+        generateAttendances(sessions, generationMember)
+
+        val actual = sessionService.getSessionHome(member)
+
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "EXPIRED 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.EXPIRED
+    }
+
+    private fun generateSessions(): MutableList<Session> {
+        val today: LocalDate = LocalDate.now()
+        val session1: Session = createNewSession(generation = 22, sessionTime = today.minusDays(3))
+        val session2: Session = createNewSession(generation = 22, sessionTime = today.plusDays(10))
+        val session3: Session = createNewSession(generation = 22, sessionTime = today.plusDays(3), title = "다가오는 세션")
+        val session4: Session = createNewSession(generation = 23, sessionTime = today.plusDays(1))
+
+        sessionRepository.save(session1)
+        sessionRepository.save(session2)
+        sessionRepository.save(session3)
+        sessionRepository.save(session4)
+
+        return mutableListOf(session1, session2, session3, session4)
+    }
+
+    private fun generateAttendances(sessions: List<Session>, generationMember: GenerationMember) {
+        for (session in sessions) {
+            attendanceRepository.save(createNewAttendance(sessionId = session.id, generationMemberId = generationMember.id))
+        }
+    }
+
 }

@@ -16,4 +16,5 @@ interface AttendanceRepository : JpaRepository<Attendance, Long> {
     fun findAllByGenerationMemberIdAndAttendanceStatusIn(generationMemberId: Long, statuses: List<AttendanceStatus>): List<Attendance>
     fun findByGenerationMemberIdAndSessionId(generationMemberId: Long, sessionId: Long): Attendance?
     fun findAllBySessionIdAndAttendanceStatus(sessionId: Long, statuses: AttendanceStatus): List<Attendance>
+    fun findBySessionIdAndGenerationMemberId(sessionId: Long, generationMemberId: Long): Attendance?
 }

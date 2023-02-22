@@ -1,7 +1,7 @@
 package nexters.admin.testsupport
 
-import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.AdminCacheRepository
+import nexters.admin.repository.QrCodeRepository
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
