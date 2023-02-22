@@ -13,6 +13,20 @@ data class CreateSessionResponse(
 )
 
 data class FindSessionHomeResponse(
+        val data: SessionHomeResponse?
+) {
+    companion object {
+        fun of(): FindSessionHomeResponse {
+            return FindSessionHomeResponse(null)
+        }
+
+        fun of(session: Session, attendance: Attendance): FindSessionHomeResponse {
+            return FindSessionHomeResponse(SessionHomeResponse.of(session, attendance))
+        }
+    }
+}
+
+data class SessionHomeResponse(
         val sessionDate: LocalDate?,
         val title: String?,
         val description: String?,
@@ -21,19 +35,8 @@ data class FindSessionHomeResponse(
         val attendanceTime: LocalDateTime?
 ) {
     companion object {
-        fun of(): FindSessionHomeResponse {
-            return FindSessionHomeResponse(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-            )
-        }
-
-        fun of(session: Session, attendance: Attendance): FindSessionHomeResponse {
-            return FindSessionHomeResponse(
+        fun of(session: Session, attendance: Attendance): SessionHomeResponse {
+            return SessionHomeResponse(
                     session.sessionTime,
                     session.title,
                     session.description,
@@ -53,5 +56,4 @@ data class FindSessionHomeResponse(
             return PENDING
         }
     }
-
 }

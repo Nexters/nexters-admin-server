@@ -12,20 +12,14 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
-import nexters.admin.testsupport.createNewSession
-import nexters.admin.testsupport.createNewAttendance
-import nexters.admin.testsupport.createNewGenerationMember
-import nexters.admin.testsupport.createNewMember
+import nexters.admin.testsupport.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Transactional
-@SpringBootTest
+@ApplicationTest
 class SessionServiceTest(
         @Autowired private val sessionService: SessionService,
         @Autowired private val sessionRepository: SessionRepository,
@@ -151,7 +145,8 @@ class SessionServiceTest(
 
         val actual = sessionService.getSessionHome(member)
 
-        actual.title shouldBe "다가오는 세션"
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "다가오는 세션"
     }
 
     @Test
@@ -162,7 +157,7 @@ class SessionServiceTest(
 
         val actual = sessionService.getSessionHome(member)
 
-        actual.title shouldBe null
+        actual.data shouldBe null
     }
 
     @Test
@@ -183,8 +178,9 @@ class SessionServiceTest(
 
         val actual = sessionService.getSessionHome(member)
 
-        actual.title shouldBe "PENDING 세션"
-        actual.sessionStatus shouldBe SessionStatus.PENDING
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "PENDING 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.PENDING
     }
 
     @Test
@@ -205,8 +201,9 @@ class SessionServiceTest(
 
         val actual = sessionService.getSessionHome(member)
 
-        actual.title shouldBe "ONGOING 세션"
-        actual.sessionStatus shouldBe SessionStatus.ONGOING
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "ONGOING 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.ONGOING
     }
 
     @Test
@@ -227,8 +224,9 @@ class SessionServiceTest(
 
         val actual = sessionService.getSessionHome(member)
 
-        actual.title shouldBe "EXPIRED 세션"
-        actual.sessionStatus shouldBe SessionStatus.EXPIRED
+        actual.data shouldNotBe null
+        actual.data?.title shouldBe "EXPIRED 세션"
+        actual.data?.sessionStatus shouldBe SessionStatus.EXPIRED
     }
 
     private fun generateSessions(): MutableList<Session> {
