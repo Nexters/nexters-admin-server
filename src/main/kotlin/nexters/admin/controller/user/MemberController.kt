@@ -8,8 +8,10 @@ import nexters.admin.service.user.FindAllMembersResponse
 import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
 import nexters.admin.support.auth.LoggedInMember
+import nexters.admin.support.utils.parseCsvFileToMap
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 
 @Tag(name = "Members", description = "유저")
@@ -23,6 +25,17 @@ class MemberController(
     @PostMapping
     fun createMemberByAdministrator(@RequestBody @Valid request: CreateMemberRequest): ResponseEntity<Void> {
         memberService.createMemberByAdministrator(request)
+        return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "[관리자 페이지] csv 파일 기반 회원 복수 생성")
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/bulk")
+    fun createMembersByAdministrator(
+            @RequestParam generation: Long,
+            @RequestParam csvFile: MultipartFile,
+    ): ResponseEntity<Void> {
+        memberService.createGenerationMembers(generation, parseCsvFileToMap(csvFile))
         return ResponseEntity.ok().build()
     }
 

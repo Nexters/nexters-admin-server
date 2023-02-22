@@ -13,11 +13,16 @@ enum class SubPosition(val value: String?) {
     MANAGER_CMO("CMO"),
     MANAGER_CTO("CTO"),
     MANAGER_CDO("CDO"),
-    NULL(null),
+    NULL(""),
     ;
 
     companion object {
-        fun from(value: String?): SubPosition =
-                values().firstOrNull { it.value == value } ?: throw BadRequestException.wrongSubPosition()
+        fun from(value: String?): SubPosition {
+            if (value == null) {
+                return NULL
+            }
+            return values().firstOrNull { it.value == value }
+                    ?: throw BadRequestException.wrongSubPosition()
+        }
     }
 }

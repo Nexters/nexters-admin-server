@@ -10,7 +10,11 @@ enum class Position(val value: String?) {
     ;
 
     companion object {
-        fun from(value: String?): Position =
-                values().firstOrNull { it.value == value } ?: throw BadRequestException.wrongPosition()
+        fun from(value: String?): Position {
+            if (value == null) {
+                return NULL
+            }
+            return values().firstOrNull { it.value == value } ?: throw BadRequestException.wrongPosition()
+        }
     }
 }

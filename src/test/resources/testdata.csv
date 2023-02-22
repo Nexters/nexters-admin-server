@@ -1,0 +1,4 @@
+name,gender,email,phone_number,position,sub_position,status
+정진우,남자,jinwoo@gmail.com,01012345678,개발자,프론트엔드,미이수
+김민수,남자,ming@gmail.com,01012345679,운영진,CTO,수료
+최다예,여자,dayeah@gmail.com,01012345670,디자이너,,제명
