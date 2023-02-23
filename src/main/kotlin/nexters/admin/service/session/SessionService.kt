@@ -53,8 +53,8 @@ class SessionService(
 
         session.apply {
             title = request.title
-            description = request.description ?: session.description
-            message = request.message ?: session.message
+            description = request.description
+            message = request.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week
