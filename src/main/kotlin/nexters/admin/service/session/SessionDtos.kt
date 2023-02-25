@@ -62,11 +62,12 @@ data class FindSessionHomeResponse(
 }
 
 data class SessionHomeResponse(
-        val sessionDate: LocalDate?,
-        val title: String?,
+        val sessionDate: LocalDate,
+        val title: String,
+        val week: Int,
         val description: String?,
-        val sessionStatus: SessionStatus?,
-        val attendanceStatus: AttendanceStatus?,
+        val sessionStatus: SessionStatus,
+        val attendanceStatus: AttendanceStatus,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val attendanceTime: LocalDateTime?,
 ) {
@@ -75,6 +76,7 @@ data class SessionHomeResponse(
             return SessionHomeResponse(
                     session.sessionTime,
                     session.title,
+                    session.week,
                     session.description,
                     findSessionStatus(session),
                     attendance.attendanceStatus,

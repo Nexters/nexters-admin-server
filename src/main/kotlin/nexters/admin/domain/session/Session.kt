@@ -2,25 +2,27 @@ package nexters.admin.domain.session
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "session")
 class Session(
-        @Column(name = "title")
-        var title: String? = null,
+        @Column(name = "title", nullable = false)
+        var title: String,
 
         @Column(name = "description")
         var description: String? = null,
 
-        @Column(name = "message")
-        var message: String? = null,
-
         @Column(name = "generation", nullable = false)
         var generation: Int,
 
-        @Column(name = "session_time")
-        var sessionTime: LocalDate? = null,
+        @Column(name = "session_time", nullable = false)
+        var sessionTime: LocalDate,
 
         @Column(name = "week", nullable = false)
         var week: Int,
