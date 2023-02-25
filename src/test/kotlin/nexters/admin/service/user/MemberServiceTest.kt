@@ -5,8 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.testsupport.PHONE_NUMBER
 import nexters.admin.controller.user.CreateMemberRequest
-import nexters.admin.domain.generation.Generation
-import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.testsupport.createNewGenerationMember
 import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember

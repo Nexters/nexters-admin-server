@@ -21,11 +21,15 @@ const val CURRENT_ONGOING_GENERATION = 22
 class SessionService(
         private val sessionRepository: SessionRepository,
         private val generationMemberRepository: GenerationMemberRepository,
-        private val attendanceRepository: AttendanceRepository
+        private val attendanceRepository: AttendanceRepository,
 ) {
 
-    fun findSessionByGeneration(generation: Int): List<Session> {
-        return sessionRepository.findAllByGeneration(generation)
+    @Transactional(readOnly = true)
+    fun findSessionByGeneration(generation: Int): FindSessionResponses {
+        return FindSessionResponses(
+                sessionRepository.findAllByGeneration(generation)
+                        .map { FindSessionResponse.from(it) }
+        )
     }
 
     fun createSession(request: CreateSessionRequest): Long {
@@ -43,8 +47,11 @@ class SessionService(
         return savedSession.id
     }
 
-    fun findSession(id: Long): Session? {
+    @Transactional(readOnly = true)
+    fun findSession(id: Long): FindSessionResponse {
         return sessionRepository.findByIdOrNull(id)
+                ?.let { FindSessionResponse.from(it) }
+                ?: throw NotFoundException.sessionNotFound()
     }
 
     fun updateSession(sessionId: Long, request: UpdateSessionRequest) {
@@ -53,8 +60,8 @@ class SessionService(
 
         session.apply {
             title = request.title
-            description = request.description ?: session.description
-            message = request.message ?: session.message
+            description = request.description
+            message = request.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week
