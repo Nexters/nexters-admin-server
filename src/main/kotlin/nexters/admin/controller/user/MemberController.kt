@@ -9,6 +9,7 @@ import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
 import nexters.admin.support.auth.LoggedInMember
 import nexters.admin.support.utils.parseCsvFileToMap
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -30,7 +31,7 @@ class MemberController(
 
     @Operation(summary = "[관리자 페이지] csv 파일 기반 회원 복수 생성")
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/bulk")
+    @PostMapping(value = ["/bulk"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun createMembersByAdministrator(
             @RequestParam generation: Long,
             @RequestParam csvFile: MultipartFile,
