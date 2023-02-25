@@ -146,7 +146,6 @@ class MemberAcceptanceTest : AcceptanceTest() {
             put("/api/members/999")
         } Then {
             statusCode(404)
-        } Extract {
         }
     }
 
@@ -162,7 +161,6 @@ class MemberAcceptanceTest : AcceptanceTest() {
             put("/api/members/999/status")
         } Then {
             statusCode(404)
-        } Extract {
         }
     }
 
@@ -178,7 +176,6 @@ class MemberAcceptanceTest : AcceptanceTest() {
             put("/api/members/999/position")
         } Then {
             statusCode(404)
-        } Extract {
         }
     }
 
@@ -192,7 +189,6 @@ class MemberAcceptanceTest : AcceptanceTest() {
             delete("/api/members/999")
         } Then {
             statusCode(404)
-        } Extract {
         }
     }
 }
