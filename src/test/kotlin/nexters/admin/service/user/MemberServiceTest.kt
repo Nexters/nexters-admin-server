@@ -4,9 +4,10 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.controller.user.CreateMemberRequest
-import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation.Generation
 import nexters.admin.domain.generation.GenerationStatus
+import nexters.admin.testsupport.createNewGenerationMember
+import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
@@ -19,8 +20,7 @@ import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.testsupport.ApplicationTest
 import nexters.admin.testsupport.PHONE_NUMBER
-import nexters.admin.testsupport.createNewGenerationMember
-import nexters.admin.testsupport.createNewMember
+import nexters.admin.testsupport.createUpdateMemberRequest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -223,13 +223,7 @@ class MemberServiceTest(
 
         memberService.updateMemberByAdministrator(
                 member.id,
-                UpdateMemberRequest(
-                        name = "김태현",
-                        gender = "남자",
-                        email = member.email,
-                        phoneNumber = member.phoneNumber,
-                        generations = listOf(21)
-                )
+                createUpdateMemberRequest()
         )
 
         val findMember = memberRepository.findByEmail(member.email)
@@ -245,13 +239,7 @@ class MemberServiceTest(
 
         memberService.updateMemberByAdministrator(
                 member.id,
-                UpdateMemberRequest(
-                        name = "김태현",
-                        gender = "남자",
-                        email = member.email,
-                        phoneNumber = member.phoneNumber,
-                        generations = listOf(21)
-                )
+                createUpdateMemberRequest()
         )
 
         val generations = generationMemberRepository.findAllByMemberId(member.id)
@@ -268,13 +256,7 @@ class MemberServiceTest(
 
         memberService.updateMemberByAdministrator(
                 member.id,
-                UpdateMemberRequest(
-                        name = "김태현",
-                        gender = "남자",
-                        email = member.email,
-                        phoneNumber = member.phoneNumber,
-                        generations = listOf(21)
-                )
+                createUpdateMemberRequest()
         )
 
         val generations = generationMemberRepository.findAllByMemberId(member.id)
