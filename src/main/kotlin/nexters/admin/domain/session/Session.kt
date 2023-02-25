@@ -13,9 +13,6 @@ class Session(
         @Column(name = "description")
         var description: String? = null,
 
-        @Column(name = "message")
-        var message: String? = null,
-
         @Column(name = "generation", nullable = false)
         var generation: Int,
 

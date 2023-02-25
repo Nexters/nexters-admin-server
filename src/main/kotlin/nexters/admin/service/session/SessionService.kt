@@ -37,7 +37,6 @@ class SessionService(
                 Session(
                         title = request.title,
                         description = request.description,
-                        message = request.message,
                         generation = request.generation,
                         sessionTime = request.sessionTime,
                         week = request.week,
@@ -61,7 +60,6 @@ class SessionService(
         session.apply {
             title = request.title
             description = request.description
-            message = request.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week

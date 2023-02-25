@@ -39,7 +39,6 @@ class SessionServiceTest(
                 CreateSessionRequest(
                         title = "Test title",
                         description = "Test description",
-                        message = "Test message",
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
@@ -58,7 +57,6 @@ class SessionServiceTest(
                 CreateSessionRequest(
                         title = "Test title",
                         description = null,
-                        message = null,
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
@@ -116,7 +114,6 @@ class SessionServiceTest(
         sessionService.updateSession(session.id, UpdateSessionRequest(
                 title = "Updated Title",
                 description = "Test description",
-                message = "Test message",
                 generation = 22,
                 sessionTime = LocalDate.now(),
                 week = 3,
