@@ -3,19 +3,26 @@ package nexters.admin.service.user
 import nexters.admin.controller.generation.CreateGenerationRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
+import nexters.admin.domain.attendance.Attendance
+import nexters.admin.domain.attendance.AttendanceStatus
+import nexters.admin.domain.generation.GenerationStatus.BEFORE_ACTIVITY
+import nexters.admin.domain.generation.GenerationStatus.DURING_ACTIVITY
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.GenerationMembers
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
+import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.domain.user.member.Members
 import nexters.admin.exception.NotFoundException
+import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
+import nexters.admin.repository.SessionRepository
 import nexters.admin.service.generation.GenerationService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -28,8 +35,15 @@ class MemberService(
         private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
         private val generationRepository: GenerationRepository,
+        private val sessionRepository: SessionRepository,
+        private val attendanceRepository: AttendanceRepository,
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
+        val currentGeneration = generationRepository.findAll()
+                .filter { it.status in listOf(BEFORE_ACTIVITY, DURING_ACTIVITY) }
+                .maxByOrNull { it.generation }
+                ?.generation
+
         val savedMember = memberRepository.save(
                 Member.of(
                         request.name,
@@ -39,22 +53,32 @@ class MemberService(
                         request.status
                 )
         )
-        createCurrentGenerationMember(savedMember, request)
+
+        currentGeneration?.let {
+            if (request.generations.contains(it)) {
+                createCurrentGenerationMember(savedMember, request, currentGeneration)
+            }
+        }
         createBeforeGenerationMembers(request, savedMember)
 
         return savedMember.id
     }
 
-    private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest) {
-        generationMemberRepository.save(
+    private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest, currentGeneration: Int) {
+        val generationMember = generationMemberRepository.save(
                 GenerationMember(
                         memberId = savedMember.id,
-                        generation = request.generations.last(),
+                        generation = currentGeneration,
                         position = Position.from(request.position),
                         subPosition = SubPosition.from(request.subPosition),
                 )
         )
-        request.generations.removeLast()
+        request.generations.remove(currentGeneration)
+
+        val sessions = sessionRepository.findAllByGeneration(currentGeneration)
+        val attendances = mutableListOf<Attendance>()
+        createAttendances(sessions, generationMember, attendances)
+        attendanceRepository.saveAll(attendances)
     }
 
     private fun createBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
