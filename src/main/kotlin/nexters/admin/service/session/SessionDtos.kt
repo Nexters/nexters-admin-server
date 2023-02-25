@@ -15,10 +15,11 @@ data class CreateSessionResponse(
 )
 
 data class FindSessionResponses(
-        val data: List<FindSessionResponse>?,
+        val data: List<FindSessionResponse>,
 )
 
 data class FindSessionResponse(
+        val id: Long,
         val title: String?,
         val description: String?,
         val generation: Int,
@@ -30,6 +31,7 @@ data class FindSessionResponse(
     companion object {
         fun from(session: Session): FindSessionResponse {
             return FindSessionResponse(
+                    session.id,
                     session.title,
                     session.description,
                     session.generation,
