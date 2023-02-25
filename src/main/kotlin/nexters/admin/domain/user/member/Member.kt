@@ -3,7 +3,7 @@ package nexters.admin.domain.user.member
 import nexters.admin.domain.user.Password
 import javax.persistence.*
 
-private const val DEFAULT_INITIAL_PASSWORD_LENGTH = 4
+private const val DEFAULT_INITIAL_PASSWORD_LENGTH = 8
 
 @Entity
 @Table(name = "member")
