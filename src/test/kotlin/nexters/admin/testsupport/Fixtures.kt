@@ -99,10 +99,29 @@ fun createNewAttendance(
         attendTime: LocalDateTime = LocalDateTime.of(2023, 1, 7, 14, 3),
         generationMemberId: Long = 0L,
         sessionId: Long = 0L,
-        attendanceStatus: AttendanceStatus = AttendanceStatus.ATTENDED
+        attendanceStatus: AttendanceStatus = AttendanceStatus.ATTENDED,
+        scoreChanged: Int = 0
 ): Attendance {
-    return Attendance(attendTime, generationMemberId, sessionId, attendanceStatus)
+    return Attendance(
+            attendTime = attendTime,
+            generationMemberId = generationMemberId,
+            sessionId = sessionId,
+            attendanceStatus = attendanceStatus,
+            scoreChanged = scoreChanged
+    )
 }
+
+fun createNewPendingAttendance(
+        generationMemberId: Long = 0L,
+        sessionId: Long = 0L,
+): Attendance {
+    return Attendance(
+            generationMemberId = generationMemberId,
+            sessionId = sessionId,
+            attendanceStatus = AttendanceStatus.PENDING,
+    )
+}
+
 
 fun createNewQrCode(
         sessionId: Long = 1L,
