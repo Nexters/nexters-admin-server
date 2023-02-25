@@ -24,7 +24,7 @@ class ExceptionControllerAdvice : ResponseEntityExceptionHandler() {
                 .map { obj: FieldError -> obj.defaultMessage }
                 .joinToString(", ")
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ExceptionResponse(String.format("잘못된 입력입니다: %s", causes)))
+                .body(ExceptionResponse(String.format("잘못된 입력입니다: [%s]", causes)))
     }
 
     @ExceptionHandler

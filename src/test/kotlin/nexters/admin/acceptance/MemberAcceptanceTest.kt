@@ -34,13 +34,13 @@ class MemberAcceptanceTest : AcceptanceTest() {
     @Test
     fun `관리자가 회원 생성시 필드 형식이 잘못되면 예외를 응답한다`() {
         val adminToken = 관리자_생성_토큰_발급()
-        val phoneNumberTooLongRequest = generateCreateMemberRequest(phoneNumber = "123456789012345678901234567890")
+        val invalidRequest = generateCreateMemberRequest(email = "asd", phoneNumber = "123456789012345678901234567890")
 
         Given {
             log().all()
             contentType(MediaType.APPLICATION_JSON_VALUE)
             auth().oauth2(adminToken)
-            body(phoneNumberTooLongRequest)
+            body(invalidRequest)
         } When {
             post("/api/members")
         } Then {
