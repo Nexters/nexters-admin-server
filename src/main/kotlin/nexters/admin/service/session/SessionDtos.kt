@@ -5,7 +5,9 @@ import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.session.SessionStatus
-import nexters.admin.domain.session.SessionStatus.*
+import nexters.admin.domain.session.SessionStatus.EXPIRED
+import nexters.admin.domain.session.SessionStatus.ONGOING
+import nexters.admin.domain.session.SessionStatus.PENDING
 import java.time.LocalDate
 import java.time.LocalDateTime
 
