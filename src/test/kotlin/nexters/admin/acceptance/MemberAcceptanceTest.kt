@@ -55,7 +55,7 @@ class MemberAcceptanceTest : AcceptanceTest() {
 
         val response = Given {
             log().all()
-            header("Authorization", "Bearer $memberToken")
+            auth().oauth2(memberToken)
             contentType(MediaType.APPLICATION_JSON_VALUE)
         } When {
             get("/api/members/me")

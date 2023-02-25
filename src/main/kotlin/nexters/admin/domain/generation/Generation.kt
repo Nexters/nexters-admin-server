@@ -8,9 +8,6 @@ class Generation(
         @Column(name = "generation", unique = true, nullable = false)
         var generation: Int,
 
-        @Column(name = "ceo")
-        var ceo: String? = null,
-
         @Enumerated(EnumType.STRING)
         @Column(name = "status")
         var status: GenerationStatus = GenerationStatus.BEFORE_ACTIVITY,

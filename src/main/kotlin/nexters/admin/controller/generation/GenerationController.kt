@@ -2,10 +2,10 @@ package nexters.admin.controller.generation
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import nexters.admin.service.generation.CreateGenerationRequest
+import nexters.admin.service.generation.FindCurrentGeneration
 import nexters.admin.service.generation.GenerationResponse
+import nexters.admin.service.generation.GenerationResponses
 import nexters.admin.service.generation.GenerationService
-import nexters.admin.service.generation.UpdateGenerationRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -19,22 +19,16 @@ class GenerationController(
 
     @Operation(summary = "현재 기수 조회")
     @GetMapping("/current")
-    fun getCurrentGeneration(): ResponseEntity<GenerationResponse> {
-        val generation = generationService.findCurrentGeneration().let {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generation)
+    fun getCurrentGeneration(): ResponseEntity<FindCurrentGeneration> {
+        val findCurrentGeneration = generationService.findCurrentGeneration()
+        return ResponseEntity.ok(findCurrentGeneration)
     }
 
     @Operation(summary = "전체 기수 조회")
     @GetMapping
-    fun getAllGenerations(): ResponseEntity<List<GenerationResponse>> {
-        val generations = generationService.findAllGeneration().map {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generations)
+    fun getAllGenerations(): ResponseEntity<GenerationResponses> {
+        val generationResponses = generationService.findAllGeneration()
+        return ResponseEntity.ok(generationResponses)
     }
 
     @Operation(summary = "기수 추가")
@@ -43,7 +37,6 @@ class GenerationController(
             @RequestBody @Valid request: CreateGenerationRequest
     ): ResponseEntity<Void> {
         generationService.createGeneration(request)
-
         return ResponseEntity.ok().build()
     }
 
@@ -53,7 +46,6 @@ class GenerationController(
             @PathVariable generation: Int,
     ): ResponseEntity<Void> {
         generationService.deleteGeneration(generation)
-
         return ResponseEntity.ok().build()
     }
 
@@ -64,7 +56,6 @@ class GenerationController(
             @RequestBody @Valid request: UpdateGenerationRequest,
     ): ResponseEntity<Void> {
         generationService.updateGeneration(generation, request)
-
         return ResponseEntity.ok().build()
     }
 
@@ -73,11 +64,7 @@ class GenerationController(
     fun getGenerationDetail(
             @PathVariable generation: Int,
     ): ResponseEntity<GenerationResponse> {
-        val generation = generationService.findGeneration(generation).let {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generation)
+        val generationResponse = generationService.findGeneration(generation)
+        return ResponseEntity.ok(generationResponse)
     }
-
 }
