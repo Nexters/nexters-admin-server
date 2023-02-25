@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.controller.user.CreateMemberRequest
+import nexters.admin.domain.generation.Generation
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
@@ -53,6 +54,7 @@ class MemberServiceTest(
 
     @Test
     fun `회원 저장 시 최신 기수회원 정보 저장`() {
+        generationRepository.save(Generation(22))
         val memberId = memberService.createMemberByAdministrator(
                 CreateMemberRequest(
                         "김태현",
