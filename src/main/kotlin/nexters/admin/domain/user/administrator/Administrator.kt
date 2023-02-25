@@ -2,7 +2,6 @@ package nexters.admin.domain.user.administrator
 
 import nexters.admin.domain.user.Password
 import java.time.LocalDateTime
-import javax.persistence.AttributeOverride
 import javax.persistence.Column
 import javax.persistence.Embedded
 import javax.persistence.Entity
