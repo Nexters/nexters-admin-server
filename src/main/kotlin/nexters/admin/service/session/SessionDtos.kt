@@ -24,7 +24,9 @@ data class FindSessionResponse(
         val generation: Int,
         val sessionTime: LocalDate?,
         val week: Int,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val startAttendTime: LocalDateTime?,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val endAttendTime: LocalDateTime?,
 ) {
     companion object {
