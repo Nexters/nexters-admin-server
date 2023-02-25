@@ -30,6 +30,17 @@ class AttendanceController(
         return ResponseEntity.ok().build()
     }
 
+    @Operation(summary = "[관리자 페이지] 개인의 출석 상태 수정")
+    @SecurityRequirement(name = "JWT")
+    @PutMapping("/{id}/status")
+    fun updateAttendanceStatus(
+            @PathVariable id: Long,
+            @RequestBody @Valid request: UpdateAttendanceStatusRequest
+    ): ResponseEntity<Void> {
+        attendanceService.updateAttendanceStatusByAdministrator(id, request.attendanceStatus, request.note)
+        return ResponseEntity.ok().build()
+    }
+
     @Operation(summary = "내 출석 정보 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/me")
