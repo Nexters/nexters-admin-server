@@ -59,11 +59,11 @@ data class FindSessionHomeResponse(
 }
 
 data class SessionHomeResponse(
-        val sessionDate: LocalDate?,
-        val title: String?,
+        val sessionDate: LocalDate,
+        val title: String,
         val description: String?,
-        val sessionStatus: SessionStatus?,
-        val attendanceStatus: AttendanceStatus?,
+        val sessionStatus: SessionStatus,
+        val attendanceStatus: AttendanceStatus,
         val attendanceTime: LocalDateTime?,
 ) {
     companion object {
