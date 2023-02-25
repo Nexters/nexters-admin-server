@@ -1,9 +1,13 @@
 package nexters.admin.exception
 
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 @RestControllerAdvice
@@ -13,6 +17,14 @@ class ExceptionControllerAdvice : ResponseEntityExceptionHandler() {
     fun handle(exception: BadRequestException): ResponseEntity<ExceptionResponse> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ExceptionResponse(exception.message ?: "잘못된 요청입니다."))
+    }
+
+    override fun handleMethodArgumentNotValid(bindingResult: MethodArgumentNotValidException, headers: HttpHeaders, status: HttpStatus, request: WebRequest): ResponseEntity<Any> {
+        val causes = bindingResult.fieldErrors
+                .map { obj: FieldError -> obj.defaultMessage }
+                .joinToString(", ")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ExceptionResponse(String.format("잘못된 입력입니다: %s", causes)))
     }
 
     @ExceptionHandler
