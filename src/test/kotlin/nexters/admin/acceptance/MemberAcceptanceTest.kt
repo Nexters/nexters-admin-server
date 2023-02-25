@@ -49,7 +49,7 @@ class MemberAcceptanceTest : AcceptanceTest() {
         val adminToken = 관리자_생성_토큰_발급()
         val request = generateCreateMemberRequest()
         회원_생성(adminToken, request)
-        val memberToken = 회원_로그인_토큰(request.email, "5678")
+        val memberToken = 회원_로그인_토큰(request.email, "12345678")
 
         val response = Given {
             log().all()
@@ -71,7 +71,7 @@ class MemberAcceptanceTest : AcceptanceTest() {
         val adminToken = 관리자_생성_토큰_발급()
         val request = generateCreateMemberRequest()
         회원_생성(adminToken, request)
-        val memberToken = 회원_로그인_토큰(request.email, "5678")
+        val memberToken = 회원_로그인_토큰(request.email, "12345678")
 
         Given {
             log().all()

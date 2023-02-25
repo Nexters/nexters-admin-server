@@ -13,7 +13,7 @@ import nexters.admin.service.auth.MemberLoginResponse
 import nexters.admin.service.user.FindAllMembersResponse
 import org.springframework.http.MediaType
 
-const val DEFAULT_PASSWORD_LENGTH = 4
+const val DEFAULT_PASSWORD_LENGTH = 8
 
 fun 회원_전체_조회(adminToken: String): FindAllMembersResponse {
     return Given {
