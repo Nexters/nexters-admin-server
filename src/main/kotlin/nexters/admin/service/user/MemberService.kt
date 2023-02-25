@@ -159,14 +159,16 @@ class MemberService(
     private fun checkIfRequestedGenerations(updateMemberRequest: UpdateMemberRequest, it: GenerationMember) =
             updateMemberRequest.generations.contains(it.generation)
 
-    fun updateStatusByAdministrator(id: Long, status: String) {
-        val findMember = memberRepository.findByIdOrNull(id)
+    fun updateStatusByAdministrator(memberId: Long, status: String) {
+        val findMember = memberRepository.findByIdOrNull(memberId)
                 ?: throw NotFoundException.memberNotFound()
         findMember.update(status = MemberStatus.from(status))
     }
 
-    fun updatePositionByAdministrator(id: Long, position: String?, subPosition: String?) {
-        val findGenerationMember = generationMemberRepository.findAllByMemberId(id)
+    fun updatePositionByAdministrator(memberId: Long, position: String?, subPosition: String?) {
+        memberRepository.findByIdOrNull(memberId)
+                ?: throw NotFoundException.memberNotFound()
+        val findGenerationMember = generationMemberRepository.findAllByMemberId(memberId)
                 .last()
         findGenerationMember.updatePosition(
                 Position.from(position),
@@ -185,9 +187,10 @@ class MemberService(
     }
 
     fun deleteByAdministrator(id: Long) {
+        memberRepository.findByIdOrNull(id)
+                ?: throw NotFoundException.memberNotFound()
         generationMemberRepository.findAllByMemberId(id)
                 .map { generationMemberRepository.deleteById(it.id) }
-
         memberRepository.deleteById(id)
     }
 

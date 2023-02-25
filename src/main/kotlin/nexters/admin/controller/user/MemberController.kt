@@ -47,7 +47,7 @@ class MemberController(
         return ResponseEntity.ok(findAllMembersResponse)
     }
 
-    @Operation(summary = "[관리자 페이지] 회원 정보수정")
+    @Operation(summary = "[관리자 페이지] 회원 정보 수정 및 기수회원 동기화")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/{id}")
     fun update(
