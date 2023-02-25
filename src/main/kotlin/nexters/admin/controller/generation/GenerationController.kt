@@ -1,6 +1,7 @@
 package nexters.admin.controller.generation
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.service.generation.FindCurrentGeneration
 import nexters.admin.service.generation.GenerationResponse
@@ -18,6 +19,7 @@ class GenerationController(
 ) {
 
     @Operation(summary = "현재 기수 조회")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/current")
     fun getCurrentGeneration(): ResponseEntity<FindCurrentGeneration> {
         val findCurrentGeneration = generationService.findCurrentGeneration()
@@ -25,6 +27,7 @@ class GenerationController(
     }
 
     @Operation(summary = "전체 기수 조회")
+    @SecurityRequirement(name = "JWT")
     @GetMapping
     fun getAllGenerations(): ResponseEntity<GenerationResponses> {
         val generationResponses = generationService.findAllGeneration()
@@ -32,6 +35,7 @@ class GenerationController(
     }
 
     @Operation(summary = "기수 추가")
+    @SecurityRequirement(name = "JWT")
     @PostMapping
     fun addGeneration(
             @RequestBody @Valid request: CreateGenerationRequest
@@ -41,6 +45,7 @@ class GenerationController(
     }
 
     @Operation(summary = "기수 삭제")
+    @SecurityRequirement(name = "JWT")
     @DeleteMapping("/{generation}")
     fun removeGeneration(
             @PathVariable generation: Int,
@@ -50,6 +55,7 @@ class GenerationController(
     }
 
     @Operation(summary = "기수 수정")
+    @SecurityRequirement(name = "JWT")
     @PutMapping("/{generation}")
     fun updateGeneration(
             @PathVariable generation: Int,
@@ -60,6 +66,7 @@ class GenerationController(
     }
 
     @Operation(summary = "기수 상세조회")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/{generation}")
     fun getGenerationDetail(
             @PathVariable generation: Int,
