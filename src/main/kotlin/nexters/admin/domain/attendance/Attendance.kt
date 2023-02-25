@@ -9,15 +9,24 @@ class Attendance(
         @Column(name = "attend_time")
         var attendTime: LocalDateTime? = null,
 
-        @Column(name = "generation_member_id")
+        @Column(name = "generation_member_id", nullable = false)
         val generationMemberId: Long,
 
-        @Column(name = "session_id")
+        @Column(name = "session_id", nullable = false)
         val sessionId: Long,
 
         @Enumerated(EnumType.STRING)
-        @Column(name = "attendance_status")
-        var attendanceStatus: AttendanceStatus
+        @Column(name = "attendance_status", nullable = false)
+        var attendanceStatus: AttendanceStatus,
+
+        @Column(name = "extra_score_note")
+        var extraScoreNote: String? = "",
+
+        @Column(name = "additional_point", nullable = false)
+        var scoreChanged: Int = 0,
+
+        @Column(name = "note")
+        var note: String? = "",
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
