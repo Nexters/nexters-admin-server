@@ -20,13 +20,13 @@ class Attendance(
         var attendanceStatus: AttendanceStatus,
 
         @Column(name = "extra_score_note")
-        var extraScoreNote: String?,
+        var extraScoreNote: String? = "",
 
         @Column(name = "additional_point", nullable = false)
         var scoreChanged: Int = 0,
 
         @Column(name = "note")
-        var note: String?,
+        var note: String? = ""
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
