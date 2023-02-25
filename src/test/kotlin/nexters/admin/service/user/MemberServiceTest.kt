@@ -5,6 +5,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.testsupport.PHONE_NUMBER
 import nexters.admin.controller.user.CreateMemberRequest
+import nexters.admin.domain.generation.Generation
+import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.testsupport.createNewGenerationMember
 import nexters.admin.testsupport.createNewMember
 import nexters.admin.domain.generation_member.GenerationMember
@@ -17,6 +19,7 @@ import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.testsupport.ApplicationTest
+import nexters.admin.testsupport.PHONE_NUMBER
 import nexters.admin.testsupport.createUpdateMemberRequest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
