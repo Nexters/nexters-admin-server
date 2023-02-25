@@ -7,6 +7,7 @@ import io.restassured.module.kotlin.extensions.When
 import nexters.admin.controller.auth.TokenResponse
 import nexters.admin.controller.user.CreateAdministratorRequest
 import nexters.admin.controller.user.CreateMemberRequest
+import nexters.admin.controller.user.UpdatePasswordRequest
 import nexters.admin.service.auth.AdminLoginRequest
 import nexters.admin.service.auth.MemberLoginRequest
 import nexters.admin.service.auth.MemberLoginResponse
@@ -63,6 +64,19 @@ fun 회원_생성(adminToken: String, request: CreateMemberRequest) {
     } Then {
         statusCode(200)
     } Extract { }
+}
+
+fun 비밀번호_수정(memberToken: String, newPassword: String) {
+    Given {
+        log().all()
+        contentType(MediaType.APPLICATION_JSON_VALUE)
+        auth().oauth2(memberToken)
+        body(UpdatePasswordRequest( newPassword))
+    } When {
+        put("/api/members/password")
+    } Then {
+        statusCode(200)
+    }
 }
 
 fun 관리자_생성_토큰_발급(): String {
