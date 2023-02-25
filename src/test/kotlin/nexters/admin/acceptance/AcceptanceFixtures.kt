@@ -94,7 +94,7 @@ fun 관리자_로그인_토큰(): String {
     } Then {
         statusCode(200)
     } Extract {
-        `as`(TokenResponse::class.java).data
+        `as`(TokenResponse::class.java).token
     }
 }
 
