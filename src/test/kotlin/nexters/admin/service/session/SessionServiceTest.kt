@@ -48,51 +48,61 @@ class SessionServiceTest(
     }
 
     @Test
-    fun `세션 조회`() {
+    fun `null을 포함한 세션 생성`() {
         val id = sessionService.createSession(
                 CreateSessionRequest(
                         title = "Test title",
-                        description = "Test description",
-                        message = "Test message",
+                        description = null,
+                        message = null,
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
                 )
         )
 
-        val found = sessionService.findSession(id)
+        val found = sessionRepository.findByIdOrNull(id)
+
+        found shouldNotBe null
+        found?.title shouldBe "Test title"
+        found?.description shouldBe null
+    }
+
+    @Test
+    fun `세션 조회`() {
+        val session = createNewSession(title = "Test title")
+        sessionRepository.save(session)
+
+        val found = sessionService.findSession(session.id)
 
         found?.title shouldBe "Test title"
     }
 
     @Test
     fun `특정 기수의 세션 조회`() {
-        sessionService.createSession(
-                CreateSessionRequest(
-                        title = "Test title0",
-                        description = "Test description",
-                        message = "Test message",
-                        generation = 22,
-                        sessionTime = LocalDate.now(),
-                        week = 2,
-                )
-        )
-        sessionService.createSession(
-                CreateSessionRequest(
-                        title = "Test title1",
-                        description = "Test description",
-                        message = "Test message",
-                        generation = 22,
-                        sessionTime = LocalDate.now(),
-                        week = 3,
-                )
-        )
+        val session1 = createNewSession(title = "Test title1", generation = 22)
+        val session2 = createNewSession(title = "Test title2", generation = 22)
+        val session3 = createNewSession(title = "Test title3", generation = 23)
+        sessionRepository.save(session1)
+        sessionRepository.save(session2)
+        sessionRepository.save(session3)
 
         val founds = sessionService.findSessionByGeneration(22)
 
+        founds.size shouldBe 2
         founds.forEach {
             it.generation shouldBe 22
         }
+    }
+
+    @Test
+    fun `특정 기수에 세션이 존재하지 않을 때 세션 조회를 하면 빈 배열을 반환한다`() {
+        val session = createNewSession(generation = 23)
+        sessionRepository.save(session)
+
+        val founds = sessionService.findSessionByGeneration(22)
+
+        founds shouldNotBe null
+        founds.size shouldBe 0
     }
 
     @Test
@@ -117,20 +127,12 @@ class SessionServiceTest(
 
     @Test
     fun `세션 삭제`() {
-        val id = sessionService.createSession(
-                CreateSessionRequest(
-                        title = "Test title",
-                        description = "Test description",
-                        message = "Test message",
-                        generation = 22,
-                        sessionTime = LocalDate.now(),
-                        week = 3,
-                )
-        )
+        val session = createNewSession()
+        sessionRepository.save(session)
 
-        sessionService.deleteSession(id)
+        sessionService.deleteSession(session.id)
 
-        val found = sessionRepository.findByIdOrNull(id)
+        val found = sessionRepository.findByIdOrNull(session.id)
 
         found shouldBe null
     }
