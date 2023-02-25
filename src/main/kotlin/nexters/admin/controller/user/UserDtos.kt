@@ -8,6 +8,7 @@ data class CreateMemberRequest(
         val gender: String,
         @field:Email
         val email: String,
+        @field:Size(min = 10, max = 20, message = "휴대폰 번호는 `-` 없이 최소 10자 이상 입력해야 합니다.")
         val phoneNumber: String,
         val generations: MutableList<Int>,
         val position: String?,
