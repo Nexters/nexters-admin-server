@@ -1,14 +1,14 @@
 package nexters.admin.domain.attendance
 
 import io.kotest.matchers.shouldBe
-import nexters.admin.testsupport.createNewAttendance
+import nexters.admin.testsupport.createNewPendingAttendance
 import org.junit.jupiter.api.Test
 
 class AttendanceTest {
 
     @Test
     fun `QR 코드 혹은 관리자에 의한 출석 상태 수정시 기존 출석 상태를 기준으로 점수 변화`() {
-        val attendance = createNewAttendance()
+        val attendance = createNewPendingAttendance()
 
         attendance.updateStatusByAdmin(AttendanceStatus.AUTHORIZED_ABSENCE, "통보 결석")
         attendance.updateStatusByQr(AttendanceStatus.TARDY)
@@ -20,7 +20,7 @@ class AttendanceTest {
 
     @Test
     fun `추가 점수 및 기타 점수 설명 입력시, 해당 점수만큼 점수 변화`() {
-        val attendance = createNewAttendance()
+        val attendance = createNewPendingAttendance()
         val extraScoreChange = 5
 
         attendance.updateStatusByQr(AttendanceStatus.AUTHORIZED_ABSENCE)
