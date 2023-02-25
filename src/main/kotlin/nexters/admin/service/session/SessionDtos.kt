@@ -5,9 +5,7 @@ import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.session.SessionStatus
-import nexters.admin.domain.session.SessionStatus.EXPIRED
-import nexters.admin.domain.session.SessionStatus.ONGOING
-import nexters.admin.domain.session.SessionStatus.PENDING
+import nexters.admin.domain.session.SessionStatus.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -66,7 +64,7 @@ data class SessionHomeResponse(
         val sessionStatus: SessionStatus?,
         val attendanceStatus: AttendanceStatus?,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-        val attendanceTime: LocalDateTime?
+        val attendanceTime: LocalDateTime?,
 ) {
     companion object {
         fun of(session: Session, attendance: Attendance): SessionHomeResponse {
