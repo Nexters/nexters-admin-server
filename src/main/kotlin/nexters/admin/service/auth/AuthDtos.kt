@@ -8,7 +8,7 @@ data class AdminLoginRequest(
 )
 
 data class MemberLoginRequest(
-        @field:Email
+        @field:Email(message = "잘못된 이메일 형식")
         val email: String,
         val password: String,
 )
