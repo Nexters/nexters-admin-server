@@ -1,5 +1,6 @@
 package nexters.admin.service.session
 
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import nexters.admin.controller.session.CreateSessionRequest
@@ -12,7 +13,11 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
-import nexters.admin.testsupport.*
+import nexters.admin.testsupport.ApplicationTest
+import nexters.admin.testsupport.createNewAttendance
+import nexters.admin.testsupport.createNewGenerationMember
+import nexters.admin.testsupport.createNewMember
+import nexters.admin.testsupport.createNewSession
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +30,7 @@ class SessionServiceTest(
         @Autowired private val sessionRepository: SessionRepository,
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val generationMemberRepository: GenerationMemberRepository,
-        @Autowired private val attendanceRepository: AttendanceRepository
+        @Autowired private val attendanceRepository: AttendanceRepository,
 ) {
 
     @Test
@@ -62,7 +67,7 @@ class SessionServiceTest(
 
         val found = sessionService.findSession(id)
 
-        found?.title shouldBe "Test title"
+        found.title shouldBe "Test title"
     }
 
     @Test
@@ -90,7 +95,8 @@ class SessionServiceTest(
 
         val founds = sessionService.findSessionByGeneration(22)
 
-        founds.forEach {
+        founds.data!! shouldHaveSize 2
+        founds.data?.forEach {
             it.generation shouldBe 22
         }
     }
