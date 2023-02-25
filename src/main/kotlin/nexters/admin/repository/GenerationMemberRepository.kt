@@ -7,6 +7,7 @@ interface GenerationMemberRepository : JpaRepository<GenerationMember, Long> {
     fun findAllByMemberId(memberId: Long): List<GenerationMember>
     fun findByGenerationAndMemberId(generation: Int, memberId: Long): GenerationMember?
     fun findTopByMemberIdOrderByGenerationDesc(memberId: Long): GenerationMember?
+    fun findTopByMemberIdOrderByGenerationAsc(memberId: Long): GenerationMember?
     fun findAllByMemberIdIn(memberIds: List<Long>): List<GenerationMember>
     fun findByGeneration(generation: Int): List<GenerationMember>
 }

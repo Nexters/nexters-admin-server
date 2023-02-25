@@ -10,10 +10,12 @@ import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.GenerationRepository
+import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
 import nexters.admin.repository.findAllPendingAttendanceOf
 import nexters.admin.repository.findGenerationAttendancesIn
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -22,6 +24,7 @@ import java.util.*
 @Service
 class AttendanceService(
         private val attendanceRepository: AttendanceRepository,
+        private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
         private val qrCodeRepository: QrCodeRepository,
         private val sessionRepository: SessionRepository,
@@ -91,4 +94,51 @@ class AttendanceService(
                 ?.generation
                 ?: throw NotFoundException.generationNotFound()
     }
+
+    @Transactional(readOnly = true)
+    fun findAttendancesBySessionId(sessionId: Long): AttendanceSessionResponses {
+        val session = (sessionRepository.findByIdOrNull(sessionId)
+                ?: throw NotFoundException.sessionNotFound())
+        val attendances = attendanceRepository.findAllBySessionId(sessionId)
+        val attended = findAttendedMembers(attendances).size
+        val tardy = findTardyMembers(attendances).size
+        val absence = findAbsenceMembers(attendances).size
+        return AttendanceSessionResponses(session.week, session.sessionTime,
+                attended, tardy, absence, attendances.map { findAttendanceBySession(it) }
+        )
+    }
+
+    private fun findAttendanceBySession(it: Attendance): AttendanceSessionResponse {
+        val generationMember = generationMemberRepository.findByIdOrNull(it.generationMemberId)
+                ?: throw NotFoundException.generationMemberNotFound()
+        val member = (memberRepository.findByIdOrNull(generationMember.id)
+                ?: throw NotFoundException.memberNotFound())
+        val initialGeneration = generationMemberRepository.findTopByMemberIdOrderByGenerationAsc(member.id)
+                ?.generation
+                ?: throw NotFoundException.generationNotFound()
+        return AttendanceSessionResponse(
+                member.name,
+                it.id,
+                generationMember.position?.value,
+                generationMember.subPosition?.value,
+                initialGeneration,
+                it.scoreChanged,
+                generationMember.score,
+                it.attendanceStatus.value,
+                it.extraScoreNote,
+                it.note
+        )
+    }
+
+    private fun findAttendedMembers(attendances: List<Attendance>) =
+            attendances.filter { it.attendanceStatus == AttendanceStatus.ATTENDED }
+
+    private fun findTardyMembers(attendances: List<Attendance>) =
+            attendances.filter { it.attendanceStatus == AttendanceStatus.TARDY }
+
+    private fun findAbsenceMembers(attendances: List<Attendance>) =
+            attendances.filter {
+                it.attendanceStatus == AttendanceStatus.UNAUTHORIZED_ABSENCE ||
+                        it.attendanceStatus == AttendanceStatus.AUTHORIZED_ABSENCE
+            }
 }
