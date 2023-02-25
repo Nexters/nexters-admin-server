@@ -3,11 +3,10 @@ package nexters.admin.service.user
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import nexters.admin.testsupport.PHONE_NUMBER
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
-import nexters.admin.testsupport.createNewGenerationMember
-import nexters.admin.testsupport.createNewMember
+import nexters.admin.domain.generation.Generation
+import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
@@ -16,8 +15,12 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
+import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.testsupport.ApplicationTest
+import nexters.admin.testsupport.PHONE_NUMBER
+import nexters.admin.testsupport.createNewGenerationMember
+import nexters.admin.testsupport.createNewMember
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -27,6 +30,7 @@ class MemberServiceTest(
         @Autowired private val memberService: MemberService,
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val generationMemberRepository: GenerationMemberRepository,
+        @Autowired private val generationRepository: GenerationRepository,
 ) {
     @Test
     fun `회원 저장`() {
@@ -117,6 +121,8 @@ class MemberServiceTest(
 
     @Test
     fun `회원 복수 생성시 엑셀 정보를 토대로 회원과 기수 회원 모두 생성`() {
+        createLatestGeneration(21)
+
         val generation = 22L
         val excelInput = mutableMapOf(
                 "name" to mutableListOf("정진우", "김민수", "최다예"),
@@ -140,6 +146,8 @@ class MemberServiceTest(
 
     @Test
     fun `회원 복수 생성시 이메일을 기준으로 이미 생성된 회원 정보는 이메일을 그대로 덮어씌어짐`() {
+        createLatestGeneration(21)
+
         val generation = 22
         val excelInput = mutableMapOf(
                 "name" to mutableListOf("정진우", "김민수", "최다예"),
@@ -163,6 +171,8 @@ class MemberServiceTest(
 
     @Test
     fun `회원 복수 생성시 이메일과 기수 정보를 기준으로 이미 생성된 기수회원의 직군 정보만 그대로 덮어씌어짐`() {
+        createLatestGeneration(21)
+
         val generation = 22
         val excelInput = mutableMapOf(
                 "name" to mutableListOf("정진우", "김민수", "최다예"),
@@ -185,6 +195,10 @@ class MemberServiceTest(
         generationMemberRepository.findByIdOrNull(existingMatchingGenerationMember.id)?.position shouldBe Position.DEVELOPER
         memberRepository.findAll() shouldHaveSize 3
         generationMemberRepository.findAll() shouldHaveSize 4
+    }
+
+    private fun createLatestGeneration(generation: Int) {
+        generationRepository.save(Generation(generation, GenerationStatus.FINISH_ACTIVITY))
     }
 
     @Test
