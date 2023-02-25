@@ -5,6 +5,8 @@ import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.attendance.QrCode
+import nexters.admin.domain.generation.Generation
+import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
@@ -106,7 +108,14 @@ fun createNewQrCode(
         sessionId: Long = 1L,
         value: String = "ASDFGH",
         attendanceType: AttendanceStatus = AttendanceStatus.ATTENDED,
-        expirationTime: LocalDateTime = LocalDateTime.now().plusSeconds(60)
+        expirationTime: LocalDateTime = LocalDateTime.now().plusSeconds(60),
 ): QrCode {
     return QrCode(sessionId, value, attendanceType, expirationTime)
+}
+
+fun createNewGeneration(
+        generation: Int = 22,
+        status: String = "활동 중",
+): Generation {
+    return Generation(generation, GenerationStatus.from(status))
 }

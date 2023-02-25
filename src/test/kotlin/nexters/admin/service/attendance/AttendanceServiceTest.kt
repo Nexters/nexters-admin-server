@@ -13,11 +13,13 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.BadRequestException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
+import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
 import nexters.admin.testsupport.ApplicationTest
 import nexters.admin.testsupport.createNewAttendance
+import nexters.admin.testsupport.createNewGeneration
 import nexters.admin.testsupport.createNewGenerationMember
 import nexters.admin.testsupport.createNewMember
 import nexters.admin.testsupport.createNewSession
@@ -38,9 +40,11 @@ class AttendanceServiceTest(
         @Autowired private val sessionRepository: SessionRepository,
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val qrCodeRepository: QrCodeRepository,
+        @Autowired private val generationRepository: GenerationRepository,
 ) {
     @Test
     fun `내 출석정보 조회`() {
+        generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -64,6 +68,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `내 출석정보 조회시 PENDING이 아닌 정보들만 불러온다`() {
+        generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -91,6 +96,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `내 출석정보 조회시 해당 기수의 멤버가 아니면 기수확인 속성은 false을, 데이터는 null을 반환한다`() {
+        generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
 
         val attendanceProfile = attendanceService.getAttendanceProfile(member)
@@ -101,6 +107,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `내 출석정보 조회시 week 순으로 내림차순해서 반환한다`() {
+        generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -125,6 +132,7 @@ class AttendanceServiceTest(
     @ParameterizedTest
     @EnumSource(AttendanceStatus::class, mode = EXCLUDE, names = ["PENDING"])
     fun `내 출석정보 조회시 출석상태에 맞는 점수를 반환한다`(attendanceStatus: AttendanceStatus) {
+        generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
         val generationMember: GenerationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -158,6 +166,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `유효한 QR 코드로 출석 성공시 출석 상태 수정`() {
+        generationRepository.save(createNewGeneration())
         val member = memberRepository.save(createNewMember())
         val generationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -173,6 +182,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `출석 체크 종료 이후에 PENDING 상태의 출석은 모두 무단 결석으로 처리`() {
+        generationRepository.save(createNewGeneration())
         val member = memberRepository.save(createNewMember())
         val generationMember = generationMemberRepository
                 .save(createNewGenerationMember(memberId = member.id))
@@ -189,6 +199,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `잘못된 QR 코드로 출석 시도시, 예외 발생`() {
+        generationRepository.save(createNewGeneration())
         val member = memberRepository.save(createNewMember())
         qrCodeRepository.initializeCodes(1L, AttendanceStatus.ATTENDED)
 
@@ -199,6 +210,7 @@ class AttendanceServiceTest(
 
     @Test
     fun `현재 활동기수가 아닌 회원이 QR 코드로 출석 시도시, 예외 발생`() {
+        generationRepository.save(createNewGeneration())
         val member = memberRepository.save(createNewMember())
         val session = sessionRepository.save(createNewSession())
         qrCodeRepository.initializeCodes(session.id, AttendanceStatus.TARDY)

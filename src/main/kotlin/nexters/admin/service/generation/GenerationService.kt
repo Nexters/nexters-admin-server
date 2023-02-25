@@ -1,14 +1,21 @@
 package nexters.admin.service.generation
 
+import nexters.admin.controller.generation.CreateGenerationRequest
+import nexters.admin.controller.generation.UpdateGenerationRequest
 import nexters.admin.domain.generation.Generation
+import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.exception.BadRequestException
 import nexters.admin.exception.NotFoundException
+import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.GenerationRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class GenerationService(
-        private val generationRepository: GenerationRepository
+        private val generationRepository: GenerationRepository,
+        private val generationMemberRepository: GenerationMemberRepository,
 ) {
     fun createGeneration(request: CreateGenerationRequest) {
         val existingGenerationFound = generationRepository.findByGeneration(request.generation)
@@ -18,34 +25,45 @@ class GenerationService(
         generationRepository.save(
                 Generation(
                         generation = request.generation,
-                        ceo = request.ceo
                 )
         )
     }
 
-    fun deleteGeneration(generation: Long) {
-        generationRepository.deleteByGeneration(generation)
+    @Transactional(readOnly = true)
+    fun findGeneration(generation: Int): GenerationResponse {
+        return generationRepository.findByGeneration(generation)
+                ?.let { GenerationResponse(it.generation, it.status) }
+                ?: throw NotFoundException.generationNotFound()
     }
 
-    fun updateGeneration(generation: Long, request: UpdateGenerationRequest) {
-        val found = generationRepository.findByGeneration(generation) ?: throw NotFoundException.generationNotFound()
-        found.apply {
-            ceo = request.ceo
-            status = request.status
-        }
-        generationRepository.save(found)
-    }
-
-    fun findGeneration(generation: Long): Generation {
-        return generationRepository.findByGeneration(generation) ?: throw NotFoundException.generationNotFound()
-    }
-
-    fun findAllGeneration(): List<Generation> {
-        return generationRepository.findAll()
+    @Transactional(readOnly = true)
+    fun findAllGeneration(): GenerationResponses {
+        return GenerationResponses(
+                generationRepository.findAll()
+                        .map { GenerationResponse(it.generation, it.status) }
+        )
     }
 
     // TODO: MAX(generation) 사용하도록 수정
-    fun findCurrentGeneration(): Generation {
-        return generationRepository.findFirstByOrderByGenerationDesc() ?: throw NotFoundException.generationNotFound()
+    @Transactional(readOnly = true)
+    fun findCurrentGeneration(): FindCurrentGeneration {
+        return generationRepository.findFirstByOrderByGenerationDesc()
+                ?.let { FindCurrentGeneration(it.generation, it.status) }
+                ?: throw NotFoundException.generationNotFound()
+    }
+
+    fun updateGeneration(generation: Int, request: UpdateGenerationRequest) {
+        val found = generationRepository.findByGeneration(generation) ?: throw NotFoundException.generationNotFound()
+        found.apply { status = GenerationStatus.from(request.status) }
+        generationRepository.save(found)
+    }
+
+    fun deleteGeneration(generation: Int) {
+        val generationMembers = generationMemberRepository.findByGeneration(generation)
+        if (generationMembers.isNotEmpty()) {
+            throw BadRequestException.existsGenerationMembers()
+        }
+
+        generationRepository.deleteByGeneration(generation)
     }
 }

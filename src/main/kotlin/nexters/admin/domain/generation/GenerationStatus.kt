@@ -4,7 +4,7 @@ import nexters.admin.exception.BadRequestException
 
 enum class GenerationStatus(val value: String?) {
     BEFORE_ACTIVITY("활동 준비"),
-    DURING_ACTIVITY("활동중"),
+    DURING_ACTIVITY("활동 중"),
     FINISH_ACTIVITY("활동 종료"),
     NULL("")
     ;

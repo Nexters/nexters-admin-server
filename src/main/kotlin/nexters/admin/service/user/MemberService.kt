@@ -1,5 +1,6 @@
 package nexters.admin.service.user
 
+import nexters.admin.controller.generation.CreateGenerationRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.generation_member.GenerationMember
@@ -13,7 +14,9 @@ import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.domain.user.member.Members
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.GenerationMemberRepository
+import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
+import nexters.admin.service.generation.GenerationService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,8 +24,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Service
 class MemberService(
+        private val generationService: GenerationService,
         private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
+        private val generationRepository: GenerationRepository,
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
         val savedMember = memberRepository.save(
@@ -68,6 +73,8 @@ class MemberService(
     }
 
     fun createGenerationMembers(generation: Long, memberMap: Map<String, List<String>>) {
+        createNewGeneration()
+
         val members = Members.of(memberMap)
         val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
         members.updateMembersWithMatchingEmail(existingMembers)
@@ -79,6 +86,13 @@ class MemberService(
         val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
         generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
         generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId }))
+    }
+
+    private fun createNewGeneration() {
+        val latestGeneration = (generationRepository.findFirstByOrderByGenerationDesc()
+                ?.generation
+                ?: throw NotFoundException.generationNotFound())
+        generationService.createGeneration(CreateGenerationRequest(latestGeneration + 1))
     }
 
     @Transactional(readOnly = true)
