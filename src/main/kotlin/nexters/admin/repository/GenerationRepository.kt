@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface GenerationRepository : JpaRepository<Generation, Long> {
     fun findFirstByOrderByGenerationDesc(): Generation?
-    fun deleteByGeneration(generation: Long)
-    fun findByGeneration(generation: Long): Generation?
+    fun deleteByGeneration(generation: Int)
+    fun findByGeneration(generation: Int): Generation?
 }

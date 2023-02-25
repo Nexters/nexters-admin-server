@@ -1,7 +1,6 @@
 package nexters.admin.controller.generation
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.service.generation.CreateGenerationRequest
 import nexters.admin.service.generation.GenerationResponse
@@ -49,32 +48,32 @@ class GenerationController(
     }
 
     @Operation(summary = "기수 삭제")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{generation}")
     fun removeGeneration(
-            @PathVariable id: Long
+            @PathVariable generation: Int,
     ): ResponseEntity<Void> {
-        generationService.deleteGeneration(id)
+        generationService.deleteGeneration(generation)
 
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "기수 수정")
-    @PutMapping("/{id}")
+    @PutMapping("/{generation}")
     fun updateGeneration(
-            @PathVariable id: Long,
-            @RequestBody @Valid request: UpdateGenerationRequest
+            @PathVariable generation: Int,
+            @RequestBody @Valid request: UpdateGenerationRequest,
     ): ResponseEntity<Void> {
-        generationService.updateGeneration(id, request)
+        generationService.updateGeneration(generation, request)
 
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "기수 상세조회")
-    @GetMapping("/{id}")
+    @GetMapping("/{generation}")
     fun getGenerationDetail(
-            @PathVariable id: Long
+            @PathVariable generation: Int,
     ): ResponseEntity<GenerationResponse> {
-        val generation = generationService.findGeneration(id).let {
+        val generation = generationService.findGeneration(generation).let {
             GenerationResponse.from(it)
         }
 

@@ -4,7 +4,7 @@ import nexters.admin.domain.generation.Generation
 import nexters.admin.domain.generation.GenerationStatus
 
 data class CreateGenerationRequest(
-        val generation: Long,
+        val generation: Int,
         val ceo: String,
 )
 
@@ -14,9 +14,9 @@ data class UpdateGenerationRequest(
 )
 
 data class GenerationResponse(
-        val generation: Long,
+        val generation: Int,
         val ceo: String?,
-        val status: GenerationStatus
+        val status: GenerationStatus,
 ) {
     companion object {
         fun from(generation: Generation): GenerationResponse {
