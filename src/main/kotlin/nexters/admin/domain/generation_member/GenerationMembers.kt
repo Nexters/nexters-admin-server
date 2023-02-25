@@ -17,7 +17,7 @@ class GenerationMembers(
 ) {
     companion object {
         fun of(
-                generation: Long,
+                generation: Int,
                 generationMembers: Map<String, List<String>>,
                 savedMembers: List<Member>,
         ): GenerationMembers {
@@ -32,7 +32,7 @@ class GenerationMembers(
                 val memberId = emailToMemberIdMap[email] ?: throw RuntimeException("wrong implementation")
                 values[memberId] = (GenerationMember(
                         memberId = memberId,
-                        generation = generation.toInt(),
+                        generation = generation,
                         position = generationMembers[POSITION]?.get(idx)?.let { Position.from(it) }
                                 ?: throw BadRequestException.missingInfo("회원의 직군"),
                         subPosition = generationMembers[SUB_POSITION]?.get(idx)?.let { SubPosition.from(it) }

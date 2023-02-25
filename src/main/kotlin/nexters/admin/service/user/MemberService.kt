@@ -72,8 +72,9 @@ class MemberService(
                 }
     }
 
-    fun createGenerationMembers(generation: Long, memberMap: Map<String, List<String>>) {
-        createNewGeneration()
+    fun createGenerationMembers(generation: Int, memberMap: Map<String, List<String>>) {
+        generationRepository.findByGeneration(generation)
+                ?: generationService.createGeneration(CreateGenerationRequest(generation))
 
         val members = Members.of(memberMap)
         val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
@@ -86,13 +87,6 @@ class MemberService(
         val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
         generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
         generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId }))
-    }
-
-    private fun createNewGeneration() {
-        val latestGeneration = (generationRepository.findFirstByOrderByGenerationDesc()
-                ?.generation
-                ?: throw NotFoundException.generationNotFound())
-        generationService.createGeneration(CreateGenerationRequest(latestGeneration + 1))
     }
 
     @Transactional(readOnly = true)
