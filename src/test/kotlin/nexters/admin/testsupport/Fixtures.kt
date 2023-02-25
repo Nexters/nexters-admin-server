@@ -1,6 +1,7 @@
 package nexters.admin.testsupport
 
 import nexters.admin.controller.user.CreateMemberRequest
+import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.attendance.QrCode
@@ -55,6 +56,22 @@ fun createNewGenerationMember(
         isCompletable: Boolean = true,
 ): GenerationMember {
     return GenerationMember(memberId, generation, position, subPosition, score, isCompletable)
+}
+
+fun createUpdateMemberRequest(
+        name: String = "김태현",
+        gender: String = "남자",
+        email: String = "kth990303@naver.com",
+        phoneNumber: String = "01012345678",
+        generations: MutableList<Int> = mutableListOf(21),
+): UpdateMemberRequest {
+    return UpdateMemberRequest(
+            name = name,
+            gender = gender,
+            email = email,
+            phoneNumber = phoneNumber,
+            generations = generations
+    )
 }
 
 fun createNewAdmin(

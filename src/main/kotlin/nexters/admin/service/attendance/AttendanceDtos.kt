@@ -1,5 +1,6 @@
 package nexters.admin.service.attendance
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
@@ -46,6 +47,7 @@ data class AttendanceResponse(
         val week: Int,
         val sessionDate: LocalDate?,
         val attendanceStatus: AttendanceStatus,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val attendanceTime: LocalDateTime?,
         val penaltyScore: Int
 ) {
