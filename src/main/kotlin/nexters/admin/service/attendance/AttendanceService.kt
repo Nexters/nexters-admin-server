@@ -74,6 +74,11 @@ class AttendanceService(
         attendance.updateStatusByQr(validCode.type)
     }
 
+    fun addExtraAttendanceScoreByAdministrator(attendanceId: Long, extraScoreChange: Int, extraScoreNote: String?) {
+        val attendance = attendanceRepository.findByIdOrNull(attendanceId) ?: throw NotFoundException.attendanceNotFound()
+        attendance.addExtraScore(extraScoreChange, extraScoreNote)
+    }
+
     fun updateAttendanceStatusByAdministrator(attendanceId: Long, attendanceStatus: String, note: String?) {
         val attendance = attendanceRepository.findByIdOrNull(attendanceId) ?: throw NotFoundException.attendanceNotFound()
         attendance.updateStatusByAdmin(AttendanceStatus.from(attendanceStatus), note)

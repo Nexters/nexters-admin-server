@@ -30,6 +30,17 @@ class AttendanceController(
         return ResponseEntity.ok().build()
     }
 
+    @Operation(summary = "[관리자 페이지] 출석 가산점/감점 부여")
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/{id}/additional-score")
+    fun addExtraAttendanceScore(
+            @PathVariable id: Long,
+            @RequestBody @Valid request: ExtraAttendanceScoreChangeRequest
+    ): ResponseEntity<Void> {
+        attendanceService.addExtraAttendanceScoreByAdministrator(id, request.extraScoreChange, request.extraScoreNote)
+        return ResponseEntity.ok().build()
+    }
+
     @Operation(summary = "[관리자 페이지] 개인의 출석 상태 수정")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/{id}/status")
