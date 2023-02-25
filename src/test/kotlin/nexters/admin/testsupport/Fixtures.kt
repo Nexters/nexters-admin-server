@@ -83,16 +83,15 @@ fun createNewAdmin(
 }
 
 fun createNewSession(
-        title: String = "1주차 세션",
-        description: String = "OT & 팀빌딩",
-        message: String = "오늘은 설레는 첫 세션 날이에요!",
+        title: String = "OT",
+        description: String = "오늘은 설레는 첫 세션 날이에요!",
         generation: Int = 22,
         sessionTime: LocalDate = LocalDate.of(2023, 1, 7),
         week: Int = 1,
         startAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 0),
         endAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 5),
 ): Session {
-    return Session(title, description, message, generation, sessionTime, week, startAttendTime, endAttendTime)
+    return Session(title, description, generation, sessionTime, week, startAttendTime, endAttendTime)
 }
 
 fun createNewAttendance(
