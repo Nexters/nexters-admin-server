@@ -4,16 +4,48 @@ import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.session.SessionStatus
-import nexters.admin.domain.session.SessionStatus.*
+import nexters.admin.domain.session.SessionStatus.EXPIRED
+import nexters.admin.domain.session.SessionStatus.ONGOING
+import nexters.admin.domain.session.SessionStatus.PENDING
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class CreateSessionResponse(
-        val sessionId: Long
+        val sessionId: Long,
 )
 
+data class FindSessionResponses(
+        val data: List<FindSessionResponse>,
+)
+
+data class FindSessionResponse(
+        val id: Long,
+        val title: String?,
+        val description: String?,
+        val generation: Int,
+        val sessionTime: LocalDate?,
+        val week: Int,
+        val startAttendTime: LocalDateTime?,
+        val endAttendTime: LocalDateTime?,
+) {
+    companion object {
+        fun from(session: Session): FindSessionResponse {
+            return FindSessionResponse(
+                    session.id,
+                    session.title,
+                    session.description,
+                    session.generation,
+                    session.sessionTime,
+                    session.week,
+                    session.startAttendTime,
+                    session.endAttendTime
+            )
+        }
+    }
+}
+
 data class FindSessionHomeResponse(
-        val data: SessionHomeResponse?
+        val data: SessionHomeResponse?,
 ) {
     companion object {
         fun of(): FindSessionHomeResponse {
@@ -32,7 +64,7 @@ data class SessionHomeResponse(
         val description: String?,
         val sessionStatus: SessionStatus?,
         val attendanceStatus: AttendanceStatus?,
-        val attendanceTime: LocalDateTime?
+        val attendanceTime: LocalDateTime?,
 ) {
     companion object {
         fun of(session: Session, attendance: Attendance): SessionHomeResponse {
