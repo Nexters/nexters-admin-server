@@ -33,7 +33,7 @@ class MemberController(
     @SecurityRequirement(name = "JWT")
     @PostMapping(value = ["/bulk"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun createMembersByAdministrator(
-            @RequestParam generation: Long,
+            @RequestParam generation: Int,
             @RequestParam csvFile: MultipartFile,
     ): ResponseEntity<Void> {
         memberService.createGenerationMembers(generation, parseCsvFileToMap(csvFile))
