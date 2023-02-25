@@ -2,6 +2,8 @@ package nexters.admin.service.session
 
 import nexters.admin.controller.session.CreateSessionRequest
 import nexters.admin.controller.session.UpdateSessionRequest
+import nexters.admin.domain.attendance.Attendance
+import nexters.admin.domain.attendance.AttendanceStatus.PENDING
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.NotFoundException
@@ -37,12 +39,20 @@ class SessionService(
                 Session(
                         title = request.title,
                         description = request.description,
-                        message = request.message,
                         generation = request.generation,
                         sessionTime = request.sessionTime,
                         week = request.week,
                 )
         )
+        val generationMembers = generationMemberRepository.findByGeneration(request.generation)
+        val attendances = generationMembers.map {
+            Attendance(
+                    generationMemberId = it.id,
+                    sessionId = savedSession.id,
+                    attendanceStatus = PENDING
+            )
+        }
+        attendanceRepository.saveAll(attendances)
 
         return savedSession.id
     }
@@ -61,7 +71,6 @@ class SessionService(
         session.apply {
             title = request.title
             description = request.description
-            message = request.message
             generation = request.generation
             sessionTime = request.sessionTime
             week = request.week

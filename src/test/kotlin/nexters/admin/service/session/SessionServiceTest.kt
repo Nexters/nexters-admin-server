@@ -13,6 +13,7 @@ import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
+import nexters.admin.repository.findAllPendingAttendanceOf
 import nexters.admin.testsupport.ApplicationTest
 import nexters.admin.testsupport.createNewAttendance
 import nexters.admin.testsupport.createNewGenerationMember
@@ -39,7 +40,6 @@ class SessionServiceTest(
                 CreateSessionRequest(
                         title = "Test title",
                         description = "Test description",
-                        message = "Test message",
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
@@ -58,7 +58,6 @@ class SessionServiceTest(
                 CreateSessionRequest(
                         title = "Test title",
                         description = null,
-                        message = null,
                         generation = 22,
                         sessionTime = LocalDate.now(),
                         week = 3,
@@ -70,6 +69,32 @@ class SessionServiceTest(
         found shouldNotBe null
         found?.title shouldBe "Test title"
         found?.description shouldBe null
+    }
+
+    @Test
+    fun `세션 생성시 기수 회원들의 PENDING 상태 출석 정보를 생성한다`() {
+        val member1 = createNewMember()
+        val member2 = createNewMember()
+        memberRepository.saveAll(listOf(member1, member2))
+        val generationMember1 = createNewGenerationMember(memberId = member1.id, generation = 22)
+        val generationMember2 = createNewGenerationMember(memberId = member2.id, generation = 22)
+        val generationMember3 = createNewGenerationMember(memberId = member2.id, generation = 23)
+        generationMemberRepository.saveAll(listOf(generationMember1, generationMember2, generationMember3))
+        val savedSessionId = sessionService.createSession(
+                CreateSessionRequest(
+                        title = "Test title",
+                        description = null,
+                        generation = 22,
+                        sessionTime = LocalDate.now(),
+                        week = 3,
+                )
+        )
+
+        val attendances = attendanceRepository.findAllPendingAttendanceOf(sessionId = savedSessionId)
+        attendances.size shouldBe 2
+        attendances.forEach {
+            it.sessionId shouldBe savedSessionId
+        }
     }
 
     @Test
@@ -116,7 +141,6 @@ class SessionServiceTest(
         sessionService.updateSession(session.id, UpdateSessionRequest(
                 title = "Updated Title",
                 description = "Test description",
-                message = "Test message",
                 generation = 22,
                 sessionTime = LocalDate.now(),
                 week = 3,
