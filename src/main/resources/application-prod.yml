@@ -7,7 +7,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    open-in-view: false
+    open-in-view: true
     properties:
       hibernate:
         show_sql: true
@@ -31,4 +31,3 @@ springdoc:
   paths-to-match:
     - /api/**
     - /health-check
-

@@ -7,6 +7,8 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import nexters.admin.controller.user.UpdatePasswordRequest
+import nexters.admin.service.auth.MemberLoginRequest
+import nexters.admin.service.auth.MemberLoginResponse
 import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.testsupport.AcceptanceTest
 import nexters.admin.testsupport.generateCreateMemberRequest
@@ -67,7 +69,7 @@ class MemberAcceptanceTest : AcceptanceTest() {
     }
 
     @Test
-    fun `비밀번호 변경 시 8~20자로 변경하면 변경된다`() {
+    fun `비밀번호 변경 시 8~20자로 변경하면 성공한다`() {
         val adminToken = 관리자_생성_토큰_발급()
         val request = generateCreateMemberRequest()
         회원_생성(adminToken, request)
@@ -77,11 +79,32 @@ class MemberAcceptanceTest : AcceptanceTest() {
             log().all()
             contentType(MediaType.APPLICATION_JSON_VALUE)
             auth().oauth2(memberToken)
-            body(UpdatePasswordRequest("12345678"))
+            body(UpdatePasswordRequest("12345678!"))
         } When {
             put("/api/members/password")
         } Then {
             statusCode(200)
+        }
+    }
+
+    @Test
+    fun `변경한 비밀번호로 다시 로그인할 수 있다`() {
+        val adminToken = 관리자_생성_토큰_발급()
+        val request = generateCreateMemberRequest()
+        회원_생성(adminToken, request)
+        val memberToken = 회원_로그인_토큰(request.email, "12345678")
+        비밀번호_수정(memberToken, "12345678!")
+
+        Given {
+            log().all()
+            contentType(MediaType.APPLICATION_JSON_VALUE)
+            body(MemberLoginRequest(request.email, "12345678!"))
+        } When {
+            post("/api/auth/login/member")
+        } Then {
+            statusCode(200)
+        } Extract {
+            `as`(MemberLoginResponse::class.java).token
         }
     }
 }
