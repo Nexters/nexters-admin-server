@@ -5,14 +5,11 @@ import javax.persistence.*
 @Entity
 @Table(name = "generation")
 class Generation(
-        @Column(unique = true)
-        var generation: Long = 0L,
-
-        @Column
-        var ceo: String? = null,
+        @Column(name = "generation", unique = true, nullable = false)
+        var generation: Int,
 
         @Enumerated(EnumType.STRING)
-        @Column
+        @Column(name = "status")
         var status: GenerationStatus = GenerationStatus.BEFORE_ACTIVITY,
 ) {
         @Id

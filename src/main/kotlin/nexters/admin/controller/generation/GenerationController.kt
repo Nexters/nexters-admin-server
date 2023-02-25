@@ -3,10 +3,10 @@ package nexters.admin.controller.generation
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import nexters.admin.service.generation.CreateGenerationRequest
+import nexters.admin.service.generation.FindCurrentGeneration
 import nexters.admin.service.generation.GenerationResponse
+import nexters.admin.service.generation.GenerationResponses
 import nexters.admin.service.generation.GenerationService
-import nexters.admin.service.generation.UpdateGenerationRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -19,66 +19,59 @@ class GenerationController(
 ) {
 
     @Operation(summary = "현재 기수 조회")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/current")
-    fun getCurrentGeneration(): ResponseEntity<GenerationResponse> {
-        val generation = generationService.findCurrentGeneration().let {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generation)
+    fun getCurrentGeneration(): ResponseEntity<FindCurrentGeneration> {
+        val findCurrentGeneration = generationService.findCurrentGeneration()
+        return ResponseEntity.ok(findCurrentGeneration)
     }
 
     @Operation(summary = "전체 기수 조회")
+    @SecurityRequirement(name = "JWT")
     @GetMapping
-    fun getAllGenerations(): ResponseEntity<List<GenerationResponse>> {
-        val generations = generationService.findAllGeneration().map {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generations)
+    fun getAllGenerations(): ResponseEntity<GenerationResponses> {
+        val generationResponses = generationService.findAllGeneration()
+        return ResponseEntity.ok(generationResponses)
     }
 
     @Operation(summary = "기수 추가")
+    @SecurityRequirement(name = "JWT")
     @PostMapping
     fun addGeneration(
             @RequestBody @Valid request: CreateGenerationRequest
     ): ResponseEntity<Void> {
         generationService.createGeneration(request)
-
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "기수 삭제")
-    @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "JWT")
+    @DeleteMapping("/{generation}")
     fun removeGeneration(
-            @PathVariable id: Long
+            @PathVariable generation: Int,
     ): ResponseEntity<Void> {
-        generationService.deleteGeneration(id)
-
+        generationService.deleteGeneration(generation)
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "기수 수정")
-    @PutMapping("/{id}")
+    @SecurityRequirement(name = "JWT")
+    @PutMapping("/{generation}")
     fun updateGeneration(
-            @PathVariable id: Long,
-            @RequestBody @Valid request: UpdateGenerationRequest
+            @PathVariable generation: Int,
+            @RequestBody @Valid request: UpdateGenerationRequest,
     ): ResponseEntity<Void> {
-        generationService.updateGeneration(id, request)
-
+        generationService.updateGeneration(generation, request)
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "기수 상세조회")
-    @GetMapping("/{id}")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/{generation}")
     fun getGenerationDetail(
-            @PathVariable id: Long
+            @PathVariable generation: Int,
     ): ResponseEntity<GenerationResponse> {
-        val generation = generationService.findGeneration(id).let {
-            GenerationResponse.from(it)
-        }
-
-        return ResponseEntity.ok(generation)
+        val generationResponse = generationService.findGeneration(generation)
+        return ResponseEntity.ok(generationResponse)
     }
-
 }

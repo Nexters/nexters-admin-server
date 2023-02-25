@@ -3,6 +3,7 @@ package nexters.admin.exception
 class BadRequestException(message: String?) : RuntimeException(message) {
     companion object {
         fun alreadyExistsAdministrator() = BadRequestException("이미 존재하는 관리자 아이디입니다.")
+        fun existsGenerationMembers() = BadRequestException("기수회원이 존재하는 기수는 삭제할 수 없습니다.")
         fun wrongGender() = BadRequestException("올바르지 않은 성별입니다.")
         fun wrongPosition() = BadRequestException("올바르지 않은 직군입니다.")
         fun wrongMemberStatus() = BadRequestException("올바르지 않은 활동구분입니다.")
