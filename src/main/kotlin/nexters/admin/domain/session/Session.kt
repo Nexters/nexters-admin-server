@@ -36,4 +36,12 @@ class Session(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun updateStartAttendTime(startAttendTime: LocalDateTime) {
+        this.startAttendTime = startAttendTime
+    }
+
+    fun updateEndAttendTime(endAttendTime: LocalDateTime) {
+        this.endAttendTime = endAttendTime
+    }
 }
