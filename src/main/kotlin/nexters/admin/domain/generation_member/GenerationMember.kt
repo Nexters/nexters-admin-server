@@ -9,6 +9,8 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
+const val MAX_SCORE = 100
+
 @Entity
 @Table(name = "generation_member")
 class GenerationMember(
@@ -27,7 +29,7 @@ class GenerationMember(
         var subPosition: SubPosition?,
 
         @Column(name = "score")
-        var score: Int? = 100,
+        var score: Int? = MAX_SCORE,
 
         @Column(name = "is_completable", nullable = false)
         var isCompletable: Boolean = true,
@@ -39,6 +41,10 @@ class GenerationMember(
     fun updatePosition(position: Position?, subPosition: SubPosition?) {
         this.position = position
         this.subPosition = subPosition
+    }
+
+    fun updateScoreByChanges(changedScores: List<Int>) {
+        this.score = changedScores.fold(MAX_SCORE) { totalScore, scoreChange -> totalScore + scoreChange }
     }
 
     fun isManager(): Boolean {
