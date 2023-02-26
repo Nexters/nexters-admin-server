@@ -21,8 +21,8 @@ class Session(
         @Column(name = "generation", nullable = false)
         var generation: Int,
 
-        @Column(name = "session_time", nullable = false)
-        var sessionTime: LocalDate,
+        @Column(name = "session_date", nullable = false)
+        var sessionDate: LocalDate,
 
         @Column(name = "week", nullable = false)
         var week: Int,
