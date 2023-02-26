@@ -38,7 +38,7 @@ data class FindSessionResponse(
                     session.title,
                     session.description,
                     session.generation,
-                    session.sessionTime,
+                    session.sessionDate,
                     session.week,
                     session.startAttendTime,
                     session.endAttendTime
@@ -74,7 +74,7 @@ data class SessionHomeResponse(
     companion object {
         fun of(session: Session, attendance: Attendance): SessionHomeResponse {
             return SessionHomeResponse(
-                    session.sessionTime,
+                    session.sessionDate,
                     session.title,
                     session.week,
                     session.description,
