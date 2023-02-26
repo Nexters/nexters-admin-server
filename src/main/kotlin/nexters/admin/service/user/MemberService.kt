@@ -55,16 +55,16 @@ class MemberService(
 
         currentGeneration?.let {
             if (request.generations.contains(it)) {
-                val generationMember = createCurrentGenerationMember(savedMember, request, currentGeneration)
+                val generationMember = saveCurrentGenerationMember(savedMember, request, currentGeneration)
                 createAttendances(generationMember)
             }
         }
-        createBeforeGenerationMembers(request, savedMember)
+        saveBeforeGenerationMembers(request, savedMember)
 
         return savedMember.id
     }
 
-    private fun createCurrentGenerationMember(
+    private fun saveCurrentGenerationMember(
             savedMember: Member,
             request: CreateMemberRequest,
             currentGeneration: Int): GenerationMember {
@@ -80,7 +80,7 @@ class MemberService(
         return generationMember
     }
 
-    private fun createBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
+    private fun saveBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
         request.generations
                 .forEach {
                     generationMemberRepository.save(
@@ -99,20 +99,24 @@ class MemberService(
         generationRepository.findByGeneration(generation)
                 ?: generationService.createGeneration(CreateGenerationRequest(generation))
 
+        val savedMembers = saveMembers(memberMap)
+        val newGenerationMembers = saveGenerationMembers(generation, memberMap, savedMembers)
+        newGenerationMembers.forEach {
+            createAttendances(it)
+        }
+    }
+
+    private fun saveMembers(memberMap: Map<String, List<String>>): List<Member> {
         val members = Members.of(memberMap)
         val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
         members.updateMembersWithMatchingEmail(existingMembers)
         val savedMemberEmails = existingMembers.map { it.email }
         val savedMembers = memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
         savedMembers.addAll(existingMembers)
-
-        val newGenerationMembers = createGenerationMembers(generation, memberMap, savedMembers)
-        newGenerationMembers.forEach {
-            createAttendances(it)
-        }
+        return savedMembers
     }
 
-    private fun createGenerationMembers(generation: Int, memberMap: Map<String, List<String>>, savedMembers: List<Member>): List<GenerationMember> {
+    private fun saveGenerationMembers(generation: Int, memberMap: Map<String, List<String>>, savedMembers: List<Member>): List<GenerationMember> {
         val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
         val existingGenerationMembers = updateExistingGenerationMembers(savedMembers, generationMembers)
         return saveNewGenerationMembers(generationMembers, existingGenerationMembers)
