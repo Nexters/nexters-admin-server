@@ -3,6 +3,10 @@ package nexters.admin.service.user
 import nexters.admin.controller.generation.CreateGenerationRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
+import nexters.admin.domain.attendance.Attendance
+import nexters.admin.domain.attendance.AttendanceStatus
+import nexters.admin.domain.generation.GenerationStatus.BEFORE_ACTIVITY
+import nexters.admin.domain.generation.GenerationStatus.DURING_ACTIVITY
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.GenerationMembers
 import nexters.admin.domain.generation_member.Position
@@ -13,9 +17,11 @@ import nexters.admin.domain.user.member.Member
 import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.domain.user.member.Members
 import nexters.admin.exception.NotFoundException
+import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.GenerationRepository
 import nexters.admin.repository.MemberRepository
+import nexters.admin.repository.SessionRepository
 import nexters.admin.service.generation.GenerationService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -28,6 +34,8 @@ class MemberService(
         private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
         private val generationRepository: GenerationRepository,
+        private val sessionRepository: SessionRepository,
+        private val attendanceRepository: AttendanceRepository,
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
         val savedMember = memberRepository.save(
@@ -39,25 +47,40 @@ class MemberService(
                         request.status
                 )
         )
-        createCurrentGenerationMember(savedMember, request)
-        createBeforeGenerationMembers(request, savedMember)
+
+        val currentGeneration = generationRepository.findAll()
+                .filter { it.status in listOf(BEFORE_ACTIVITY, DURING_ACTIVITY) }
+                .maxByOrNull { it.generation }
+                ?.generation
+
+        currentGeneration?.let {
+            if (request.generations.contains(it)) {
+                val generationMember = saveCurrentGenerationMember(savedMember, request, currentGeneration)
+                createAttendances(generationMember)
+            }
+        }
+        saveBeforeGenerationMembers(request, savedMember)
 
         return savedMember.id
     }
 
-    private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest) {
-        generationMemberRepository.save(
+    private fun saveCurrentGenerationMember(
+            savedMember: Member,
+            request: CreateMemberRequest,
+            currentGeneration: Int): GenerationMember {
+        val generationMember = generationMemberRepository.save(
                 GenerationMember(
                         memberId = savedMember.id,
-                        generation = request.generations.last(),
+                        generation = currentGeneration,
                         position = Position.from(request.position),
                         subPosition = SubPosition.from(request.subPosition),
                 )
         )
-        request.generations.removeLast()
+        request.generations.remove(currentGeneration)
+        return generationMember
     }
 
-    private fun createBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
+    private fun saveBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
         request.generations
                 .forEach {
                     generationMemberRepository.save(
@@ -76,17 +99,52 @@ class MemberService(
         generationRepository.findByGeneration(generation)
                 ?: generationService.createGeneration(CreateGenerationRequest(generation))
 
+        val savedMembers = saveMembers(memberMap)
+        val newGenerationMembers = saveGenerationMembers(generation, memberMap, savedMembers)
+        newGenerationMembers.forEach {
+            createAttendances(it)
+        }
+    }
+
+    private fun saveMembers(memberMap: Map<String, List<String>>): List<Member> {
         val members = Members.of(memberMap)
         val existingMembers = memberRepository.findAllByEmailIn(members.getEmails())
         members.updateMembersWithMatchingEmail(existingMembers)
         val savedMemberEmails = existingMembers.map { it.email }
         val savedMembers = memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
         savedMembers.addAll(existingMembers)
+        return savedMembers
+    }
 
+    private fun saveGenerationMembers(generation: Int, memberMap: Map<String, List<String>>, savedMembers: List<Member>): List<GenerationMember> {
         val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
+        val existingGenerationMembers = updateExistingGenerationMembers(savedMembers, generationMembers)
+        return saveNewGenerationMembers(generationMembers, existingGenerationMembers)
+    }
+
+    private fun updateExistingGenerationMembers(savedMembers: List<Member>, generationMembers: GenerationMembers): List<GenerationMember> {
         val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
         generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
-        generationMemberRepository.saveAll(generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId }))
+        return existingGenerationMembers
+    }
+
+    private fun saveNewGenerationMembers(generationMembers: GenerationMembers, existingGenerationMembers: List<GenerationMember>): List<GenerationMember> {
+        val newGenerationMembers = generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId })
+        generationMemberRepository.saveAll(newGenerationMembers)
+        return newGenerationMembers
+    }
+
+    private fun createAttendances(generationMember: GenerationMember) {
+        val sessions = sessionRepository.findAllByGeneration(generationMember.generation)
+        val attendances = mutableListOf<Attendance>()
+        sessions.forEach { session ->
+            attendances.add(Attendance(
+                    generationMemberId = generationMember.id,
+                    sessionId = session.id,
+                    attendanceStatus = AttendanceStatus.PENDING,
+            ))
+        }
+        attendanceRepository.saveAll(attendances)
     }
 
     @Transactional(readOnly = true)
