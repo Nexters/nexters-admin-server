@@ -119,7 +119,6 @@ fun createNewGeneration(
     return Generation(generation, GenerationStatus.from(status))
 }
 
-
 fun createExcelInput() = mutableMapOf(
         "name" to mutableListOf("정진우", "김민수", "최다예"),
         "gender" to mutableListOf("남자", "남자", "여자"),
