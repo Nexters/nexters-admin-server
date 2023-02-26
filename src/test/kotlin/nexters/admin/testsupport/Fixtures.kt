@@ -99,14 +99,13 @@ fun createNewAttendance(
         generationMemberId: Long = 0L,
         sessionId: Long = 0L,
         attendanceStatus: AttendanceStatus = AttendanceStatus.ATTENDED,
-        scoreChanged: Int = 0
 ): Attendance {
     return Attendance(
             attendTime = attendTime,
             generationMemberId = generationMemberId,
             sessionId = sessionId,
             attendanceStatus = attendanceStatus,
-            scoreChanged = scoreChanged
+            scoreChanged = attendanceStatus.penaltyScore
     )
 }
 

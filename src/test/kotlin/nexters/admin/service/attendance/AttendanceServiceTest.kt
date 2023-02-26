@@ -8,6 +8,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
+import nexters.admin.domain.generation_member.MAX_SCORE
 import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.BadRequestException
@@ -165,7 +166,7 @@ class AttendanceServiceTest(
     )
 
     @Test
-    fun `유효한 QR 코드로 출석 성공시 출석 상태 수정`() {
+    fun `유효한 QR 코드로 출석 성공시 출석 상태 및 점수 수정`() {
         generationRepository.save(createNewGeneration())
         val member = memberRepository.save(createNewMember())
         val generationMember = generationMemberRepository
@@ -178,6 +179,8 @@ class AttendanceServiceTest(
         attendanceService.attendWithQrCode(member, validCode.value)
 
         attendance.attendanceStatus shouldBe AttendanceStatus.TARDY
+        attendance.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
+        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore
     }
 
     @Test
@@ -194,6 +197,7 @@ class AttendanceServiceTest(
 
         val actual = attendanceRepository.findByIdOrNull(attendance.id)
         actual?.attendanceStatus shouldBe AttendanceStatus.UNAUTHORIZED_ABSENCE
+        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.UNAUTHORIZED_ABSENCE.penaltyScore
         qrCodeRepository.getQrCodes() shouldHaveSize 0
     }
 
@@ -219,5 +223,47 @@ class AttendanceServiceTest(
         shouldThrow<BadRequestException> {
             attendanceService.attendWithQrCode(member, validCode.value)
         }
+    }
+
+    @Test
+    fun `관리자가 출석 상태를 수정하면 그에 따른 점수 변화는 기수회원의 점수에도 즉시 반영`() {
+        val generationMember = generationMemberRepository.save(createNewGenerationMember())
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember.id,
+                sessionId = 1L,
+                attendanceStatus = AttendanceStatus.TARDY
+        ))
+        val currentAttendance =  attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember.id,
+                sessionId = 2L,
+                attendanceStatus = AttendanceStatus.UNAUTHORIZED_ABSENCE
+        ))
+
+        attendanceService.updateAttendanceStatusByAdministrator(currentAttendance.id, AttendanceStatus.TARDY.name, "알고보니 지각")
+
+        currentAttendance.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
+        currentAttendance.note shouldBe "알고보니 지각"
+        generationMember.score shouldBe MAX_SCORE + (AttendanceStatus.TARDY.penaltyScore * 2)
+    }
+
+    @Test
+    fun `관리자가 가산점을 주면 그에 따른 점수 변화는 기수회원의 점수에도 즉시 반영`() {
+        val generationMember = generationMemberRepository.save(createNewGenerationMember())
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember.id,
+                sessionId = 1L,
+                attendanceStatus = AttendanceStatus.TARDY
+        ))
+        val currentAttendance =  attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember.id,
+                sessionId = 2L,
+                attendanceStatus = AttendanceStatus.ATTENDED
+        ))
+
+        attendanceService.addExtraAttendanceScoreByAdministrator(currentAttendance.id, 10, "운영지원 두 배")
+
+        currentAttendance.scoreChanged shouldBe 10
+        currentAttendance.extraScoreNote shouldBe "운영지원 두 배"
+        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore + 10
     }
 }

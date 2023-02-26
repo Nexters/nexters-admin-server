@@ -72,16 +72,21 @@ class AttendanceService(
         val attendance = attendanceRepository.findByGenerationMemberIdAndSessionId(generationMember.id, validCode.sessionId)
                 ?: throw NotFoundException.sessionNotFound()
         attendance.updateStatusByQr(validCode.type)
+        updateGenerationMemberScore(attendance.generationMemberId)
     }
 
     fun addExtraAttendanceScoreByAdministrator(attendanceId: Long, extraScoreChange: Int, extraScoreNote: String?) {
-        val attendance = attendanceRepository.findByIdOrNull(attendanceId) ?: throw NotFoundException.attendanceNotFound()
+        val attendance = attendanceRepository.findByIdOrNull(attendanceId)
+                ?: throw NotFoundException.attendanceNotFound()
         attendance.addExtraScore(extraScoreChange, extraScoreNote)
+        updateGenerationMemberScore(attendance.generationMemberId)
     }
 
     fun updateAttendanceStatusByAdministrator(attendanceId: Long, attendanceStatus: String, note: String?) {
-        val attendance = attendanceRepository.findByIdOrNull(attendanceId) ?: throw NotFoundException.attendanceNotFound()
+        val attendance = attendanceRepository.findByIdOrNull(attendanceId)
+                ?: throw NotFoundException.attendanceNotFound()
         attendance.updateStatusByAdmin(AttendanceStatus.from(attendanceStatus), note)
+        updateGenerationMemberScore(attendance.generationMemberId)
     }
 
     fun endAttendance() {
@@ -92,6 +97,7 @@ class AttendanceService(
         val pendingAttendances = attendanceRepository.findAllPendingAttendanceOf(activeSessionId)
         pendingAttendances.forEach {
             it.updateStatusByQr(AttendanceStatus.UNAUTHORIZED_ABSENCE)
+            updateGenerationMemberScore(it.generationMemberId)
         }
     }
 
@@ -101,5 +107,13 @@ class AttendanceService(
                 .maxByOrNull { it.generation }
                 ?.generation
                 ?: throw NotFoundException.generationNotFound()
+    }
+
+    private fun updateGenerationMemberScore(generationMemberId: Long) {
+        val generationMember = generationMemberRepository.findByIdOrNull(generationMemberId)
+                ?: throw NotFoundException.generationMemberNotFound()
+        val currentGenerationScoreChanges = attendanceRepository.findAllByGenerationMemberId(generationMemberId)
+                .map { it.scoreChanged }
+        generationMember.updateScoreByChanges(currentGenerationScoreChanges)
     }
 }
