@@ -18,6 +18,7 @@ import nexters.admin.repository.findGenerationAttendancesIn
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.*
 
 @Transactional
@@ -81,6 +82,10 @@ class AttendanceService(
                 ?: throw BadRequestException.attendanceNotStarted()
         qrCodeRepository.clear()
 
+        val activeSession = (sessionRepository.findByIdOrNull(activeSessionId)
+                ?: throw NotFoundException.sessionNotFound())
+        activeSession.updateEndAttendTime(LocalDateTime.now())
+
         val pendingAttendances = attendanceRepository.findAllPendingAttendanceOf(activeSessionId)
         pendingAttendances.forEach {
             it.updateStatus(AttendanceStatus.UNAUTHORIZED_ABSENCE)
@@ -103,8 +108,13 @@ class AttendanceService(
         val attended = findAttendedMembers(attendances).size
         val tardy = findTardyMembers(attendances).size
         val absence = findAbsenceMembers(attendances).size
-        return AttendanceSessionResponses(session.week, session.sessionDate,
-                attended, tardy, absence, attendances.map { findAttendanceBySession(it) }
+        return AttendanceSessionResponses(
+                week = session.week,
+                sessionDate = session.sessionDate,
+                attended = attended,
+                tardy = tardy,
+                absence = absence,
+                data = attendances.map { findAttendanceBySession(it) }
         )
     }
 
@@ -117,16 +127,16 @@ class AttendanceService(
                 ?.generation
                 ?: throw NotFoundException.generationNotFound()
         return AttendanceSessionResponse(
-                member.name,
-                it.id,
-                generationMember.position?.value,
-                generationMember.subPosition?.value,
-                initialGeneration,
-                it.scoreChanged,
-                generationMember.score,
-                it.attendanceStatus.value,
-                it.extraScoreNote,
-                it.note
+                name = member.name,
+                attendanceId = it.id,
+                position = generationMember.position?.value,
+                subPosition = generationMember.subPosition?.value,
+                initialGeneration = initialGeneration,
+                scoreChanged = it.scoreChanged,
+                score = generationMember.score,
+                attendanceStatus = it.attendanceStatus.value,
+                extraScoreNote = it.extraScoreNote,
+                note = it.note
         )
     }
 
