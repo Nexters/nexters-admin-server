@@ -11,7 +11,6 @@ import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.GenerationMembers
 import nexters.admin.domain.generation_member.Position
 import nexters.admin.domain.generation_member.SubPosition
-import nexters.admin.domain.session.Session
 import nexters.admin.domain.user.Password
 import nexters.admin.domain.user.member.Gender
 import nexters.admin.domain.user.member.Member
@@ -56,7 +55,8 @@ class MemberService(
 
         currentGeneration?.let {
             if (request.generations.contains(it)) {
-                createCurrentGenerationMember(savedMember, request, currentGeneration)
+                val generationMember = createCurrentGenerationMember(savedMember, request, currentGeneration)
+                createAttendances(generationMember)
             }
         }
         createBeforeGenerationMembers(request, savedMember)
@@ -64,7 +64,10 @@ class MemberService(
         return savedMember.id
     }
 
-    private fun createCurrentGenerationMember(savedMember: Member, request: CreateMemberRequest, currentGeneration: Int) {
+    private fun createCurrentGenerationMember(
+            savedMember: Member,
+            request: CreateMemberRequest,
+            currentGeneration: Int): GenerationMember {
         val generationMember = generationMemberRepository.save(
                 GenerationMember(
                         memberId = savedMember.id,
@@ -74,11 +77,7 @@ class MemberService(
                 )
         )
         request.generations.remove(currentGeneration)
-
-        val sessions = sessionRepository.findAllByGeneration(currentGeneration)
-        val attendances = mutableListOf<Attendance>()
-        createAttendances(sessions, generationMember, attendances)
-        attendanceRepository.saveAll(attendances)
+        return generationMember
     }
 
     private fun createBeforeGenerationMembers(request: CreateMemberRequest, savedMember: Member) {
@@ -107,22 +106,33 @@ class MemberService(
         val savedMembers = memberRepository.saveAll(members.findAllByEmailNotIn(savedMemberEmails)).toMutableList()
         savedMembers.addAll(existingMembers)
 
-        val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
-        val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
-        generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
-        val newGenerationMembers = generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId })
-        generationMemberRepository.saveAll(newGenerationMembers)
-
-        val sessions = sessionRepository.findAllByGeneration(generation)
-        val attendances = mutableListOf<Attendance>()
+        val newGenerationMembers = createGenerationMembers(generation, memberMap, savedMembers)
         newGenerationMembers.forEach {
-            createAttendances(sessions, it, attendances)
+            createAttendances(it)
         }
-        attendanceRepository.saveAll(attendances)
     }
 
-    private fun createAttendances(sessions: List<Session>, generationMember: GenerationMember, attendances: MutableList
-    <Attendance>) {
+    private fun createGenerationMembers(generation: Int, memberMap: Map<String, List<String>>, savedMembers: List<Member>): List<GenerationMember> {
+        val generationMembers = GenerationMembers.of(generation, memberMap, savedMembers)
+        val existingGenerationMembers = updateExistingGenerationMembers(savedMembers, generationMembers)
+        return saveNewGenerationMembers(generationMembers, existingGenerationMembers)
+    }
+
+    private fun updateExistingGenerationMembers(savedMembers: List<Member>, generationMembers: GenerationMembers): List<GenerationMember> {
+        val existingGenerationMembers = generationMemberRepository.findAllByMemberIdIn(savedMembers.map { it.id })
+        generationMembers.updateGenerationMembersWithMatchingMemberId(existingGenerationMembers)
+        return existingGenerationMembers
+    }
+
+    private fun saveNewGenerationMembers(generationMembers: GenerationMembers, existingGenerationMembers: List<GenerationMember>): List<GenerationMember> {
+        val newGenerationMembers = generationMembers.findAllByMemberIdsNotIn(existingGenerationMembers.map { it.memberId })
+        generationMemberRepository.saveAll(newGenerationMembers)
+        return newGenerationMembers
+    }
+
+    private fun createAttendances(generationMember: GenerationMember) {
+        val sessions = sessionRepository.findAllByGeneration(generationMember.generation)
+        val attendances = mutableListOf<Attendance>()
         sessions.forEach { session ->
             attendances.add(Attendance(
                     generationMemberId = generationMember.id,
@@ -130,6 +140,7 @@ class MemberService(
                     attendanceStatus = AttendanceStatus.PENDING,
             ))
         }
+        attendanceRepository.saveAll(attendances)
     }
 
     @Transactional(readOnly = true)
