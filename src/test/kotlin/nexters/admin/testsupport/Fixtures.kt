@@ -121,7 +121,6 @@ fun createNewPendingAttendance(
     )
 }
 
-
 fun createNewQrCode(
         sessionId: Long = 1L,
         value: String = "ASDFGH",
