@@ -1,6 +1,7 @@
 package nexters.admin.acceptance
 
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
@@ -10,6 +11,7 @@ import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation.GenerationStatus
 import nexters.admin.domain.user.member.MemberStatus
 import nexters.admin.service.attendance.AttendanceSessionResponses
+import nexters.admin.service.attendance.FindAttendanceProfileResponse
 import nexters.admin.testsupport.AcceptanceTest
 import nexters.admin.testsupport.generateCreateMemberRequest
 import nexters.admin.testsupport.generateCreateSessionRequest
@@ -17,6 +19,41 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 
 class AttendanceAcceptanceTest : AcceptanceTest() {
+
+    @Test
+    fun `내 출석 정보 조회`() {
+        val adminToken = 관리자_생성_토큰_발급()
+        기수_생성(adminToken, 22)
+        기수_상태_변경(adminToken, 22, GenerationStatus.DURING_ACTIVITY.value!!)
+        val memberToken = 회원_생성_토큰_발급(adminToken, generateCreateMemberRequest())
+        val session1Id = 세션_생성(adminToken, generateCreateSessionRequest(week = 1)).sessionId
+        val session2Id = 세션_생성(adminToken, generateCreateSessionRequest(week = 2)).sessionId
+        val session3Id = 세션_생성(adminToken, generateCreateSessionRequest(week = 3)).sessionId
+
+        val qrCode1 = 출석_시작_및_qr_조회(adminToken, session1Id, AttendanceStatus.ATTENDED).qrCode
+        회원_출석(memberToken, qrCode1)
+        출석_종료(adminToken)
+        val qrCode2 = 출석_시작_및_qr_조회(adminToken, session2Id, AttendanceStatus.TARDY).qrCode
+        회원_출석(memberToken, qrCode2)
+        출석_종료(adminToken)
+        val qrCode3 = 출석_시작_및_qr_조회(adminToken, session3Id, AttendanceStatus.ATTENDED).qrCode
+        회원_출석(memberToken, qrCode3)
+
+        val findAttendanceProfileResponse = Given {
+            log().all()
+            contentType(MediaType.APPLICATION_JSON_VALUE)
+            auth().oauth2(memberToken)
+        } When {
+            get("/api/attendance/me")
+        } Then {
+            statusCode(200)
+        } Extract {
+            `as`(FindAttendanceProfileResponse::class.java)
+        }
+
+        findAttendanceProfileResponse.isGenerationMember shouldBe true
+        findAttendanceProfileResponse.attendanceData?.attendances?.shouldHaveSize(3)
+    }
 
     @Test
     fun `해당 세션에 대한 출석 진행 도중 출석 정보 조회`() {
