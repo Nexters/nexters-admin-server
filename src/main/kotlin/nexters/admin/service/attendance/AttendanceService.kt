@@ -103,7 +103,7 @@ class AttendanceService(
         val attended = findAttendedMembers(attendances).size
         val tardy = findTardyMembers(attendances).size
         val absence = findAbsenceMembers(attendances).size
-        return AttendanceSessionResponses(session.week, session.sessionTime,
+        return AttendanceSessionResponses(session.week, session.sessionDate,
                 attended, tardy, absence, attendances.map { findAttendanceBySession(it) }
         )
     }
@@ -111,8 +111,8 @@ class AttendanceService(
     private fun findAttendanceBySession(it: Attendance): AttendanceSessionResponse {
         val generationMember = generationMemberRepository.findByIdOrNull(it.generationMemberId)
                 ?: throw NotFoundException.generationMemberNotFound()
-        val member = (memberRepository.findByIdOrNull(generationMember.id)
-                ?: throw NotFoundException.memberNotFound())
+        val member = memberRepository.findByIdOrNull(generationMember.memberId)
+                ?: throw NotFoundException.memberNotFound()
         val initialGeneration = generationMemberRepository.findTopByMemberIdOrderByGenerationAsc(member.id)
                 ?.generation
                 ?: throw NotFoundException.generationNotFound()
