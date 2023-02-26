@@ -56,7 +56,7 @@ data class AttendanceResponse(
             return AttendanceResponse(
                     session.title,
                     session.week,
-                    session.sessionTime,
+                    session.sessionDate,
                     attendance.attendanceStatus,
                     attendance.attendTime,
                     attendance.attendanceStatus.penaltyScore

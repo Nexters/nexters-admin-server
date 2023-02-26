@@ -41,7 +41,7 @@ class SessionServiceTest(
                         title = "Test title",
                         description = "Test description",
                         generation = 22,
-                        sessionTime = LocalDate.now(),
+                        sessionDate = LocalDate.now(),
                         week = 3,
                 )
         )
@@ -59,7 +59,7 @@ class SessionServiceTest(
                         title = "Test title",
                         description = null,
                         generation = 22,
-                        sessionTime = LocalDate.now(),
+                        sessionDate = LocalDate.now(),
                         week = 3,
                 )
         )
@@ -85,7 +85,7 @@ class SessionServiceTest(
                         title = "Test title",
                         description = null,
                         generation = 22,
-                        sessionTime = LocalDate.now(),
+                        sessionDate = LocalDate.now(),
                         week = 3,
                 )
         )
@@ -142,7 +142,7 @@ class SessionServiceTest(
                 title = "Updated Title",
                 description = "Test description",
                 generation = 22,
-                sessionTime = LocalDate.now(),
+                sessionDate = LocalDate.now(),
                 week = 3,
         ))
 
@@ -199,7 +199,7 @@ class SessionServiceTest(
         val pendingSession: Session = createNewSession(
                 title = "PENDING 세션",
                 generation = 22,
-                sessionTime = LocalDate.now(),
+                sessionDate = LocalDate.now(),
                 startAttendTime = null,
                 endAttendTime = null)
         sessionRepository.save(pendingSession)
@@ -222,7 +222,7 @@ class SessionServiceTest(
         val ongoingSession: Session = createNewSession(
                 title = "ONGOING 세션",
                 generation = 22,
-                sessionTime = LocalDate.now(),
+                sessionDate = LocalDate.now(),
                 startAttendTime = LocalDateTime.now().minusMinutes(3),
                 endAttendTime = null)
         sessionRepository.save(ongoingSession)
@@ -245,7 +245,7 @@ class SessionServiceTest(
         val expiredSession: Session = createNewSession(
                 title = "EXPIRED 세션",
                 generation = 22,
-                sessionTime = LocalDate.now(),
+                sessionDate = LocalDate.now(),
                 startAttendTime = LocalDateTime.now().minusMinutes(10),
                 endAttendTime = LocalDateTime.now().minusMinutes(3))
         sessionRepository.save(expiredSession)
@@ -261,10 +261,10 @@ class SessionServiceTest(
 
     private fun generateSessions(): MutableList<Session> {
         val today: LocalDate = LocalDate.now()
-        val session1: Session = createNewSession(generation = 22, sessionTime = today.minusDays(3))
-        val session2: Session = createNewSession(generation = 22, sessionTime = today.plusDays(10))
-        val session3: Session = createNewSession(generation = 22, sessionTime = today.plusDays(3), title = "다가오는 세션")
-        val session4: Session = createNewSession(generation = 23, sessionTime = today.plusDays(1))
+        val session1: Session = createNewSession(generation = 22, sessionDate = today.minusDays(3))
+        val session2: Session = createNewSession(generation = 22, sessionDate = today.plusDays(10))
+        val session3: Session = createNewSession(generation = 22, sessionDate = today.plusDays(3), title = "다가오는 세션")
+        val session4: Session = createNewSession(generation = 23, sessionDate = today.plusDays(1))
 
         sessionRepository.save(session1)
         sessionRepository.save(session2)

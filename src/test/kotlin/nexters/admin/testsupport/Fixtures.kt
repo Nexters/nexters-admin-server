@@ -86,12 +86,12 @@ fun createNewSession(
         title: String = "OT",
         description: String = "오늘은 설레는 첫 세션 날이에요!",
         generation: Int = 22,
-        sessionTime: LocalDate = LocalDate.of(2023, 1, 7),
+        sessionDate: LocalDate = LocalDate.of(2023, 1, 7),
         week: Int = 1,
         startAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 0),
         endAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 5),
 ): Session {
-    return Session(title, description, generation, sessionTime, week, startAttendTime, endAttendTime)
+    return Session(title, description, generation, sessionDate, week, startAttendTime, endAttendTime)
 }
 
 fun createNewAttendance(
@@ -118,3 +118,13 @@ fun createNewGeneration(
 ): Generation {
     return Generation(generation, GenerationStatus.from(status))
 }
+
+fun createExcelInput() = mutableMapOf(
+        "name" to mutableListOf("정진우", "김민수", "최다예"),
+        "gender" to mutableListOf("남자", "남자", "여자"),
+        "email" to mutableListOf("jinwoo@gmail.com", "ming@gmail.com", "dayeah@gmail.com"),
+        "phone_number" to mutableListOf("01012345678", "01012345679", "01012345670"),
+        "position" to mutableListOf("개발자", "운영진", "디자이너"),
+        "sub_position" to mutableListOf("프론트엔드", "CTO", ""),
+        "status" to mutableListOf("미이수", "수료", "제명")
+)
