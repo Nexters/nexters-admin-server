@@ -204,8 +204,6 @@ class MemberServiceTest(
         initGenerationsAndSessions()
         val excelInput = getExcelInput()
         memberService.createGenerationMembers(generation = 22, excelInput)
-        memberRepository.flush()
-        generationMemberRepository.flush()
 
         val attendances = attendanceRepository.findAll()
 
@@ -228,8 +226,6 @@ class MemberServiceTest(
             }
         }
         memberService.createGenerationMembers(generation, excelInput)
-        memberRepository.flush()
-        generationMemberRepository.flush()
 
         val attendances = attendanceRepository.findAll().filter { it.generationMemberId == generationMember.id }
         attendances.size shouldBe 8
