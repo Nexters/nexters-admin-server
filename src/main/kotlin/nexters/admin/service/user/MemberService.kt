@@ -39,11 +39,6 @@ class MemberService(
         private val attendanceRepository: AttendanceRepository,
 ) {
     fun createMemberByAdministrator(request: CreateMemberRequest): Long {
-        val currentGeneration = generationRepository.findAll()
-                .filter { it.status in listOf(BEFORE_ACTIVITY, DURING_ACTIVITY) }
-                .maxByOrNull { it.generation }
-                ?.generation
-
         val savedMember = memberRepository.save(
                 Member.of(
                         request.name,
@@ -53,6 +48,11 @@ class MemberService(
                         request.status
                 )
         )
+
+        val currentGeneration = generationRepository.findAll()
+                .filter { it.status in listOf(BEFORE_ACTIVITY, DURING_ACTIVITY) }
+                .maxByOrNull { it.generation }
+                ?.generation
 
         currentGeneration?.let {
             if (request.generations.contains(it)) {
