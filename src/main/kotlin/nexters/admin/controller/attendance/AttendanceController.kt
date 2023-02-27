@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.attendance.AttendanceService
+import nexters.admin.service.attendance.AttendanceSessionResponses
 import nexters.admin.service.attendance.FindAttendanceProfileResponse
 import nexters.admin.service.attendance.QrCodeService
 import nexters.admin.support.auth.LoggedInMember
@@ -60,5 +61,13 @@ class AttendanceController(
     fun endAttendance(): ResponseEntity<Void> {
         attendanceService.endAttendance()
         return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "[관리자 페이지] 해당 세션에 대한 출석 정보 조회")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/{sessionId}")
+    fun findAllBySessionId(@PathVariable sessionId: Long): ResponseEntity<AttendanceSessionResponses> {
+        val attendanceSessionResponses = attendanceService.findAttendancesBySessionId(sessionId)
+        return ResponseEntity.ok(attendanceSessionResponses)
     }
 }

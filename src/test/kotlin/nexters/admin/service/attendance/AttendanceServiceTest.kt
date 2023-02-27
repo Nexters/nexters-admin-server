@@ -2,10 +2,12 @@ package nexters.admin.service.attendance
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeSortedWith
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.session.Session
@@ -219,5 +221,87 @@ class AttendanceServiceTest(
         shouldThrow<BadRequestException> {
             attendanceService.attendWithQrCode(member, validCode.value)
         }
+    }
+
+    @Test
+    fun `현재 세션에 대한 출석 정보들을 모두 조회`() {
+        generationRepository.save(createNewGeneration(generation = 13))
+        generationRepository.save(createNewGeneration(generation = 20))
+        generationRepository.save(createNewGeneration(generation = 22))
+        val member1 = memberRepository.save(createNewMember(name = "김태현"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member1.id, generation = 20))
+        val generationMember1 = generationMemberRepository.save(createNewGenerationMember(memberId = member1.id, generation = 22))
+        val member2 = memberRepository.save(createNewMember(name = "정진우"))
+        val generationMember2 = generationMemberRepository.save(createNewGenerationMember(memberId = member2.id, generation = 22))
+        val member3 = memberRepository.save(createNewMember(name = "정설희"))
+        val generationMember3 = generationMemberRepository.save(createNewGenerationMember(memberId = member3.id, generation = 22))
+        val member4 = memberRepository.save(createNewMember(name = "박성현"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member4.id, generation = 13))
+        val generationMember4 = generationMemberRepository.save(createNewGenerationMember(memberId = member4.id, generation = 22))
+
+        val session = sessionRepository.save(createNewSession())
+        saveAttendances(session, generationMember1, generationMember2, generationMember3, generationMember4)
+
+        val actual = attendanceService.findAttendancesBySessionId(session.id)
+
+        actual.week shouldBe session.week
+        actual.attended shouldBe 1
+        actual.tardy shouldBe 1
+        actual.absence shouldBe 1
+        actual.data shouldHaveSize 4
+        actual.data.map {
+            it.initialGeneration
+        } shouldContainExactly listOf(20, 22, 22, 13)
+    }
+
+    private fun saveAttendances(session: Session, generationMember1: GenerationMember, generationMember2: GenerationMember, generationMember3: GenerationMember, generationMember4: GenerationMember) {
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember1.id,
+                sessionId = session.id,
+                attendanceStatus = AttendanceStatus.TARDY)
+        )
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember2.id,
+                sessionId = session.id,
+                attendanceStatus = AttendanceStatus.ATTENDED)
+        )
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember3.id,
+                sessionId = session.id,
+                attendanceStatus = AttendanceStatus.AUTHORIZED_ABSENCE)
+        )
+        attendanceRepository.save(createNewAttendance(
+                generationMemberId = generationMember4.id,
+                sessionId = session.id,
+                attendanceStatus = AttendanceStatus.PENDING)
+        )
+    }
+
+    @Test
+    fun `아직 출석한 사람이 없을 때 현재 세션에 대한 출석 정보들을 모두 조회`() {
+        generationRepository.save(createNewGeneration(generation = 13))
+        generationRepository.save(createNewGeneration(generation = 20))
+        generationRepository.save(createNewGeneration(generation = 22))
+        val member1 = memberRepository.save(createNewMember(name = "김태현"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member1.id, generation = 20))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member1.id, generation = 22))
+        val member2 = memberRepository.save(createNewMember(name = "정진우"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member2.id, generation = 22))
+        val member3 = memberRepository.save(createNewMember(name = "정설희"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member3.id, generation = 22))
+        val member4 = memberRepository.save(createNewMember(name = "박성현"))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member4.id, generation = 13))
+        generationMemberRepository.save(createNewGenerationMember(memberId = member4.id, generation = 22))
+
+        val session = sessionRepository.save(createNewSession())
+
+        val actual = attendanceService.findAttendancesBySessionId(session.id)
+
+        actual.week shouldBe session.week
+        actual.attended shouldBe 0
+        actual.tardy shouldBe 0
+        actual.absence shouldBe 0
+        actual.data shouldNotBe null
+        actual.data shouldHaveSize 0
     }
 }
