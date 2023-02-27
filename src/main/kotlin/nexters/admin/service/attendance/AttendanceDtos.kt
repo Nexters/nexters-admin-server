@@ -54,9 +54,9 @@ data class AttendanceResponse(
     companion object {
         fun of(session: Session, attendance: Attendance): AttendanceResponse {
             return AttendanceResponse(
-                    session.title ?: "",
+                    session.title,
                     session.week,
-                    session.sessionTime,
+                    session.sessionDate,
                     attendance.attendanceStatus,
                     attendance.attendTime,
                     attendance.attendanceStatus.penaltyScore
@@ -64,3 +64,25 @@ data class AttendanceResponse(
         }
     }
 }
+
+data class AttendanceSessionResponses(
+        val week: Int,
+        val sessionDate: LocalDate,
+        val attended: Int,
+        val tardy: Int,
+        val absence: Int,
+        val data: List<AttendanceSessionResponse>,
+)
+
+data class AttendanceSessionResponse(
+        val name: String,
+        val attendanceId: Long,
+        val position: String?,
+        val subPosition: String?,
+        val initialGeneration: Int,
+        val scoreChanged: Int,
+        val score: Int?,
+        val attendanceStatus: String,
+        val extraScoreNote: String?,
+        val note: String?,
+)

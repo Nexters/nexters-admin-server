@@ -21,8 +21,8 @@ class Session(
         @Column(name = "generation", nullable = false)
         var generation: Int,
 
-        @Column(name = "session_time", nullable = false)
-        var sessionTime: LocalDate,
+        @Column(name = "session_date", nullable = false)
+        var sessionDate: LocalDate,
 
         @Column(name = "week", nullable = false)
         var week: Int,
@@ -36,4 +36,12 @@ class Session(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
+
+    fun updateStartAttendTime(startAttendTime: LocalDateTime) {
+        this.startAttendTime = startAttendTime
+    }
+
+    fun updateEndAttendTime(endAttendTime: LocalDateTime) {
+        this.endAttendTime = endAttendTime
+    }
 }

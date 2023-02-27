@@ -21,10 +21,10 @@ data class FindSessionResponses(
 
 data class FindSessionResponse(
         val id: Long,
-        val title: String?,
+        val title: String,
         val description: String?,
         val generation: Int,
-        val sessionTime: LocalDate?,
+        val sessionDate: LocalDate,
         val week: Int,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val startAttendTime: LocalDateTime?,
@@ -38,7 +38,7 @@ data class FindSessionResponse(
                     session.title,
                     session.description,
                     session.generation,
-                    session.sessionTime,
+                    session.sessionDate,
                     session.week,
                     session.startAttendTime,
                     session.endAttendTime
@@ -74,7 +74,7 @@ data class SessionHomeResponse(
     companion object {
         fun of(session: Session, attendance: Attendance): SessionHomeResponse {
             return SessionHomeResponse(
-                    session.sessionTime,
+                    session.sessionDate,
                     session.title,
                     session.week,
                     session.description,

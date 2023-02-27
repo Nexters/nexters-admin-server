@@ -1,5 +1,6 @@
 package nexters.admin.testsupport
 
+import nexters.admin.controller.session.CreateSessionRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
 import nexters.admin.domain.attendance.Attendance
@@ -86,12 +87,22 @@ fun createNewSession(
         title: String = "OT",
         description: String = "오늘은 설레는 첫 세션 날이에요!",
         generation: Int = 22,
-        sessionTime: LocalDate = LocalDate.of(2023, 1, 7),
+        sessionDate: LocalDate = LocalDate.of(2023, 1, 7),
         week: Int = 1,
         startAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 0),
         endAttendTime: LocalDateTime? = LocalDateTime.of(2023, 1, 7, 14, 5),
 ): Session {
-    return Session(title, description, generation, sessionTime, week, startAttendTime, endAttendTime)
+    return Session(title, description, generation, sessionDate, week, startAttendTime, endAttendTime)
+}
+
+fun generateCreateSessionRequest(
+        title: String = "OT",
+        description: String = "오늘은 설레는 첫 세션 날이에요!",
+        generation: Int = 22,
+        sessionDate: LocalDate = LocalDate.of(2023, 1, 7),
+        week: Int = 1,
+): CreateSessionRequest {
+    return CreateSessionRequest(title, description, generation, sessionDate, week)
 }
 
 fun createNewAttendance(

@@ -11,7 +11,7 @@ enum class AttendanceStatus(val value: String, val penaltyScore: Int) {
     ;
 
     companion object {
-        fun from(name: String): AttendanceStatus = AttendanceStatus.values()
+        fun from(name: String): AttendanceStatus = values()
                 .firstOrNull { it.name == name }
                 ?: throw BadRequestException.wrongAttendanceStatus()
     }

@@ -10,6 +10,7 @@ import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
 import nexters.admin.repository.GenerationRepository
+import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
 import nexters.admin.repository.findAllPendingAttendanceOf
@@ -17,12 +18,14 @@ import nexters.admin.repository.findGenerationAttendancesIn
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.*
 
 @Transactional
 @Service
 class AttendanceService(
         private val attendanceRepository: AttendanceRepository,
+        private val memberRepository: MemberRepository,
         private val generationMemberRepository: GenerationMemberRepository,
         private val qrCodeRepository: QrCodeRepository,
         private val sessionRepository: SessionRepository,
@@ -94,6 +97,10 @@ class AttendanceService(
                 ?: throw BadRequestException.attendanceNotStarted()
         qrCodeRepository.clear()
 
+        val activeSession = (sessionRepository.findByIdOrNull(activeSessionId)
+                ?: throw NotFoundException.sessionNotFound())
+        activeSession.updateEndAttendTime(LocalDateTime.now())
+
         val pendingAttendances = attendanceRepository.findAllPendingAttendanceOf(activeSessionId)
         pendingAttendances.forEach {
             it.updateStatusByQr(AttendanceStatus.UNAUTHORIZED_ABSENCE)
@@ -116,4 +123,56 @@ class AttendanceService(
                 .map { it.scoreChanged }
         generationMember.updateScoreByChanges(currentGenerationScoreChanges)
     }
+
+    @Transactional(readOnly = true)
+    fun findAttendancesBySessionId(sessionId: Long): AttendanceSessionResponses {
+        val session = (sessionRepository.findByIdOrNull(sessionId)
+                ?: throw NotFoundException.sessionNotFound())
+        val attendances = attendanceRepository.findAllBySessionId(sessionId)
+        val attended = findAttendedMembers(attendances).size
+        val tardy = findTardyMembers(attendances).size
+        val absence = findAbsenceMembers(attendances).size
+        return AttendanceSessionResponses(
+                week = session.week,
+                sessionDate = session.sessionDate,
+                attended = attended,
+                tardy = tardy,
+                absence = absence,
+                data = attendances.map { findAttendanceBySession(it) }
+        )
+    }
+
+    private fun findAttendanceBySession(it: Attendance): AttendanceSessionResponse {
+        val generationMember = generationMemberRepository.findByIdOrNull(it.generationMemberId)
+                ?: throw NotFoundException.generationMemberNotFound()
+        val member = memberRepository.findByIdOrNull(generationMember.memberId)
+                ?: throw NotFoundException.memberNotFound()
+        val initialGeneration = generationMemberRepository.findTopByMemberIdOrderByGenerationAsc(member.id)
+                ?.generation
+                ?: throw NotFoundException.generationNotFound()
+        return AttendanceSessionResponse(
+                name = member.name,
+                attendanceId = it.id,
+                position = generationMember.position?.value,
+                subPosition = generationMember.subPosition?.value,
+                initialGeneration = initialGeneration,
+                scoreChanged = it.scoreChanged,
+                score = generationMember.score,
+                attendanceStatus = it.attendanceStatus.value,
+                extraScoreNote = it.extraScoreNote,
+                note = it.note
+        )
+    }
+
+    private fun findAttendedMembers(attendances: List<Attendance>) =
+            attendances.filter { it.attendanceStatus == AttendanceStatus.ATTENDED }
+
+    private fun findTardyMembers(attendances: List<Attendance>) =
+            attendances.filter { it.attendanceStatus == AttendanceStatus.TARDY }
+
+    private fun findAbsenceMembers(attendances: List<Attendance>) =
+            attendances.filter {
+                it.attendanceStatus == AttendanceStatus.UNAUTHORIZED_ABSENCE ||
+                        it.attendanceStatus == AttendanceStatus.AUTHORIZED_ABSENCE
+            }
 }

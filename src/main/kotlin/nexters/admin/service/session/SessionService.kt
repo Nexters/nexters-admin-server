@@ -40,7 +40,7 @@ class SessionService(
                         title = request.title,
                         description = request.description,
                         generation = request.generation,
-                        sessionTime = request.sessionTime,
+                        sessionDate = request.sessionDate,
                         week = request.week,
                 )
         )
@@ -72,7 +72,7 @@ class SessionService(
             title = request.title
             description = request.description
             generation = request.generation
-            sessionTime = request.sessionTime
+            sessionDate = request.sessionDate
             week = request.week
         }
 
