@@ -105,7 +105,6 @@ class AttendanceAcceptanceTest : AcceptanceTest() {
 
         val attendance1Id = 세션_출석_조회(adminToken, session1Id).data[0].attendanceId
         출석_수정(adminToken, attendance1Id, TARDY.name, "지각 사후 통보")
-
         val attendance = 나의_출석_조회(memberToken).attendanceData
 
         attendance?.score shouldBe 100 - 15 - 5
@@ -125,7 +124,6 @@ class AttendanceAcceptanceTest : AcceptanceTest() {
 
         val attendanceId = 세션_출석_조회(adminToken, sessionId).data[0].attendanceId
         출석_점수_부여(adminToken, attendanceId, 5, "운영 지원")
-
         val attendance = 나의_출석_조회(memberToken).attendanceData
 
         attendance?.score shouldBe 100 + 5
