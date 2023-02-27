@@ -22,6 +22,16 @@ data class CurrentQrCodeResponse(
     }
 }
 
+data class ExtraAttendanceScoreChangeRequest(
+        val extraScoreChange: Int,
+        val extraScoreNote: String?
+)
+
+data class UpdateAttendanceStatusRequest(
+        val attendanceStatus: String,
+        val note: String?
+)
+
 data class InitializeQrCodesRequest(
         val sessionId: Long,
         val qrCodeType: String,

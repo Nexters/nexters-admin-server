@@ -13,6 +13,7 @@ fun AttendanceRepository.findAllPendingAttendanceOf(sessionId: Long): List<Atten
 }
 
 interface AttendanceRepository : JpaRepository<Attendance, Long> {
+    fun findAllByGenerationMemberId(generationMemberId: Long): List<Attendance>
     fun findAllByGenerationMemberIdAndAttendanceStatusIn(generationMemberId: Long, statuses: List<AttendanceStatus>): List<Attendance>
     fun findByGenerationMemberIdAndSessionId(generationMemberId: Long, sessionId: Long): Attendance?
     fun findAllBySessionIdAndAttendanceStatus(sessionId: Long, statuses: AttendanceStatus): List<Attendance>

@@ -26,14 +26,29 @@ class Attendance(
         var scoreChanged: Int = 0,
 
         @Column(name = "note")
-        var note: String? = ""
+        var note: String? = "",
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    fun updateStatus(attendanceStatus: AttendanceStatus) {
+    fun updateStatusByQr(attendanceStatus: AttendanceStatus) {
+        updateStatusAndScore(attendanceStatus)
         this.attendTime = LocalDateTime.now()
+    }
+
+    fun updateStatusByAdmin(attendanceStatus: AttendanceStatus, note: String?) {
+        updateStatusAndScore(attendanceStatus)
+        this.note = note
+    }
+
+    fun addExtraScore(extraScoreChange: Int, extraScoreNote: String?) {
+        this.scoreChanged += extraScoreChange
+        this.extraScoreNote = extraScoreNote
+    }
+
+    private fun updateStatusAndScore(attendanceStatus: AttendanceStatus) {
+        this.scoreChanged += this.attendanceStatus.calculateScoreChangeTo(attendanceStatus)
         this.attendanceStatus = attendanceStatus
     }
 }

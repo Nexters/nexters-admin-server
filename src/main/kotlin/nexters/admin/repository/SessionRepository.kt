@@ -10,6 +10,5 @@ fun SessionRepository.findUpcomingSession(generation: Int, today: LocalDate): Se
 
 interface SessionRepository : JpaRepository<Session, Long> {
     fun findAllByGeneration(generation: Int): List<Session>
-
     fun findTopByGenerationAndSessionDateGreaterThanEqualOrderBySessionDateAsc(generation: Int, today: LocalDate): Session?
 }

@@ -5,7 +5,9 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import nexters.admin.controller.attendance.CurrentQrCodeResponse
+import nexters.admin.controller.attendance.ExtraAttendanceScoreChangeRequest
 import nexters.admin.controller.attendance.InitializeQrCodesRequest
+import nexters.admin.controller.attendance.UpdateAttendanceStatusRequest
 import nexters.admin.controller.attendance.ValidateQrCodeRequest
 import nexters.admin.controller.auth.TokenResponse
 import nexters.admin.controller.generation.CreateGenerationRequest
@@ -15,6 +17,8 @@ import nexters.admin.controller.user.CreateAdministratorRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdatePasswordRequest
 import nexters.admin.domain.attendance.AttendanceStatus
+import nexters.admin.service.attendance.AttendanceSessionResponses
+import nexters.admin.service.attendance.FindAttendanceProfileResponse
 import nexters.admin.service.auth.AdminLoginRequest
 import nexters.admin.service.auth.MemberLoginRequest
 import nexters.admin.service.auth.MemberLoginResponse
@@ -79,7 +83,7 @@ fun 비밀번호_수정(memberToken: String, newPassword: String) {
         log().all()
         contentType(MediaType.APPLICATION_JSON_VALUE)
         auth().oauth2(memberToken)
-        body(UpdatePasswordRequest( newPassword))
+        body(UpdatePasswordRequest(newPassword))
     } When {
         put("/api/members/password")
     } Then {
@@ -204,6 +208,60 @@ fun 출석_종료(adminToken: String) {
         auth().oauth2(adminToken)
     } When {
         delete("/api/attendance/qr")
+    } Then {
+        statusCode(200)
+    }
+}
+
+fun 나의_출석_조회(memberToken: String): FindAttendanceProfileResponse {
+    return Given {
+        log().all()
+        contentType(MediaType.APPLICATION_JSON_VALUE)
+        auth().oauth2(memberToken)
+    } When {
+        get("/api/attendance/me")
+    } Then {
+        statusCode(200)
+    } Extract {
+        `as`(FindAttendanceProfileResponse::class.java)
+    }
+}
+
+fun 세션_출석_조회(adminToken: String, sessionId: Long): AttendanceSessionResponses {
+    return Given {
+        log().all()
+        contentType(MediaType.APPLICATION_JSON_VALUE)
+        auth().oauth2(adminToken)
+    } When {
+        get("/api/attendance/{sessionId}", sessionId)
+    } Then {
+        statusCode(200)
+    } Extract {
+        `as`(AttendanceSessionResponses::class.java)
+    }
+}
+
+fun 출석_점수_부여(adminToken: String, attendanceId: Long, extraScoreChange: Int, extraScoreNote: String?) {
+    Given {
+        log().all()
+        contentType(MediaType.APPLICATION_JSON_VALUE)
+        auth().oauth2(adminToken)
+        body(ExtraAttendanceScoreChangeRequest(extraScoreChange, extraScoreNote))
+    } When {
+        post("/api/attendance/{id}/additional-score", attendanceId)
+    } Then {
+        statusCode(200)
+    }
+}
+
+fun 출석_수정(adminToken: String, attendanceId: Long, attendanceStatus: String, note: String?) {
+    Given {
+        log().all()
+        contentType(MediaType.APPLICATION_JSON_VALUE)
+        auth().oauth2(adminToken)
+        body(UpdateAttendanceStatusRequest(attendanceStatus, note))
+    } When {
+        put("/api/attendance/{id}/status", attendanceId)
     } Then {
         statusCode(200)
     }

@@ -111,7 +111,24 @@ fun createNewAttendance(
         sessionId: Long = 0L,
         attendanceStatus: AttendanceStatus = AttendanceStatus.ATTENDED,
 ): Attendance {
-    return Attendance(attendTime, generationMemberId, sessionId, attendanceStatus)
+    return Attendance(
+            attendTime = attendTime,
+            generationMemberId = generationMemberId,
+            sessionId = sessionId,
+            attendanceStatus = attendanceStatus,
+            scoreChanged = attendanceStatus.penaltyScore
+    )
+}
+
+fun createNewPendingAttendance(
+        generationMemberId: Long = 0L,
+        sessionId: Long = 0L,
+): Attendance {
+    return Attendance(
+            generationMemberId = generationMemberId,
+            sessionId = sessionId,
+            attendanceStatus = AttendanceStatus.PENDING,
+    )
 }
 
 fun createNewQrCode(

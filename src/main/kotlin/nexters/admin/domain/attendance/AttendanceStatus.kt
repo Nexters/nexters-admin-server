@@ -15,4 +15,8 @@ enum class AttendanceStatus(val value: String, val penaltyScore: Int) {
                 .firstOrNull { it.name == name }
                 ?: throw BadRequestException.wrongAttendanceStatus()
     }
+
+    fun calculateScoreChangeTo(targetAttendanceStatus: AttendanceStatus): Int {
+        return targetAttendanceStatus.penaltyScore - this.penaltyScore
+    }
 }
