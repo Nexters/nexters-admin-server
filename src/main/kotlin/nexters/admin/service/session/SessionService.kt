@@ -1,6 +1,5 @@
 package nexters.admin.service.session
 
-import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.controller.session.CreateSessionRequest
 import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.domain.attendance.Attendance
@@ -88,8 +87,8 @@ class SessionService(
     }
 
     @Transactional(readOnly = true)
-    fun getSessionHome(loggedInMemberRequest: LoggedInMemberRequest): FindSessionHomeResponse {
-        val loggedInMember = memberRepository.findByEmail(loggedInMemberRequest.email)
+    fun getSessionHome(email: String): FindSessionHomeResponse {
+        val loggedInMember = memberRepository.findByEmail(email)
                 ?: throw NotFoundException.memberNotFound()
         val generationMember =
                 generationMemberRepository.findByGenerationAndMemberId(CURRENT_ONGOING_GENERATION, loggedInMember.id)

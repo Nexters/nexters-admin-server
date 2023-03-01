@@ -1,6 +1,5 @@
 package nexters.admin.support.auth
 
-import nexters.admin.controller.auth.LoggedInMemberRequest
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -22,9 +21,8 @@ class LoginUserResolver(
             mavContainer: ModelAndViewContainer?,
             webRequest: NativeWebRequest,
             binderFactory: WebDataBinderFactory?,
-    ): LoggedInMemberRequest {
+    ): String {
         val token = AuthorizationHeaderUtils.extractBearerToken(webRequest)
-        val userEmail = jwtTokenProvider.getPayload(token)
-        return LoggedInMemberRequest(userEmail)
+        return jwtTokenProvider.getPayload(token)
     }
 }

@@ -3,7 +3,6 @@ package nexters.admin.service.user
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.domain.attendance.AttendanceStatus.ATTENDED
 import nexters.admin.domain.attendance.AttendanceStatus.PENDING
@@ -341,7 +340,7 @@ class MemberServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
         generationMemberRepository.save(generationMember)
 
-        memberService.updatePassword(LoggedInMemberRequest(member.email), "2345")
+        memberService.updatePassword(member.email, "2345")
 
         val actual = memberRepository.findByEmail(member.email)
         actual?.password shouldBe Password("2345")
@@ -387,7 +386,7 @@ class MemberServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DEVELOPER)
         generationMemberRepository.save(generationMember)
 
-        val profile = memberService.getProfile(LoggedInMemberRequest(member.email))
+        val profile = memberService.getProfile(member.email)
 
         profile.name shouldBe "정설희"
         profile.generation shouldBe 22
@@ -402,7 +401,7 @@ class MemberServiceTest(
         generationMemberRepository.save(generationMember1)
         generationMemberRepository.save(generationMember2)
 
-        val profile = memberService.getProfile(LoggedInMemberRequest(member.email))
+        val profile = memberService.getProfile(member.email)
 
         profile.generation shouldBe 22
         profile.position shouldBe Position.DESIGNER.value
@@ -412,7 +411,7 @@ class MemberServiceTest(
     fun `기수 정보가 없는 회원이 내 정보 조회시 0기로 표시`() {
         val member: Member = memberRepository.save(createNewMember())
 
-        val profile = memberService.getProfile(LoggedInMemberRequest(member.email))
+        val profile = memberService.getProfile(member.email)
 
         profile.generation shouldBe 0
         profile.position shouldBe ""
