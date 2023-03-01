@@ -40,6 +40,7 @@ class GenerationService(
     fun findAllGeneration(): GenerationResponses {
         return GenerationResponses(
                 generationRepository.findAll()
+                        .sortedByDescending { it.generation }
                         .map { GenerationResponse(it.generation, it.status) }
         )
     }
