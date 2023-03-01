@@ -3,7 +3,7 @@ package nexters.admin.controller.attendance
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import nexters.admin.domain.user.member.Member
+import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.service.attendance.AttendanceService
 import nexters.admin.service.attendance.AttendanceSessionResponses
 import nexters.admin.service.attendance.FindAttendanceProfileResponse
@@ -24,8 +24,8 @@ class AttendanceController(
     @SecurityRequirement(name = "JWT")
     @PostMapping
     fun attend(
-            @LoggedInMember member: Member,
-            @RequestBody @Valid request: ValidateQrCodeRequest
+            @LoggedInMember member: LoggedInMemberRequest,
+            @RequestBody @Valid request: ValidateQrCodeRequest,
     ): ResponseEntity<Void> {
         attendanceService.attendWithQrCode(member, request.nonce)
         return ResponseEntity.ok().build()
@@ -56,7 +56,7 @@ class AttendanceController(
     @Operation(summary = "내 출석 정보 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/me")
-    fun findAttendanceProfile(@LoggedInMember member: Member): ResponseEntity<FindAttendanceProfileResponse> {
+    fun findAttendanceProfile(@LoggedInMember member: LoggedInMemberRequest): ResponseEntity<FindAttendanceProfileResponse> {
         val findAttendanceProfileResponse = attendanceService.getAttendanceProfile(member)
         return ResponseEntity.ok(findAttendanceProfileResponse)
     }

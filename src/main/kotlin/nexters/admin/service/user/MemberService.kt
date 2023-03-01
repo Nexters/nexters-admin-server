@@ -1,5 +1,6 @@
 package nexters.admin.service.user
 
+import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.controller.generation.CreateGenerationRequest
 import nexters.admin.controller.user.CreateMemberRequest
 import nexters.admin.controller.user.UpdateMemberRequest
@@ -242,7 +243,9 @@ class MemberService(
         )
     }
 
-    fun updatePassword(loggedInMember: Member, newPassword: String) {
+    fun updatePassword(loggedInMemberRequest: LoggedInMemberRequest, newPassword: String) {
+        val loggedInMember = memberRepository.findByEmail(loggedInMemberRequest.email)
+                ?: throw NotFoundException.memberNotFound()
         loggedInMember.updatePassword(Password(newPassword))
     }
 
@@ -261,7 +264,9 @@ class MemberService(
     }
 
     @Transactional(readOnly = true)
-    fun getProfile(loggedInMember: Member): FindProfileResponse {
+    fun getProfile(loggedInMemberRequest: LoggedInMemberRequest): FindProfileResponse {
+        val loggedInMember = memberRepository.findByEmail(loggedInMemberRequest.email)
+                ?: throw NotFoundException.memberNotFound()
         val generationMember = generationMemberRepository.findTopByMemberIdOrderByGenerationDesc(loggedInMember.id)
         return FindProfileResponse.of(loggedInMember, generationMember)
     }

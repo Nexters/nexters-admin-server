@@ -8,6 +8,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.domain.attendance.AttendanceStatus
 import nexters.admin.domain.generation_member.GenerationMember
 import nexters.admin.domain.generation_member.MAX_SCORE
@@ -56,7 +57,7 @@ class AttendanceServiceTest(
         generateAttendance(session1, generationMember, AttendanceStatus.ATTENDED)
         generateAttendance(session2, generationMember, AttendanceStatus.TARDY)
 
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+        val attendanceProfile = attendanceService.getAttendanceProfile(LoggedInMemberRequest(member.email))
 
         attendanceProfile.isGenerationMember shouldBe true
         attendanceProfile.attendanceData!!.run {
@@ -77,7 +78,7 @@ class AttendanceServiceTest(
                 .save(createNewGenerationMember(memberId = member.id))
         saveAttendanceDataWithStatuses(generationMember)
 
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+        val attendanceProfile = attendanceService.getAttendanceProfile(LoggedInMemberRequest(member.email))
         attendanceProfile.attendanceData!!.attendances.run {
             size shouldBe 4
             map { it.attendanceStatus } shouldNotContain AttendanceStatus.PENDING
@@ -102,7 +103,7 @@ class AttendanceServiceTest(
         generationRepository.save(createNewGeneration())
         val member: Member = memberRepository.save(createNewMember())
 
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+        val attendanceProfile = attendanceService.getAttendanceProfile(LoggedInMemberRequest(member.email))
 
         attendanceProfile.isGenerationMember shouldBe false
         attendanceProfile.attendanceData shouldBe null
@@ -116,7 +117,7 @@ class AttendanceServiceTest(
                 .save(createNewGenerationMember(memberId = member.id))
         saveUnorderedAttendanceData(generationMember)
 
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+        val attendanceProfile = attendanceService.getAttendanceProfile(LoggedInMemberRequest(member.email))
 
         attendanceProfile.attendanceData!!.attendances shouldBeSortedWith { a, b -> b.week.compareTo(a.week) }
     }
@@ -142,7 +143,7 @@ class AttendanceServiceTest(
         val session: Session = sessionRepository.save(createNewSession())
         generateAttendance(session, generationMember, attendanceStatus)
 
-        val attendanceProfile = attendanceService.getAttendanceProfile(member)
+        val attendanceProfile = attendanceService.getAttendanceProfile(LoggedInMemberRequest(member.email))
 
         attendanceProfile.attendanceData!!.attendances.getOrNull(0)!!.penaltyScore shouldBe attendanceStatus.penaltyScore
     }
@@ -178,7 +179,7 @@ class AttendanceServiceTest(
         qrCodeRepository.initializeCodes(session.id, AttendanceStatus.TARDY)
         val validCode = qrCodeRepository.findCurrentValidCode()!!
 
-        attendanceService.attendWithQrCode(member, validCode.value)
+        attendanceService.attendWithQrCode(LoggedInMemberRequest(member.email), validCode.value)
 
         attendance.attendanceStatus shouldBe AttendanceStatus.TARDY
         attendance.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
@@ -210,7 +211,7 @@ class AttendanceServiceTest(
         qrCodeRepository.initializeCodes(1L, AttendanceStatus.ATTENDED)
 
         shouldThrow<BadRequestException> {
-            attendanceService.attendWithQrCode(member, "INVALIDCODE")
+            attendanceService.attendWithQrCode(LoggedInMemberRequest(member.email), "INVALIDCODE")
         }
     }
 
@@ -223,7 +224,7 @@ class AttendanceServiceTest(
         val validCode = qrCodeRepository.findCurrentValidCode()!!
 
         shouldThrow<BadRequestException> {
-            attendanceService.attendWithQrCode(member, validCode.value)
+            attendanceService.attendWithQrCode(LoggedInMemberRequest(member.email), validCode.value)
         }
     }
 

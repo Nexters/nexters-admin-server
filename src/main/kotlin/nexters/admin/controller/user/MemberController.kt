@@ -3,7 +3,7 @@ package nexters.admin.controller.user
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import nexters.admin.domain.user.member.Member
+import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.service.user.FindAllMembersResponse
 import nexters.admin.service.user.FindProfileResponse
 import nexters.admin.service.user.MemberService
@@ -85,7 +85,7 @@ class MemberController(
     @SecurityRequirement(name = "JWT")
     @PutMapping("/password")
     fun updatePassword(
-            @LoggedInMember member: Member,
+            @LoggedInMember member: LoggedInMemberRequest,
             @RequestBody @Valid request: UpdatePasswordRequest,
     ): ResponseEntity<Void> {
         memberService.updatePassword(member, request.password)
@@ -95,7 +95,7 @@ class MemberController(
     @Operation(summary = "내 정보 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/me")
-    fun findProfile(@LoggedInMember member: Member): ResponseEntity<FindProfileResponse> {
+    fun findProfile(@LoggedInMember member: LoggedInMemberRequest): ResponseEntity<FindProfileResponse> {
         val findProfileResponse = memberService.getProfile(member)
         return ResponseEntity.ok(findProfileResponse)
     }

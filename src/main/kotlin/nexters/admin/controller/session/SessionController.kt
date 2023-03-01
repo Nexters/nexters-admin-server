@@ -3,6 +3,7 @@ package nexters.admin.controller.session
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import nexters.admin.controller.auth.LoggedInMemberRequest
 import nexters.admin.domain.user.member.Member
 import nexters.admin.service.session.CreateSessionResponse
 import nexters.admin.service.session.FindSessionHomeResponse
@@ -24,7 +25,7 @@ class SessionController(
     @Operation(summary = "메인 세션 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/home")
-    fun getSessionHome(@LoggedInMember member: Member): ResponseEntity<FindSessionHomeResponse> {
+    fun getSessionHome(@LoggedInMember member: LoggedInMemberRequest): ResponseEntity<FindSessionHomeResponse> {
         val findSessionHomeResponse = sessionService.getSessionHome(member)
         return ResponseEntity.ok(findSessionHomeResponse)
     }
