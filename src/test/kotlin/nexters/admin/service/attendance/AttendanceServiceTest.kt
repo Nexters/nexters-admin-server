@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.transaction.annotation.Transactional
 
-@Transactional
 @ApplicationTest
 class AttendanceServiceTest(
         @Autowired private val attendanceService: AttendanceService,
@@ -181,9 +179,11 @@ class AttendanceServiceTest(
 
         attendanceService.attendWithQrCode(LoggedInMemberRequest(member.email), validCode.value)
 
-        attendance.attendanceStatus shouldBe AttendanceStatus.TARDY
-        attendance.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
-        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore
+        val updatedAttendance = attendanceRepository.findByIdOrNull(attendance.id)
+        val updatedGenerationMember = generationMemberRepository.findByIdOrNull(generationMember.id)
+        updatedAttendance?.attendanceStatus shouldBe AttendanceStatus.TARDY
+        updatedAttendance?.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
+        updatedGenerationMember?.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore
     }
 
     @Test
@@ -198,9 +198,10 @@ class AttendanceServiceTest(
 
         attendanceService.endAttendance()
 
-        val actual = attendanceRepository.findByIdOrNull(attendance.id)
-        actual?.attendanceStatus shouldBe AttendanceStatus.UNAUTHORIZED_ABSENCE
-        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.UNAUTHORIZED_ABSENCE.penaltyScore
+        val updatedAttendance = attendanceRepository.findByIdOrNull(attendance.id)
+        val updatedGenerationMember = generationMemberRepository.findByIdOrNull(generationMember.id)
+        updatedAttendance?.attendanceStatus shouldBe AttendanceStatus.UNAUTHORIZED_ABSENCE
+        updatedGenerationMember?.score shouldBe MAX_SCORE + AttendanceStatus.UNAUTHORIZED_ABSENCE.penaltyScore
         qrCodeRepository.getQrCodes() shouldHaveSize 0
     }
 
@@ -236,7 +237,7 @@ class AttendanceServiceTest(
                 sessionId = 1L,
                 attendanceStatus = AttendanceStatus.TARDY
         ))
-        val currentAttendance =  attendanceRepository.save(createNewAttendance(
+        val currentAttendance = attendanceRepository.save(createNewAttendance(
                 generationMemberId = generationMember.id,
                 sessionId = 2L,
                 attendanceStatus = AttendanceStatus.UNAUTHORIZED_ABSENCE
@@ -244,9 +245,11 @@ class AttendanceServiceTest(
 
         attendanceService.updateAttendanceStatusByAdministrator(currentAttendance.id, AttendanceStatus.TARDY.name, "알고보니 지각")
 
-        currentAttendance.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
-        currentAttendance.note shouldBe "알고보니 지각"
-        generationMember.score shouldBe MAX_SCORE + (AttendanceStatus.TARDY.penaltyScore * 2)
+        val updatedAttendance = attendanceRepository.findByIdOrNull(currentAttendance.id)
+        val updatedGenerationMember = generationMemberRepository.findByIdOrNull(generationMember.id)
+        updatedAttendance?.scoreChanged shouldBe AttendanceStatus.TARDY.penaltyScore
+        updatedAttendance?.note shouldBe "알고보니 지각"
+        updatedGenerationMember?.score shouldBe MAX_SCORE + (AttendanceStatus.TARDY.penaltyScore * 2)
     }
 
     @Test
@@ -265,9 +268,11 @@ class AttendanceServiceTest(
 
         attendanceService.addExtraAttendanceScoreByAdministrator(currentAttendance.id, 10, "운영지원 두 배")
 
-        currentAttendance.scoreChanged shouldBe 10
-        currentAttendance.extraScoreNote shouldBe "운영지원 두 배"
-        generationMember.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore + 10
+        val updatedAttendance = attendanceRepository.findByIdOrNull(currentAttendance.id)
+        val updatedGenerationMember = generationMemberRepository.findByIdOrNull(generationMember.id)
+        updatedAttendance?.scoreChanged shouldBe 10
+        updatedAttendance?.extraScoreNote shouldBe "운영지원 두 배"
+        updatedGenerationMember?.score shouldBe MAX_SCORE + AttendanceStatus.TARDY.penaltyScore + 10
     }
 
     fun `현재 세션에 대한 출석 정보들을 모두 조회`() {
