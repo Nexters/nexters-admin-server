@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.controller.auth.LoggedInMemberRequest
-import nexters.admin.domain.user.member.Member
 import nexters.admin.service.session.CreateSessionResponse
 import nexters.admin.service.session.FindSessionHomeResponse
 import nexters.admin.service.session.FindSessionResponse
@@ -48,6 +47,7 @@ class SessionController(
         return ResponseEntity.ok(CreateSessionResponse(sessionId))
     }
 
+    @Operation(summary = "[관리자 페이지] 세션 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/{id}")
     fun findSessionById(

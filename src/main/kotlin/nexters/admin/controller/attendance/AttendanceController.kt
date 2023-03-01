@@ -36,7 +36,7 @@ class AttendanceController(
     @PostMapping("/{id}/additional-score")
     fun addExtraAttendanceScore(
             @PathVariable id: Long,
-            @RequestBody @Valid request: ExtraAttendanceScoreChangeRequest
+            @RequestBody @Valid request: ExtraAttendanceScoreChangeRequest,
     ): ResponseEntity<Void> {
         attendanceService.addExtraAttendanceScoreByAdministrator(id, request.extraScoreChange, request.extraScoreNote)
         return ResponseEntity.ok().build()
@@ -47,7 +47,7 @@ class AttendanceController(
     @PutMapping("/{id}/status")
     fun updateAttendanceStatus(
             @PathVariable id: Long,
-            @RequestBody @Valid request: UpdateAttendanceStatusRequest
+            @RequestBody @Valid request: UpdateAttendanceStatusRequest,
     ): ResponseEntity<Void> {
         attendanceService.updateAttendanceStatusByAdministrator(id, request.attendanceStatus, request.note)
         return ResponseEntity.ok().build()
