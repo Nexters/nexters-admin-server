@@ -32,6 +32,7 @@ class SessionService(
         return FindSessionResponses(
                 sessionRepository.findAllByGeneration(generation)
                         .map { FindSessionResponse.from(it) }
+                        .sortedByDescending { it.sessionDate }
         )
     }
 
