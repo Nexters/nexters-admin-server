@@ -86,3 +86,60 @@ data class AttendanceSessionResponse(
         val extraScoreNote: String?,
         val note: String?,
 )
+
+data class AttendanceActivityResponses(
+        val data: List<AttendanceActivityResponse>,
+)
+
+data class AttendanceActivityResponse(
+        val generationMemberId: Long,
+        val name: String,
+        val position: String?,
+        val subPosition: String?,
+        val initialGeneration: Int,
+        val score: Int?,
+        val isCompletable: Boolean,
+        val isManager: Boolean,
+) {
+    companion object {
+        fun from(generationMember: GenerationMember, name: String, initialGeneration: Int): AttendanceActivityResponse {
+            return AttendanceActivityResponse(
+                    generationMember.id,
+                    name,
+                    generationMember.position?.value,
+                    generationMember.subPosition?.value,
+                    initialGeneration,
+                    generationMember.score,
+                    generationMember.isCompletable,
+                    generationMember.isManager()
+            )
+        }
+    }
+}
+
+data class AttendanceActivityHistoryResponses(
+        val data: List<AttendanceActivityHistoryResponse>,
+)
+
+data class AttendanceActivityHistoryResponse(
+        val title: String,
+        val week: Int,
+        val sessionDate: LocalDate?,
+        val attendanceStatus: String,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        val attendanceTime: LocalDateTime?,
+        val penaltyScore: Int,
+) {
+    companion object {
+        fun of(session: Session, attendance: Attendance): AttendanceActivityHistoryResponse {
+            return AttendanceActivityHistoryResponse(
+                    session.title,
+                    session.week,
+                    session.sessionDate,
+                    attendance.attendanceStatus.value,
+                    attendance.attendTime,
+                    attendance.attendanceStatus.penaltyScore
+            )
+        }
+    }
+}

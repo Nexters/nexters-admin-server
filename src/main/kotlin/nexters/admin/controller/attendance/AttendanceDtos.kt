@@ -29,7 +29,7 @@ data class ExtraAttendanceScoreChangeRequest(
 
 data class UpdateAttendanceStatusRequest(
         val attendanceStatus: String,
-        val note: String?
+        val note: String?,
 )
 
 data class InitializeQrCodesRequest(

@@ -45,7 +45,7 @@ class SessionService(
                         week = request.week,
                 )
         )
-        val generationMembers = generationMemberRepository.findByGeneration(request.generation)
+        val generationMembers = generationMemberRepository.findAllByGeneration(request.generation)
         val attendances = generationMembers.map {
             Attendance(
                     generationMemberId = it.id,
