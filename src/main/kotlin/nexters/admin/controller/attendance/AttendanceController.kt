@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import nexters.admin.service.attendance.AttendanceActivityHistoryResponses
 import nexters.admin.service.attendance.AttendanceActivityResponses
+import nexters.admin.domain.user.member.Member
+import nexters.admin.service.attendance.AttendanceActivityHistoryResponses
+import nexters.admin.service.attendance.AttendanceActivityResponses
 import nexters.admin.service.attendance.AttendanceService
 import nexters.admin.service.attendance.AttendanceSessionResponses
 import nexters.admin.service.attendance.FindAttendanceProfileResponse
