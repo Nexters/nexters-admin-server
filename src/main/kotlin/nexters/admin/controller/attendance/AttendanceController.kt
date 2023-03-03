@@ -97,7 +97,7 @@ class AttendanceController(
 
     @Operation(summary = "[관리자 페이지] 활동 관리 조회")
     @SecurityRequirement(name = "JWT")
-    @GetMapping("/activity")
+    @GetMapping("/activity/{generation}")
     fun findAllActivities(@PathVariable generation: Int): ResponseEntity<AttendanceActivityResponses> {
         val attendanceActivityResponses = attendanceService.findAllActivities(generation)
         return ResponseEntity.ok(attendanceActivityResponses)
@@ -105,7 +105,7 @@ class AttendanceController(
 
     @Operation(summary = "[관리자 페이지] 활동 관리 자세히 보기")
     @SecurityRequirement(name = "JWT")
-    @GetMapping("/activity/{generationMemberId}")
+    @GetMapping("/activity/{generation}/{generationMemberId}")
     fun findActivityHistory(
             @PathVariable generationMemberId: Long,
             @PathVariable generation: Int,
