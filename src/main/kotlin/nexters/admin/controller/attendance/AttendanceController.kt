@@ -3,6 +3,8 @@ package nexters.admin.controller.attendance
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import nexters.admin.service.attendance.AttendanceActivityHistoryResponses
+import nexters.admin.service.attendance.AttendanceActivityResponses
 import nexters.admin.service.attendance.AttendanceService
 import nexters.admin.service.attendance.AttendanceSessionResponses
 import nexters.admin.service.attendance.FindAttendanceProfileResponse
@@ -90,5 +92,24 @@ class AttendanceController(
     fun findAllBySessionId(@PathVariable sessionId: Long): ResponseEntity<AttendanceSessionResponses> {
         val attendanceSessionResponses = attendanceService.findAttendancesBySessionId(sessionId)
         return ResponseEntity.ok(attendanceSessionResponses)
+    }
+
+    @Operation(summary = "[관리자 페이지] 활동 관리 조회")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/activity/{generation}")
+    fun findAllActivities(@PathVariable generation: Int): ResponseEntity<AttendanceActivityResponses> {
+        val attendanceActivityResponses = attendanceService.findAllActivities(generation)
+        return ResponseEntity.ok(attendanceActivityResponses)
+    }
+
+    @Operation(summary = "[관리자 페이지] 활동 관리 자세히 보기")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/activity/{generation}/{generationMemberId}")
+    fun findActivityHistory(
+            @PathVariable generationMemberId: Long,
+            @PathVariable generation: Int,
+    ): ResponseEntity<AttendanceActivityHistoryResponses> {
+        val attendanceActivityHistoryResponses = attendanceService.findActivityHistory(generationMemberId, generation)
+        return ResponseEntity.ok(attendanceActivityHistoryResponses)
     }
 }
