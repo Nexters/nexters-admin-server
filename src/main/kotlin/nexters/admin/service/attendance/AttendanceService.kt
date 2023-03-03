@@ -147,9 +147,7 @@ class AttendanceService(
                 ?: throw NotFoundException.generationMemberNotFound()
         val member = memberRepository.findByIdOrNull(generationMember.memberId)
                 ?: throw NotFoundException.memberNotFound()
-        val initialGeneration = generationMemberRepository.findTopByMemberIdOrderByGenerationAsc(member.id)
-                ?.generation
-                ?: throw NotFoundException.generationNotFound()
+        val initialGeneration = findInitialGeneration(member)
         return AttendanceSessionResponse(
                 name = member.name,
                 attendanceId = it.id,
@@ -175,4 +173,35 @@ class AttendanceService(
                 it.attendanceStatus == AttendanceStatus.UNAUTHORIZED_ABSENCE ||
                         it.attendanceStatus == AttendanceStatus.AUTHORIZED_ABSENCE
             }
+
+    @Transactional(readOnly = true)
+    fun findAllActivities(generation: Int): AttendanceActivityResponses {
+        return AttendanceActivityResponses(
+                generationMemberRepository.findAllByGeneration(generation)
+                        .map {
+                            val member = (memberRepository.findByIdOrNull(it.memberId)
+                                    ?: throw NotFoundException.memberNotFound())
+                            val name = member.name
+                            val initialGeneration = findInitialGeneration(member)
+                            AttendanceActivityResponse.from(it, name, initialGeneration)
+                        }
+        )
+    }
+
+    private fun findInitialGeneration(member: Member) =
+            (generationMemberRepository.findTopByMemberIdOrderByGenerationAsc(member.id)
+                    ?.generation
+                    ?: throw NotFoundException.generationNotFound())
+
+    @Transactional(readOnly = true)
+    fun findActivityHistory(generationMemberId: Long, generation: Int): AttendanceActivityHistoryResponses {
+        return AttendanceActivityHistoryResponses(sessionRepository.findAllByGeneration(generation)
+                .sortedByDescending { it.week }
+                .map {
+                    val attendance = (attendanceRepository.findByGenerationMemberIdAndSessionId(generationMemberId, it.id)
+                            ?: throw NotFoundException.attendanceNotFound())
+                    AttendanceActivityHistoryResponse.of(it, attendance)
+                }
+        )
+    }
 }

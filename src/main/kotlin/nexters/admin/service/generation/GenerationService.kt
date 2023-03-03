@@ -60,7 +60,7 @@ class GenerationService(
     }
 
     fun deleteGeneration(generation: Int) {
-        val generationMembers = generationMemberRepository.findByGeneration(generation)
+        val generationMembers = generationMemberRepository.findAllByGeneration(generation)
         if (generationMembers.isNotEmpty()) {
             throw BadRequestException.existsGenerationMembers()
         }
