@@ -1,7 +1,7 @@
 package nexters.admin.service.attendance
 
+import nexters.admin.controller.attendance.CurrentQrCodeResponse
 import nexters.admin.domain.attendance.AttendanceStatus
-import nexters.admin.domain.attendance.QrCode
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.QrCodeRepository
 import nexters.admin.repository.SessionRepository
@@ -15,9 +15,12 @@ class QrCodeService(
         private val qrCodeRepository: QrCodeRepository,
         private val sessionRepository: SessionRepository,
 ) {
-    fun getCurrentQrCode(): QrCode {
-        return qrCodeRepository.findCurrentValidCode()
+    fun getCurrentQrCode(): CurrentQrCodeResponse {
+        val qrCode = qrCodeRepository.findCurrentValidCode()
                 ?: throw NotFoundException.qrCodeNotFound()
+        val session = (sessionRepository.findByIdOrNull(qrCode.sessionId)
+                ?: throw NotFoundException.sessionNotFound())
+        return CurrentQrCodeResponse.from(qrCode, session)
     }
 
     @Transactional
