@@ -66,8 +66,8 @@ class AttendanceController(
     @SecurityRequirement(name = "JWT")
     @GetMapping("/qr")
     fun getCurrentQrCode(): ResponseEntity<CurrentQrCodeResponse> {
-        val qrCode = qrCodeService.getCurrentQrCode()
-        return ResponseEntity.ok(CurrentQrCodeResponse.from((qrCode)))
+        val currentQrCodeResponse = qrCodeService.getCurrentQrCode()
+        return ResponseEntity.ok(currentQrCodeResponse)
     }
 
     @Operation(summary = "[관리자 페이지] 출석 시작 - QR 코드 자동 생성 시작")
