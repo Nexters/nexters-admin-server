@@ -242,7 +242,9 @@ class MemberService(
         )
     }
 
-    fun updatePassword(loggedInMember: Member, newPassword: String) {
+    fun updatePassword(email: String, newPassword: String) {
+        val loggedInMember = memberRepository.findByEmail(email)
+                ?: throw NotFoundException.memberNotFound()
         loggedInMember.updatePassword(Password(newPassword))
     }
 
@@ -261,7 +263,9 @@ class MemberService(
     }
 
     @Transactional(readOnly = true)
-    fun getProfile(loggedInMember: Member): FindProfileResponse {
+    fun getProfile(email: String): FindProfileResponse {
+        val loggedInMember = memberRepository.findByEmail(email)
+                ?: throw NotFoundException.memberNotFound()
         val generationMember = generationMemberRepository.findTopByMemberIdOrderByGenerationDesc(loggedInMember.id)
         return FindProfileResponse.of(loggedInMember, generationMember)
     }

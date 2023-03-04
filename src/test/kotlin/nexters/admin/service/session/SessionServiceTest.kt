@@ -173,7 +173,7 @@ class SessionServiceTest(
         val sessions = generateSessions()
         generateAttendances(sessions, generationMember)
 
-        val actual = sessionService.getSessionHome(member)
+        val actual = sessionService.getSessionHome(member.email)
 
         actual.data shouldNotBe null
         actual.data?.title shouldBe "다가오는 세션"
@@ -185,7 +185,7 @@ class SessionServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22)
         generationMemberRepository.save(generationMember)
 
-        val actual = sessionService.getSessionHome(member)
+        val actual = sessionService.getSessionHome(member.email)
 
         actual.data shouldBe null
     }
@@ -206,7 +206,7 @@ class SessionServiceTest(
         sessions.add(pendingSession)
         generateAttendances(sessions, generationMember)
 
-        val actual = sessionService.getSessionHome(member)
+        val actual = sessionService.getSessionHome(member.email)
 
         actual.data shouldNotBe null
         actual.data?.title shouldBe "PENDING 세션"
@@ -229,7 +229,7 @@ class SessionServiceTest(
         sessions.add(ongoingSession)
         generateAttendances(sessions, generationMember)
 
-        val actual = sessionService.getSessionHome(member)
+        val actual = sessionService.getSessionHome(member.email)
 
         actual.data shouldNotBe null
         actual.data?.title shouldBe "ONGOING 세션"
@@ -252,7 +252,7 @@ class SessionServiceTest(
         sessions.add(expiredSession)
         generateAttendances(sessions, generationMember)
 
-        val actual = sessionService.getSessionHome(member)
+        val actual = sessionService.getSessionHome(member.email)
 
         actual.data shouldNotBe null
         actual.data?.title shouldBe "EXPIRED 세션"

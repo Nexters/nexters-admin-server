@@ -1,7 +1,5 @@
 package nexters.admin.support.auth
 
-import nexters.admin.domain.user.member.Member
-import nexters.admin.service.user.MemberService
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -12,7 +10,6 @@ import org.springframework.web.method.support.ModelAndViewContainer
 @Component
 class LoginUserResolver(
         private val jwtTokenProvider: JwtTokenProvider,
-        private val memberService: MemberService
 ) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
@@ -23,10 +20,9 @@ class LoginUserResolver(
             parameter: MethodParameter,
             mavContainer: ModelAndViewContainer?,
             webRequest: NativeWebRequest,
-            binderFactory: WebDataBinderFactory?
-    ): Member {
+            binderFactory: WebDataBinderFactory?,
+    ): String {
         val token = AuthorizationHeaderUtils.extractBearerToken(webRequest)
-        val userEmail = jwtTokenProvider.getPayload(token)
-        return memberService.getByEmail(userEmail)
+        return jwtTokenProvider.getPayload(token)
     }
 }

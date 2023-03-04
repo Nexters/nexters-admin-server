@@ -16,7 +16,7 @@ import javax.validation.Valid
 class AuthController(
         private val authService: AuthService,
 ) {
-    @Operation(summary = "관리자 로그인")
+    @Operation(summary = "[관리자 페이지] 관리자 로그인")
     @PostMapping("/login/admin")
     fun loginAdmin(@RequestBody @Valid request: AdminLoginRequest): ResponseEntity<TokenResponse> {
         val token = authService.generateAdminToken(request)

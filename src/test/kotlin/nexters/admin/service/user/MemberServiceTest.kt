@@ -340,9 +340,10 @@ class MemberServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id)
         generationMemberRepository.save(generationMember)
 
-        memberService.updatePassword(member, "2345")
+        memberService.updatePassword(member.email, "2345")
 
-        member.password shouldBe Password("2345")
+        val actual = memberRepository.findByEmail(member.email)
+        actual?.password shouldBe Password("2345")
     }
 
     @Test
@@ -385,7 +386,7 @@ class MemberServiceTest(
         val generationMember: GenerationMember = createNewGenerationMember(memberId = member.id, generation = 22, position = Position.DEVELOPER)
         generationMemberRepository.save(generationMember)
 
-        val profile = memberService.getProfile(member)
+        val profile = memberService.getProfile(member.email)
 
         profile.name shouldBe "정설희"
         profile.generation shouldBe 22
@@ -400,7 +401,7 @@ class MemberServiceTest(
         generationMemberRepository.save(generationMember1)
         generationMemberRepository.save(generationMember2)
 
-        val profile = memberService.getProfile(member)
+        val profile = memberService.getProfile(member.email)
 
         profile.generation shouldBe 22
         profile.position shouldBe Position.DESIGNER.value
@@ -410,7 +411,7 @@ class MemberServiceTest(
     fun `기수 정보가 없는 회원이 내 정보 조회시 0기로 표시`() {
         val member: Member = memberRepository.save(createNewMember())
 
-        val profile = memberService.getProfile(member)
+        val profile = memberService.getProfile(member.email)
 
         profile.generation shouldBe 0
         profile.position shouldBe ""

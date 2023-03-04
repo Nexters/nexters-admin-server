@@ -5,10 +5,10 @@ import nexters.admin.controller.session.UpdateSessionRequest
 import nexters.admin.domain.attendance.Attendance
 import nexters.admin.domain.attendance.AttendanceStatus.PENDING
 import nexters.admin.domain.session.Session
-import nexters.admin.domain.user.member.Member
 import nexters.admin.exception.NotFoundException
 import nexters.admin.repository.AttendanceRepository
 import nexters.admin.repository.GenerationMemberRepository
+import nexters.admin.repository.MemberRepository
 import nexters.admin.repository.SessionRepository
 import nexters.admin.repository.findUpcomingSession
 import org.springframework.data.repository.findByIdOrNull
@@ -21,6 +21,7 @@ const val CURRENT_ONGOING_GENERATION = 22
 @Transactional
 @Service
 class SessionService(
+        private val memberRepository: MemberRepository,
         private val sessionRepository: SessionRepository,
         private val generationMemberRepository: GenerationMemberRepository,
         private val attendanceRepository: AttendanceRepository,
@@ -87,7 +88,9 @@ class SessionService(
     }
 
     @Transactional(readOnly = true)
-    fun getSessionHome(loggedInMember: Member): FindSessionHomeResponse {
+    fun getSessionHome(email: String): FindSessionHomeResponse {
+        val loggedInMember = memberRepository.findByEmail(email)
+                ?: throw NotFoundException.memberNotFound()
         val generationMember =
                 generationMemberRepository.findByGenerationAndMemberId(CURRENT_ONGOING_GENERATION, loggedInMember.id)
                         ?: return FindSessionHomeResponse.of()

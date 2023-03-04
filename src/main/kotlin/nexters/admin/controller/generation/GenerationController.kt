@@ -18,7 +18,7 @@ class GenerationController(
         private val generationService: GenerationService
 ) {
 
-    @Operation(summary = "현재 기수 조회")
+    @Operation(summary = "[관리자 페이지] 현재 기수 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/current")
     fun getCurrentGeneration(): ResponseEntity<FindCurrentGeneration> {
@@ -26,7 +26,7 @@ class GenerationController(
         return ResponseEntity.ok(findCurrentGeneration)
     }
 
-    @Operation(summary = "전체 기수 조회")
+    @Operation(summary = "[관리자 페이지] 전체 기수 조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping
     fun getAllGenerations(): ResponseEntity<GenerationResponses> {
@@ -34,7 +34,7 @@ class GenerationController(
         return ResponseEntity.ok(generationResponses)
     }
 
-    @Operation(summary = "기수 추가")
+    @Operation(summary = "[관리자 페이지] 기수 추가")
     @SecurityRequirement(name = "JWT")
     @PostMapping
     fun addGeneration(
@@ -44,7 +44,7 @@ class GenerationController(
         return ResponseEntity.ok().build()
     }
 
-    @Operation(summary = "기수 삭제")
+    @Operation(summary = "[관리자 페이지] 기수 삭제")
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/{generation}")
     fun removeGeneration(
@@ -54,7 +54,7 @@ class GenerationController(
         return ResponseEntity.ok().build()
     }
 
-    @Operation(summary = "기수 수정")
+    @Operation(summary = "[관리자 페이지] 기수 수정")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/{generation}")
     fun updateGeneration(
@@ -65,7 +65,7 @@ class GenerationController(
         return ResponseEntity.ok().build()
     }
 
-    @Operation(summary = "기수 상세조회")
+    @Operation(summary = "[관리자 페이지] 기수 상세조회")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/{generation}")
     fun getGenerationDetail(

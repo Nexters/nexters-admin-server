@@ -32,7 +32,9 @@ class AttendanceService(
         private val generationRepository: GenerationRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getAttendanceProfile(loggedInMember: Member): FindAttendanceProfileResponse {
+    fun getAttendanceProfile(email: String): FindAttendanceProfileResponse {
+        val loggedInMember = memberRepository.findByEmail(email)
+                ?: throw NotFoundException.memberNotFound()
         val latestOngoingGeneration = findLatestOngoingGeneration()
         val generationMember = generationMemberRepository.findByGenerationAndMemberId(latestOngoingGeneration, loggedInMember.id)
                 ?: return FindAttendanceProfileResponse.of()
@@ -64,7 +66,9 @@ class AttendanceService(
     }
 
     // TODO: 현재 상태가 무엇이든 QR 코드를 찍었으면 출석/지각으로 덮어써지는 구조. PENDING일 때만 변하도록 해야 하는가?
-    fun attendWithQrCode(loggedInMember: Member, qrCode: String) {
+    fun attendWithQrCode(email: String, qrCode: String) {
+        val loggedInMember = memberRepository.findByEmail(email)
+                ?: throw NotFoundException.memberNotFound()
         val validCode = qrCodeRepository.findCurrentValidCode()
                 ?: throw BadRequestException.attendanceNotStarted()
         if (!validCode.isSameValue(qrCode)) {
