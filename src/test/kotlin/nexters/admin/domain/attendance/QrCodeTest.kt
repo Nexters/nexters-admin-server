@@ -25,7 +25,7 @@ class QrCodeTest {
 
     @Test
     fun `of 메서드를 통해 임의의 6글자짜리 코드 생성`() {
-        val actual =  QrCode.of(1L, AttendanceStatus.ATTENDED, LocalDateTime.now())
+        val actual = QrCode.of(1L, AttendanceStatus.ATTENDED, LocalDateTime.now())
 
         actual.value matches Regex("^[0-9a-zA-Z]+$")
     }

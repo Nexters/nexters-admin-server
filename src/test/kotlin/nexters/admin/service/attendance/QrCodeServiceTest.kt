@@ -30,7 +30,6 @@ class QrCodeServiceTest(
         val actual = qrCodeService.getCurrentQrCode()
 
         actual.sessionId shouldBe 1L
-        actual.type shouldBe AttendanceStatus.ATTENDED
-        actual.isExpired() shouldBe false
+        actual.qrCodeType shouldBe AttendanceStatus.ATTENDED.name
     }
 }

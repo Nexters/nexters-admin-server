@@ -27,7 +27,7 @@ class AttendanceController(
     @PostMapping
     fun attend(
             @LoggedInMember member: Member,
-            @RequestBody @Valid request: ValidateQrCodeRequest
+            @RequestBody @Valid request: ValidateQrCodeRequest,
     ): ResponseEntity<Void> {
         attendanceService.attendWithQrCode(member, request.nonce)
         return ResponseEntity.ok().build()
@@ -38,7 +38,7 @@ class AttendanceController(
     @PostMapping("/{id}/additional-score")
     fun addExtraAttendanceScore(
             @PathVariable id: Long,
-            @RequestBody @Valid request: ExtraAttendanceScoreChangeRequest
+            @RequestBody @Valid request: ExtraAttendanceScoreChangeRequest,
     ): ResponseEntity<Void> {
         attendanceService.addExtraAttendanceScoreByAdministrator(id, request.extraScoreChange, request.extraScoreNote)
         return ResponseEntity.ok().build()
@@ -49,7 +49,7 @@ class AttendanceController(
     @PutMapping("/{id}/status")
     fun updateAttendanceStatus(
             @PathVariable id: Long,
-            @RequestBody @Valid request: UpdateAttendanceStatusRequest
+            @RequestBody @Valid request: UpdateAttendanceStatusRequest,
     ): ResponseEntity<Void> {
         attendanceService.updateAttendanceStatusByAdministrator(id, request.attendanceStatus, request.note)
         return ResponseEntity.ok().build()
@@ -67,8 +67,8 @@ class AttendanceController(
     @SecurityRequirement(name = "JWT")
     @GetMapping("/qr")
     fun getCurrentQrCode(): ResponseEntity<CurrentQrCodeResponse> {
-        val qrCode = qrCodeService.getCurrentQrCode()
-        return ResponseEntity.ok(CurrentQrCodeResponse.from((qrCode)))
+        val currentQrCodeResponse = qrCodeService.getCurrentQrCode()
+        return ResponseEntity.ok(currentQrCodeResponse)
     }
 
     @Operation(summary = "[관리자 페이지] 출석 시작 - QR 코드 자동 생성 시작")
